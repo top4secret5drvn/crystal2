@@ -8,7 +8,7 @@ import os
 from typing import List, Dict, Tuple, Optional, Set
 from dataclasses import dataclass
 from engine import (TruthValue, EDGE_CAUSE, EDGE_EXCEPT, EDGE_COND, EDGE_SYNTAGM,
-                    EDGE_IS_A, unpack_edge, MarkerType, Marker, DependencyNode, CrystalReason)
+                    EDGE_IS_A, EDGE_PART_OF, unpack_edge, MarkerType, Marker, DependencyNode, CrystalReason)
 from calibration import CalibrationProfile
 
 
@@ -194,11 +194,13 @@ class LanguageMembrane:
     }
 
     CONSTRUCTIONS = {
-        "CAUSATION": "{Cause} вызывает {Effect}",
-        "STATE": "{Entity} обладает свойством {Property}",
-        "IDENTITY": "{Entity} является {Property}",
-        "LOCATION": "{Entity} находится в {Location}",
-        "POSSESSION": "{Entity} имеет {Possession}",
+        "CAUSATION": "{Cause} приводит к {Effect}.",
+        "STATE_ADJ": "{Entity} — {Property}.",
+        "STATE_NOUN": "{Entity} — это {Property}.",
+        "IS_A": "{Entity} является {Class}.",
+        "PART_OF": "{Part} входит в состав {Whole}.",
+        "COMPARISON": "{Entity1} и {Entity2} имеют общие черты: {Common}.",
+        "NEGATION": "{Entity} не является {Class}.",
     }
 
     CAUSE_MARKERS = frozenset([
@@ -711,49 +713,46 @@ class LanguageMembrane:
         sentence = ""
         if primary_r:
             primary_lbl = primary_r.label[5:] if primary_r.label.startswith("root:") else primary_r.label
-            cause_target = None
+            # 🆕 ЗАДАЧА 7: выбор конструкции по типу сильнейшего отношения
+            best_relation = None
+            best_target = None
+            best_weight = 0
+
             for tgt_id, packed in primary_r.connections.items():
                 w, et = unpack_edge(packed)
-                if et == EDGE_CAUSE and w > 30 and tgt_id in self.lattice.resonators:
-                    tgt_r = self.lattice.resonators[tgt_id]
-                    if tgt_r.is_active():
-                        cause_target = tgt_r.label[5:] if tgt_r.label.startswith("root:") else tgt_r.label
-                        break
-            if cause_target:
-                template = self.CONSTRUCTIONS.get("CAUSATION", "{Cause} вызывает {Effect}")
-                sentence = template.format(Cause=primary_lbl.capitalize(), Effect=cause_target)
-            else:
+                if tgt_id not in self.lattice.resonators:
+                    continue
+                tgt_r = self.lattice.resonators[tgt_id]
+                if not tgt_r.is_active():
+                    continue
+                tgt_lbl = tgt_r.label[5:] if tgt_r.label.startswith("root:") else tgt_r.label
+                if len(tgt_lbl) < 3 or tgt_lbl == primary_lbl:
+                    continue
+                if w > best_weight:
+                    best_weight = w
+                    best_target = tgt_lbl
+                    best_relation = et
+
+            if best_relation == EDGE_IS_A:
+                sentence = self.CONSTRUCTIONS["IS_A"].format(
+                    Entity=primary_lbl.capitalize(), Class=best_target)
+            elif best_relation == EDGE_CAUSE:
+                sentence = self.CONSTRUCTIONS["CAUSATION"].format(
+                    Cause=primary_lbl.capitalize(), Effect=best_target)
+            elif best_relation == EDGE_PART_OF:
+                sentence = self.CONSTRUCTIONS["PART_OF"].format(
+                    Part=primary_lbl.capitalize(), Whole=best_target)
+            elif best_relation == EDGE_EXCEPT:
+                sentence = self.CONSTRUCTIONS["NEGATION"].format(
+                    Entity=primary_lbl.capitalize(), Class=best_target)
+            elif best_target:
                 ADJ_ENDINGS = ('ый', 'ий', 'ой', 'ая', 'яя', 'ое', 'ее', 'ые', 'ие')
-                VERB_ENDINGS = ('ть', 'ти', 'чь', 'ют', 'ут', 'ат', 'ят', 'ит', 'ет', 'ла', 'ли', 'ло', 'лся', 'лась', 'лись', 'лось', 'утся', 'ятся')
-                best_adj = None
-                best_adj_w = 0
-                best_noun = None
-                best_noun_w = 0
-                for tgt_id, packed in primary_r.connections.items():
-                    w, et = unpack_edge(packed)
-                    if et == EDGE_SYNTAGM and w > 0 and tgt_id in self.lattice.resonators:
-                        tgt_r = self.lattice.resonators[tgt_id]
-                        tgt_lbl = tgt_r.label[5:] if tgt_r.label.startswith("root:") else tgt_r.label
-                        if len(tgt_lbl) < 3 or tgt_lbl == primary_lbl:
-                            continue
-                        is_adj = tgt_lbl.endswith(ADJ_ENDINGS)
-                        is_verb = tgt_lbl.endswith(VERB_ENDINGS)
-                        if is_adj:
-                            if w > best_adj_w:
-                                best_adj_w = w
-                                best_adj = tgt_lbl
-                        elif not is_verb:
-                            if w > best_noun_w:
-                                best_noun_w = w
-                                best_noun = tgt_lbl
-                        else:
-                            if w > best_noun_w:
-                                best_noun_w = w
-                                best_noun = tgt_lbl
-                if best_adj:
-                    sentence = f"{primary_lbl.capitalize()} обладает свойством {best_adj}."
-                elif best_noun:
-                    sentence = f"{primary_lbl.capitalize()} это {best_noun}."
+                if best_target.endswith(ADJ_ENDINGS):
+                    sentence = self.CONSTRUCTIONS["STATE_ADJ"].format(
+                        Entity=primary_lbl.capitalize(), Property=best_target)
+                else:
+                    sentence = self.CONSTRUCTIONS["STATE_NOUN"].format(
+                        Entity=primary_lbl.capitalize(), Property=best_target)
         if not sentence:
             analogies = self.lattice.find_analogies(primary_lbl)
             if analogies:
@@ -804,6 +803,7 @@ class LanguageMembrane:
                 else:
                     if r1.id in plan_set and r2.id in plan_set:
                         connected_pairs += 1
-        if total_pairs > 0 and (connected_pairs / total_pairs) < 0.40:
+        # 🆕 ЗАДАЧА 7: снижен порог связности 0.40 -> 0.25 (меньше ложных "Мысль фрагментарна")
+        if total_pairs > 0 and (connected_pairs / total_pairs) < 0.25:
             return "Мысль фрагментарна. Требуется больше фактов."
         return text
