@@ -19,13 +19,15 @@ EDGE_COND    = 0x30000000
 EDGE_EXCEPT  = 0x40000000
 EDGE_ANALOG  = 0x50000000
 EDGE_GOAL    = 0x80000000
+EDGE_IS_A    = 0x60000000
+EDGE_PART_OF = 0x70000000
 MASK_TYPE   = 0xF0000000
 MASK_WEIGHT = 0x0FFFFFFF
 
 EDGE_NAMES = {
     EDGE_SYNTAGM: "SYN", EDGE_CAUSE: "CAUSE", EDGE_EFFECT: "EFFECT",
     EDGE_COND: "COND", EDGE_EXCEPT: "EXCEPT", EDGE_ANALOG: "ANALOG",
-    EDGE_GOAL: "GOAL",
+    EDGE_GOAL: "GOAL", EDGE_IS_A: "IS_A", EDGE_PART_OF: "PART_OF",
 }
 
 # 🆕 Приоритет 1.6: Ограничения типов связей
@@ -37,6 +39,8 @@ EDGE_CONSTRAINTS = {
     EDGE_EXCEPT:  {"description": "Исключение / Опровержение", "bidirectional": True},
     EDGE_ANALOG:  {"description": "Аналогия", "bidirectional": True},
     EDGE_GOAL:    {"description": "Цель", "bidirectional": False},
+    EDGE_IS_A:    {"description": "Классовое включение", "bidirectional": False},
+    EDGE_PART_OF: {"description": "Часть целого", "bidirectional": False},
 }
 
 def pack_edge(weight: int, edge_type: int = EDGE_SYNTAGM) -> int:
@@ -1311,6 +1315,8 @@ class CrystalLattice:
                         effective_weight = weight // 2
                     if edge_type == EDGE_GOAL:
                         effective_weight = min(MASK_WEIGHT, weight + (weight // 2))
+                    if edge_type == EDGE_IS_A:
+                        effective_weight = min(MASK_WEIGHT, weight + (weight // 4))  # 🆕 Усиление классовых связей
                     transferred = int((r.energy * effective_weight * energy_mult) // 256)
                     if conn_count > 5 and transferred > 0:
                         transferred = (transferred * 5) // conn_count

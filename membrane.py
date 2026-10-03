@@ -8,7 +8,7 @@ import os
 from typing import List, Dict, Tuple, Optional, Set
 from dataclasses import dataclass
 from engine import (TruthValue, EDGE_CAUSE, EDGE_EXCEPT, EDGE_COND, EDGE_SYNTAGM,
-                    unpack_edge, MarkerType, Marker, DependencyNode, CrystalReason)
+                    EDGE_IS_A, unpack_edge, MarkerType, Marker, DependencyNode, CrystalReason)
 from calibration import CalibrationProfile
 
 
@@ -213,7 +213,7 @@ class LanguageMembrane:
     COND_MARKERS = frozenset([
         'если', 'когда', 'условие', 'случай', 'при', 'допустим'
     ])
-    IS_A_MARKERS = frozenset(['является', 'это'])  # 🆕 Приоритет 2.3
+    IS_A_MARKERS = frozenset(['является', 'есть', 'представляет'])  # 🆕 Приоритет 2.3 ('это' — теперь оператор, не маркер-концепт)
     # 🆕 Приоритет 2.2: Детекция намерений вопросов
     QUESTION_INTENTS = {
         'why': frozenset(['почему', 'зачем', 'отчего']),
@@ -452,6 +452,7 @@ class LanguageMembrane:
 
         # 🆕 Приоритет 2.1: Флаг отрицания
         negation_pending = False
+        pending_is_a = False  # 🆕 'это' — оператор связки X IS_A Y
 
         for w in words:
             # 🆕 Обработка "не" — не пропускаем, а активируем флаг отрицания
@@ -459,6 +460,14 @@ class LanguageMembrane:
                 negation_pending = True
                 stats.negations += 1
                 resolved_labels.append(None)
+                continue
+
+            # 🆕 'это' — оператор связки, не концепт
+            if w == 'это':
+                # Не создаём узел. Просто запоминаем, что следующий концепт
+                # будет связан с предыдущим через IS_A
+                pending_is_a = True
+                resolved_labels.append(None)  # не материализуем
                 continue
 
             # Пропускаем обычные стоп-слова (кроме маркеров связок)
@@ -521,6 +530,25 @@ class LanguageMembrane:
                     weight=self.calibration.syntagm_weight_skip,
                     edge_type=EDGE_SYNTAGM
                 )
+
+        # 🆕 Обработка паттерна "X это Y" → IS_A (оператор связки, без узла 'это')
+        if pending_is_a and len(valid_concepts) >= 2:
+            subj = valid_concepts[-2]  # X
+            obj = valid_concepts[-1]   # Y
+            reason = CrystalReason(
+                kind="input",
+                source_label=f"{subj} IS_A {obj}",
+                source_type="text",
+                confidence=0.95,
+                context=self.lattice.active_context,
+                timestamp=self.lattice.tick_count,
+                metadata={"relation": "is_a", "marker": "это"}
+            )
+            self.lattice.connect(subj, obj, weight=self.calibration.causal_marker_weight,
+                                 edge_type=EDGE_IS_A, reason=reason)
+            stats.is_a_links += 1
+
+        pending_is_a = False
 
         self._learn_contextual_rules(words, resolved_labels)
 
