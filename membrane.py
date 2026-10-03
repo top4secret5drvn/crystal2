@@ -479,10 +479,14 @@ class LanguageMembrane:
                 resolved_labels.append(None)
                 continue
 
+            # 🆕 Фикс: после 'это' или 'не' принудительно материализуем следующий концепт
+            force_materialize = pending_is_a or negation_pending
+
             label = self._resolve_label(w)
             resolved_labels.append(label)
             occurrence_count = self.word_occurrence_count.get(w, 0)
             should_materialize = (
+                force_materialize or          # ← ДОБАВЛЕНО
                 occurrence_count >= 2 or
                 label in self.lattice.label_to_id or
                 label.startswith("root:")
@@ -566,6 +570,11 @@ class LanguageMembrane:
                 edge_type = EDGE_COND
             elif marker in self.IS_A_MARKERS:
                 edge_type = EDGE_SYNTAGM
+                relation_meta = "is_a"
+
+            # 🆕 Задача 2: оператор связки 'это' (не входит в IS_A_MARKERS как концепт)
+            if marker == 'это':
+                edge_type = EDGE_IS_A
                 relation_meta = "is_a"
 
             if edge_type is not None:
