@@ -479,6 +479,7 @@ class CrystalLattice:
             ("COMMUNICATION", ["Speaker", "Hearer", "Message"]),
             ("CAUSATION", ["Cause", "Effect"]),
             ("STATE", ["Entity", "Property"]),
+            ("TAXONOMY", ["Instance", "Class", "Attribute"]),
         ]
         for label, roles in primitives:
             fid = self._next_frame_id
@@ -1018,16 +1019,37 @@ class CrystalLattice:
             if not r.is_active(): continue
             for tgt_id, packed in r.connections.items():
                 w, et = unpack_edge(packed)
-                if et == EDGE_CAUSE and w > 30 and tgt_id in self.resonators:
+                # 🆕 ЗАДАЧА 8: CAUSATION фрейм эвоцируется от CAUSE, EFFECT, COND
+                # (раньше — только EDGE_CAUSE с w > 30, из-за чего фреймы почти никогда
+                #  не эвоцировались: большинство связей — SYNTAGM/IS_A).
+                if et in (EDGE_CAUSE, EDGE_EFFECT, EDGE_COND) and w > 15 and tgt_id in self.resonators:
                     tgt_r = self.resonators[tgt_id]
                     if tgt_r.is_active():
                         for frame in self.active_frames.values():
                             if frame.label == "CAUSATION":
-                                act = min(1.0, (r.energy + tgt_r.energy + w) / 2000.0)
+                                act = min(1.0, (r.energy + tgt_r.energy + w) / 3000.0)
                                 if act > frame.activation:
                                     frame.activation = act
                                     frame.bind_slot("Cause", r.id, act)
                                     frame.bind_slot("Effect", tgt_id, act)
+
+                # 🆕 ЗАДАЧА 8: IS_A связи эвоцируют TAXONOMY (и усиливают STATE)
+                if et == EDGE_IS_A and w > 10 and tgt_id in self.resonators:
+                    tgt_r = self.resonators[tgt_id]
+                    if tgt_r.is_active():
+                        for frame in self.active_frames.values():
+                            if frame.label == "STATE":
+                                act = min(1.0, (r.energy + tgt_r.energy) / 2000.0)
+                                if act > frame.activation:
+                                    frame.activation = act
+                                    frame.bind_slot("Entity", r.id, act)
+                                    frame.bind_slot("Property", tgt_id, act)
+                            elif frame.label == "TAXONOMY":
+                                act = min(1.0, (r.energy + tgt_r.energy) / 2000.0)
+                                if act > frame.activation:
+                                    frame.activation = act
+                                    frame.bind_slot("Instance", r.id, act)
+                                    frame.bind_slot("Class", tgt_id, act)
         
         ADJ_ENDINGS = ('ый', 'ий', 'ой', 'ая', 'яя', 'ое', 'ее', 'ые', 'ие')
         for r in self.resonators.values():
