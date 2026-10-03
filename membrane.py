@@ -157,11 +157,24 @@ class RussianStemmer:
         if result.endswith('ь') and len(result) > 3:
             result = result[:-1]
 
-        return result if len(result) >= 3 else word
+        # 🆕 Фикс: минимальная длина стема — 4 символа для существительных
+        # (предотвращает "яблоко" → "яб", "цитрус" → "ци")
+        if len(result) < 4:
+            return word
+        return result
 
     def _find_rv(self, word: str) -> str:
-        """Найти RV-регион (всё после первой гласной)."""
+        """Найти RV-регион: всё после ПЕРВОЙ гласной."""
         vowels = set('аеиоуыэюяё')
+        found_first = False
+        for i, ch in enumerate(word):
+            if ch in vowels:
+                if not found_first:
+                    found_first = True
+                    continue
+                # Нашли вторую гласную — RV начинается после неё
+                return word[i + 1:]
+        # Если гласная только одна — возвращаем всё после неё
         for i, ch in enumerate(word):
             if ch in vowels:
                 return word[i + 1:]

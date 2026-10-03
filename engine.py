@@ -1896,33 +1896,9 @@ class CrystalLattice:
         contrast_candidates.discard(r1.id)
         contrast_candidates.discard(r2.id)
         antagonisms = self._find_antagonisms(unique1_ids, unique2_ids, r1, r2, hubs, n1, n2, debug=debug)
-        if not antagonisms:
-            for u1_id in contrast_candidates:
-                if u1_id in service_ids or u1_id in {r1.id, r2.id}:
-                    continue
-                if u1_id not in self.resonators:
-                    continue
-                u1_r = self.resonators[u1_id]
-                for u2_id in contrast_candidates:
-                    if u2_id in service_ids or u2_id in {r1.id, r2.id} or u2_id == u1_id:
-                        continue
-                    if u2_id not in self.resonators:
-                        continue
-                    u2_r = self.resonators[u2_id]
-                    if u1_r.id == u2_r.id:
-                        continue
-                    has_except = False
-                    if u2_id in u1_r.connections:
-                        _, edge_type = unpack_edge(u1_r.connections[u2_id])
-                        has_except = edge_type == EDGE_EXCEPT
-                    if not has_except and u1_id in u2_r.connections:
-                        _, edge_type = unpack_edge(u2_r.connections[u1_id])
-                        has_except = edge_type == EDGE_EXCEPT
-                    if has_except:
-                        antagonisms.append((display_label(u1_r.label), display_label(u2_r.label)))
-                        break
-                if antagonisms:
-                    break
+        # 🆕 Фикс: НЕ ищем антагонизмы в расширенном контексте.
+        # Только прямые EXCEPT-связи между уникальными соседями.
+        # (Убран fallback по contrast_candidates — он производит мусор)
         common_traits = [trait for trait in common_traits if trait not in {display_label(r1.label), display_label(r2.label)}]
         common_traits = common_traits[:7]
         if synonym_traits:
@@ -2028,8 +2004,13 @@ class CrystalLattice:
             profile.sort()
             profiles[attr.id] = (attr, profile)
         checked = set()
+        syngrammy_created = 0
         for id1, (r1, p1) in profiles.items():
+            if syngrammy_created >= 5:  # 🆕 максимум 5 сингамий за сон
+                break
             for id2, (r2, p2) in profiles.items():
+                if syngrammy_created >= 5:
+                    break
                 if id1 >= id2: continue
                 pair = tuple(sorted((id1, id2)))
                 if pair in checked: continue
@@ -2081,6 +2062,7 @@ class CrystalLattice:
                                 dreams.append(f"🍎 Сингамия: '{abstract_label}' (Изоморфизм: {jaccard:.2f}, поддержка: {support}) ✓")
                             else:
                                 dreams.append(f"🍎 Сингамия: '{abstract_label}' (Изоморфизм: {jaccard:.2f}, поддержка: {support}) [гипотеза]")
+                            syngrammy_created += 1  # 🆕 учёт и в ветке гипотезы
         return dreams
     
     # --- Сон ---
@@ -2141,7 +2123,7 @@ class CrystalLattice:
                         checked_pairs.add(pair)
                         strong_bonds.append((w, r.id, tgt_id))
         strong_bonds.sort(key=lambda x: x[0], reverse=True)
-        for weight, r_id, tgt_id in strong_bonds[:3]:
+        for weight, r_id, tgt_id in strong_bonds[:5]:  # 🆕 фикс: максимум 5 кластеров за сон
             r = self.resonators[r_id]
             target_r = self.resonators[tgt_id]
             cluster_label = f"cluster:{r.label}+{target_r.label}"
@@ -2191,7 +2173,10 @@ class CrystalLattice:
                     if w2 < self.calibration.mdl_triad_min_weight or tgt2_id == r.id or tgt2_id not in self.resonators: continue
                     key = (r.id, tgt2_id)
                     triads[key] = triads.get(key, 0) + 1
+        mdl_created = 0
         for (a_id, c_id), count in triads.items():
+            if mdl_created >= 10:  # 🆕 максимум 10 MDL за сон
+                break
             if count >= self.calibration.mdl_triad_count_thresh:
                 a_r = self.resonators[a_id]
                 c_r = self.resonators[c_id]
@@ -2234,6 +2219,7 @@ class CrystalLattice:
                         dreams.append(f"🗜️ MDL: '{shortcut_label}' (×{count}) ✓")
                     else:
                         dreams.append(f"🗜️ MDL: '{shortcut_label}' (×{count}) [гипотеза]")
+                    mdl_created += 1
         potential_antagonists = []
         for r in list(self.resonators.values()):
             if r.label.startswith(('mdl:', 'cluster:', 'SELF', 'EPOCH:', 'mod:', 'skill:')): continue
@@ -2251,10 +2237,10 @@ class CrystalLattice:
             for j in range(i + 1, len(potential_antagonists)):
                 id2, base2 = potential_antagonists[j]
                 common_base = base1 & base2
-                if len(common_base) >= 3:  # было >= 1
+                if len(common_base) >= 5:  # было >= 3
                     r1, r2 = self.resonators[id1], self.resonators[id2]
                     sim = self.encoder.similarity(r1.hdc_vector, r2.hdc_vector)
-                    if sim < 0.30:  # только реально далёкие векторы
+                    if sim < 0.20:  # только реально далёкие векторы (было < 0.30)
                         if id2 not in r1.connections or unpack_edge(r1.connections[id2])[1] != EDGE_EXCEPT:
                             self.connect(r1.label, r2.label, weight=self.calibration.except_antonym_weight, edge_type=EDGE_EXCEPT)
                             dreams.append(f"🛡 Авто-EXCEPT: '{r1.label}' ↔ '{r2.label}' (общая база: {len(common_base)})")

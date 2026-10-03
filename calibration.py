@@ -33,11 +33,11 @@ class CalibrationProfile:
     # === Сон и Абстракции (Сингамия / MDL) ===
     syngrammy_min_attractor_energy: int = 50
     syngrammy_min_edge_weight: int = 20
-    syngrammy_min_profile_len: int = 3
-    syngrammy_jaccard_thresh: float = 0.45
+    syngrammy_min_profile_len: int = 4
+    syngrammy_jaccard_thresh: float = 0.70
     mdl_triad_min_weight: int = 30
     mdl_triad_min_energy: int = 30
-    mdl_triad_count_thresh: int = 2
+    mdl_triad_count_thresh: int = 5
     
     # === Обратная волна (Tick Backward) ===
     backward_max_depth: int = 7
