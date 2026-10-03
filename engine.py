@@ -772,7 +772,7 @@ class CrystalLattice:
             f"разведены через инверсию оси P (Топологический парадокс)."
         )
     
-    def _scan_for_antonyms_in_sleep(self, similarity_threshold: float = 0.85, min_common_neighbors: int = 3) -> int:
+    def _scan_for_antonyms_in_sleep(self, similarity_threshold: float = 0.92, min_common_neighbors: int = 5) -> int:
         """
         💤 Фаза сна: Поиск топологических парадоксов.
         """
@@ -1702,39 +1702,16 @@ class CrystalLattice:
                     f"structural_strength={structural_strength} root_like={root_like} "
                     f"hdc_sim={self.encoder.similarity(u1_r.hdc_vector, u2_r.hdc_vector):.3f}"
                 )
-                if not direct_except and not root_like and structural_strength < 6:
-                    emit_debug("skip: weak non-root pair")
+                # Требование: ТОЛЬКО прямая EXCEPT-связь или очень сильное структурное доказательство
+                if not direct_except:
+                    # Без прямой EXCEPT-связи антагонизм не создаём
+                    # (убираем эвристики "shared context" и "hdc_sim < 0.56")
                     continue
-                if direct_except:
-                    if self._is_false_antagonism(l1, l2):
-                        emit_debug("skip: user-marked false antagonism")
-                        continue
-                    emit_debug("accept: direct EXCEPT edge")
-                    antagonisms.append((l1, l2))
+                if self._is_false_antagonism(l1, l2):
+                    emit_debug("skip: user-marked false antagonism")
                     continue
-                shared_context = (set(u1_r.connections.keys()) & set(u2_r.connections.keys())) - hubs - {r1.id, r2.id}
-                if len(shared_context) >= 2:
-                    hdc_sim = self.encoder.similarity(u1_r.hdc_vector, u2_r.hdc_vector)
-                    if hdc_sim < 0.56 and (root_like or direct_strength >= 60):
-                        neighbor_jaccard = self._jaccard_similarity(set(u1_r.connections.keys()) - hubs, set(u2_r.connections.keys()) - hubs)
-                        if neighbor_jaccard > 0.30 and (root_like or structural_strength >= 12):
-                            emit_debug("accept: strong shared-context contrast")
-                            if self._is_false_antagonism(l1, l2):
-                                emit_debug("skip: user-marked false antagonism")
-                                continue
-                            antagonisms.append((l1, l2))
-                            continue
-                if len(shared_context) >= 1:
-                    hdc_sim = self.encoder.similarity(u1_r.hdc_vector, u2_r.hdc_vector)
-                    if hdc_sim < 0.46 and (root_like or direct_strength >= 60):
-                        neighbor_jaccard = self._jaccard_similarity(set(u1_r.connections.keys()) - hubs, set(u2_r.connections.keys()) - hubs)
-                        if neighbor_jaccard > 0.40 and (root_like or structural_strength >= 10):
-                            emit_debug("accept: shared-context contrast")
-                            if self._is_false_antagonism(l1, l2):
-                                emit_debug("skip: user-marked false antagonism")
-                                continue
-                            antagonisms.append((l1, l2))
-                            continue
+                emit_debug("accept: direct EXCEPT edge")
+                antagonisms.append((l1, l2))
                 if len(antagonisms) >= 15:
                     break
             if len(antagonisms) >= 15:
@@ -2234,10 +2211,10 @@ class CrystalLattice:
             for j in range(i + 1, len(potential_antagonists)):
                 id2, base2 = potential_antagonists[j]
                 common_base = base1 & base2
-                if len(common_base) >= 1:
+                if len(common_base) >= 3:  # было >= 1
                     r1, r2 = self.resonators[id1], self.resonators[id2]
                     sim = self.encoder.similarity(r1.hdc_vector, r2.hdc_vector)
-                    if sim < 0.45:
+                    if sim < 0.30:  # только реально далёкие векторы
                         if id2 not in r1.connections or unpack_edge(r1.connections[id2])[1] != EDGE_EXCEPT:
                             self.connect(r1.label, r2.label, weight=self.calibration.except_antonym_weight, edge_type=EDGE_EXCEPT)
                             dreams.append(f"🛡 Авто-EXCEPT: '{r1.label}' ↔ '{r2.label}' (общая база: {len(common_base)})")
@@ -2250,7 +2227,7 @@ class CrystalLattice:
         annealed = self.anneal_paradoxes()
         if annealed > 0:
             dreams.append(f"🔥 Отжиг: {annealed} узлов мутировали.")
-        antonyms_diverged = self._scan_for_antonyms_in_sleep(similarity_threshold=0.85, min_common_neighbors=3)
+        antonyms_diverged = self._scan_for_antonyms_in_sleep(similarity_threshold=0.92, min_common_neighbors=5)
         if antonyms_diverged > 0:
             dreams.append(f"🎭 Структурализм: Разведено {antonyms_diverged} пар антонимов (Соссюр).")
         seed = self.tick_count ^ len(self.resonators)
