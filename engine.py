@@ -1375,9 +1375,11 @@ class CrystalLattice:
         attractors = []
         for r in self.resonators.values():
             if r.label == 'SELF': continue
-            if r.label.startswith(('mod:', 'cluster:', 'mdl:', 'skill:', 'EPOCH:')): continue
-            if '->' in r.label or '+' in r.label: continue
-            if not r.label.startswith('root:'): continue
+            # 🆕 v7.2: пропускаем только служебные узлы (раньше отбрасывались все не-root)
+            if r.label.startswith(('mod:', 'cluster:', 'mdl:', 'skill:', 'EPOCH:')):
+                continue
+            if '->' in r.label or '+' in r.label:
+                continue
             gravity = r.energy * math.log2(1 + len(r.connections))
             attractors.append((gravity, r))
         attractors.sort(key=lambda x: x[0], reverse=True)
@@ -1385,6 +1387,17 @@ class CrystalLattice:
         spore_node_ids = set()
         for _, r in top_attractors:
             spore_node_ids.add(r.id)
+        # 🆕 v7.2: расширение ядра на 1-hop соседей (топ-3 по весу с каждого узла ядра)
+        extended_ids = set(spore_node_ids)
+        for node_id in spore_node_ids:
+            if node_id in self.resonators:
+                r = self.resonators[node_id]
+                sorted_conns = sorted(r.connections.items(),
+                                      key=lambda x: unpack_edge(x[1])[0], reverse=True)
+                for tgt_id, _ in sorted_conns[:3]:
+                    if tgt_id in self.resonators:
+                        extended_ids.add(tgt_id)
+        spore_node_ids = extended_ids
         for node_id in spore_node_ids:
             if node_id in self.resonators:
                 spore.add_resonator(self.resonators[node_id], label_id_map)
@@ -1405,12 +1418,11 @@ class CrystalLattice:
     def enter_dormancy(self):
         """Переводит кристалл в режим Проводника с высоким трением."""
         self.is_dormant = True
+        # Увеличиваем трение, но НЕ удаляем навыки и контексты (v7.2)
         self.genome &= ~(0xFFFFFFFF << GENE_DECAY_SHIFT)
         self.genome |= (80 << GENE_DECAY_SHIFT)
-        for r in self.resonators.values():
-            r.context_sources.clear()
-            r.context_mask = 0
-        self.skills.clear()
+        # 🆕 v7.2: УБРАНО: skills.clear() и очистка context_sources/context_mask —
+        # родитель-«проводник» сохраняет накопленный опыт для будущих поколений.
     
     def do_intervention(self, label: str, energy: int = 500) -> List[str]:
         r = self.get_or_create(label)
@@ -2457,7 +2469,7 @@ class CrystalPopulation:
         """
         parent = self.active
         print(f"\n🧬 [МИТОЗ] Перенасыщение кристалла #{self.active_index + 1} ({len(parent.resonators)} узлов). Деление...")
-        spore = parent.extract_spore(top_k_attractors=3)
+        spore = parent.extract_spore(top_k_attractors=20)
         print(f"   📦 Извлечено ядро: {len(spore.resonators)} узлов")
         child = CrystalLattice()
         child.genome = self._mutate_genome(parent.genome)
@@ -2481,8 +2493,8 @@ class CrystalPopulation:
         parent1 = self.crystals[idx1]
         parent2 = self.crystals[idx2]
         print(f"\n🧬 [КОНЪЮГАЦИЯ] Скрещивание кристаллов #{idx1+1} и #{idx2+1}...")
-        spore1 = parent1.extract_spore(top_k_attractors=3)
-        spore2 = parent2.extract_spore(top_k_attractors=3)
+        spore1 = parent1.extract_spore(top_k_attractors=20)
+        spore2 = parent2.extract_spore(top_k_attractors=20)
         print(f"   📦 Ядро #{idx1+1}: {len(spore1.resonators)} узлов")
         print(f"   📦 Ядро #{idx2+1}: {len(spore2.resonators)} узлов")
         child = CrystalLattice()
