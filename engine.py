@@ -356,14 +356,17 @@ class Resonator:
                     if len(self.activation_sources) > 5:
                         self.activation_sources.pop(0)
     
-    def decay(self, base_decay: int = 15):
-        """🧬 Затухание управляется Геномом. Чистый int."""
+    def decay(self, base_decay: int = 25):
+        """🧬 Затухание управляется Геномом. Нелинейное: чем выше энергия, тем быстрее падает."""
         if self.energy < 20:
             self.energy = 0
         else:
-            factor = base_decay
-            if self.energy > 500:
-                factor = min(95, base_decay * 3)
+            if self.energy > 2000:
+                factor = min(90, base_decay * 4)
+            elif self.energy > 500:
+                factor = min(70, base_decay * 2)
+            else:
+                factor = base_decay
             self.energy = (self.energy * (100 - factor)) // 100
     
     def is_active(self, threshold: int = 15) -> bool:
@@ -421,7 +424,7 @@ class CrystalLattice:
         
         # 🧬 Когнитивный Геном
         self.genome: int = (
-            (15 << GENE_DECAY_SHIFT) |
+            (25 << GENE_DECAY_SHIFT) |
             (800 << GENE_ENTROPY_THRESH) |
             (150 << GENE_MUTATION_RATE) |
             (10 << GENE_MAX_DEPTH) |
@@ -1320,6 +1323,8 @@ class CrystalLattice:
                     transferred = int((r.energy * effective_weight * energy_mult) // 256)
                     if conn_count > 5 and transferred > 0:
                         transferred = (transferred * 5) // conn_count
+                    # 🆕 Жёсткий потолок на одну передачу за такт (перебалансировка энергии)
+                    transferred = min(transferred, 200)
                     if transferred > 0:
                         if target_id not in transfers:
                             transfers[target_id] = (0, [])

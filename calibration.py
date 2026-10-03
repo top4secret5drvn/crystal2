@@ -12,9 +12,9 @@ CONFIG_PATH = os.path.join(os.getcwd(), 'crystal_calibration.json')
 @dataclass
 class CalibrationProfile:
     # === Сырые параметры (Энергия и Затухание) ===
-    energy_cap: int = 5000
-    base_decay: int = 15
-    concept_inject_energy: int = 150
+    energy_cap: int = 3000
+    base_decay: int = 25
+    concept_inject_energy: int = 800
     intervention_energy: int = 500
     shadow_energy_cap: int = 2000
     
