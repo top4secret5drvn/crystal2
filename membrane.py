@@ -72,6 +72,102 @@ class SuffixTrie:
         return candidates[:top_k]
 
 
+class RussianStemmer:
+    """Упрощённый стеммер Портера для русского. Без зависимостей."""
+
+    PERFECTIVE_GERUND = ('ив', 'ивши', 'ившись', 'ыв', 'ывши', 'ывшись')
+    REFLEXIVE = ('ся', 'сь')
+    ADJECTIVE = (
+        'ее', 'ие', 'ые', 'ое', 'ими', 'ыми', 'ей', 'ий', 'ый', 'ой',
+        'ем', 'им', 'ым', 'ом', 'его', 'ого', 'ему', 'ому', 'их', 'ых',
+        'ую', 'юю', 'ая', 'яя', 'ою', 'ею',
+    )
+    PARTICIPLE = ('ем', 'нн', 'вш', 'ющ', 'щ')
+    VERB = (
+        'ила', 'ыла', 'ена', 'ейте', 'уйте', 'ите', 'или', 'ыли', 'ей',
+        'уй', 'ил', 'ыл', 'им', 'ым', 'ен', 'ило', 'ыло', 'ено', 'ят',
+        'ует', 'уют', 'ит', 'ыт', 'ены', 'ить', 'ыть', 'ишь', 'ую', 'ю',
+        'ать', 'еть', 'оть', 'уть', 'ть',
+    )
+    NOUN = (
+        'а', 'ев', 'ов', 'ие', 'ье', 'е', 'иями', 'ями', 'ами', 'еи',
+        'ии', 'и', 'ией', 'ей', 'ой', 'ий', 'й', 'иям', 'ям', 'ием',
+        'ем', 'ам', 'ом', 'о', 'у', 'ах', 'иях', 'ях', 'ы', 'ь', 'ию',
+        'ью', 'ю', 'ия', 'ья', 'я',
+    )
+    SUPERLATIVE = ('ейш', 'ейше')
+    DERIVATIONAL = ('ост', 'ость')
+
+    def stem(self, word: str) -> str:
+        word = word.lower().strip()
+        if len(word) <= 3:
+            return word
+
+        # Шаг 1: Найти окончание (окончание = последняя гласная + всё после)
+        rv_region = self._find_rv(word)
+        if not rv_region:
+            return word
+
+        stem = word[:len(word) - len(rv_region)]
+        ending = rv_region
+
+        # Шаг 2: Удалить совершенный герундий
+        for suffix in sorted(self.PERFECTIVE_GERUND, key=len, reverse=True):
+            if ending.endswith(suffix):
+                ending = ending[:-len(suffix)]
+                break
+        else:
+            # Шаг 3: Удалить возвратное
+            for suffix in self.REFLEXIVE:
+                if ending.endswith(suffix):
+                    ending = ending[:-len(suffix)]
+                    break
+            # Шаг 4: Удалить прилагательное, причастие или глагол
+            done = False
+            for group in (self.ADJECTIVE, self.PARTICIPLE, self.VERB):
+                for suffix in sorted(group, key=len, reverse=True):
+                    if ending.endswith(suffix):
+                        ending = ending[:-len(suffix)]
+                        done = True
+                        break
+                if done:
+                    break
+            if not done:
+                # Шаг 5: Удалить существительное
+                for suffix in sorted(self.NOUN, key=len, reverse=True):
+                    if ending.endswith(suffix):
+                        ending = ending[:-len(suffix)]
+                        break
+
+        result = stem + ending
+
+        # Шаг 6: Удалить превосходную степень
+        for suffix in self.SUPERLATIVE:
+            if result.endswith(suffix):
+                result = result[:-len(suffix)]
+                break
+
+        # Шаг 7: Удалить деривационный суффикс
+        for suffix in self.DERIVATIONAL:
+            if result.endswith(suffix) and len(result) - len(suffix) >= 3:
+                result = result[:-len(suffix)]
+                break
+
+        # Шаг 8: Удалить конечный мягкий знак
+        if result.endswith('ь') and len(result) > 3:
+            result = result[:-1]
+
+        return result if len(result) >= 3 else word
+
+    def _find_rv(self, word: str) -> str:
+        """Найти RV-регион (всё после первой гласной)."""
+        vowels = set('аеиоуыэюяё')
+        for i, ch in enumerate(word):
+            if ch in vowels:
+                return word[i + 1:]
+        return ''
+
+
 class LanguageMembrane:
     """
     Сенсорная мембрана: единственная точка входа текста в Кристалл.
@@ -138,6 +234,7 @@ class LanguageMembrane:
         self.trigram_neighbors: Dict[Tuple[str, str], Dict[str, float]] = {}
         self.learned_rules_path = os.path.join(os.getcwd(), 'learned_language_rules.json')
         self._label_cache: Dict[str, str] = {}
+        self.stemmer = RussianStemmer()
         self.last_query_intent: Optional[str] = None  # 🆕 Приоритет 2.2
         self._load_learned_rules()
 
@@ -255,27 +352,11 @@ class LanguageMembrane:
             print(f"   ⚠️ Не удалось загрузить правила: {e}")
 
     def resolve_query(self, word_str: str) -> str:
-        w_bytes = word_str.lower().encode('utf-8')
-        best_lcs = b''
-        for other in self.known_words:
-            if other == w_bytes: continue
-            lcs = self.trie.find_lcs([w_bytes, other])
-            if len(lcs) > len(best_lcs):
-                best_lcs = lcs
-        lcs_str = best_lcs.decode('utf-8', errors='ignore')
-        if len(lcs_str) >= self.calibration.min_root_len and best_lcs in w_bytes:
-            root_idx = w_bytes.find(best_lcs)
-            if root_idx == 0:
-                return f"root:{lcs_str}"
-        if w_bytes not in self.known_words:
-            for other in self.known_words:
-                lcs = self.trie.find_lcs([w_bytes, other])
-                if len(lcs) > len(best_lcs):
-                    best_lcs = lcs
-            lcs_str = best_lcs.decode('utf-8', errors='ignore')
-            if len(lcs_str) >= self.calibration.min_root_len and best_lcs in w_bytes:
-                return f"root:{lcs_str}"
-        return word_str.lower()
+        cleaned = word_str.strip().lower()
+        stem = self.stemmer.stem(cleaned)
+        if stem != cleaned and len(stem) >= self.calibration.min_root_len:
+            return f"root:{stem}"
+        return cleaned
 
     # ================================================================
     # 🔤 Токенизация и Морфология
@@ -316,22 +397,20 @@ class LanguageMembrane:
     def _resolve_label(self, word_str: str) -> str:
         if word_str in self._label_cache:
             return self._label_cache[word_str]
+
         w_bytes = word_str.encode('utf-8')
-        is_new = w_bytes not in self.known_words
-        if is_new:
+        if w_bytes not in self.known_words:
             self.known_words.add(w_bytes)
             self.trie.insert(w_bytes)
-        result = word_str
-        if len(self.known_words) > 1:
-            lcs = self._find_best_lcs(w_bytes)
-            lcs_str = lcs.decode('utf-8', errors='ignore')
-            len_ratio = len(lcs_str) / len(word_str) if len(word_str) > 0 else 0
-            if (len(lcs_str) >= self.calibration.min_root_len and
-                lcs in w_bytes and
-                len_ratio >= 0.60):
-                root_idx = w_bytes.find(lcs)
-                if root_idx == 0:
-                    result = f"root:{lcs_str}"
+
+        # НОВЫЙ ПОДХОД: стемминг вместо LCS
+        stem = self.stemmer.stem(word_str)
+
+        if stem != word_str and len(stem) >= self.calibration.min_root_len:
+            result = f"root:{stem}"
+        else:
+            result = word_str.lower()
+
         self._label_cache[word_str] = result
         return result
 
