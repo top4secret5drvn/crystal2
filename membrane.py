@@ -659,6 +659,14 @@ class LanguageMembrane:
         for c in seed_concepts:
             if not c: continue
             resolved = self.resolve_query(c)
+            # 🆕 Фикс: пробуем найти и с префиксом root:
+            if resolved not in self.lattice.label_to_id:
+                if f"root:{resolved}" in self.lattice.label_to_id:
+                    resolved = f"root:{resolved}"
+                elif c in self.lattice.label_to_id:
+                    resolved = c
+                elif f"root:{c}" in self.lattice.label_to_id:
+                    resolved = f"root:{c}"
             if resolved in self.lattice.label_to_id:
                 seed_ids.append(self.lattice.label_to_id[resolved])
                 intention_vectors.append(self.lattice.resonators[self.lattice.label_to_id[resolved]].hdc_vector)
@@ -712,12 +720,13 @@ class LanguageMembrane:
         primary_r = self.lattice.resonators.get(primary_seed_id)
         sentence = ""
         if primary_r:
-            primary_lbl = primary_r.label[5:] if primary_r.label.startswith("root:") else primary_r.label
+            primary_lbl = self._get_surface_form(primary_r.label)
             # 🆕 ЗАДАЧА 7: выбор конструкции по типу сильнейшего отношения
             best_relation = None
             best_target = None
             best_weight = 0
 
+            best_target_id = None
             for tgt_id, packed in primary_r.connections.items():
                 w, et = unpack_edge(packed)
                 if tgt_id not in self.lattice.resonators:
@@ -725,17 +734,24 @@ class LanguageMembrane:
                 tgt_r = self.lattice.resonators[tgt_id]
                 if not tgt_r.is_active():
                     continue
-                tgt_lbl = tgt_r.label[5:] if tgt_r.label.startswith("root:") else tgt_r.label
+                # 🆕 Фикс: служебные абстракции не подходят как объект высказывания
+                if tgt_r.label.startswith(('mod:', 'cluster:', 'mdl:', 'skill:', 'EPOCH:')) or '->' in tgt_r.label:
+                    continue
+                tgt_lbl = self._get_surface_form(tgt_r.label)
                 if len(tgt_lbl) < 3 or tgt_lbl == primary_lbl:
                     continue
                 if w > best_weight:
                     best_weight = w
                     best_target = tgt_lbl
+                    best_target_id = tgt_id
                     best_relation = et
 
             if best_relation == EDGE_IS_A:
+                entity_display = self._get_surface_form(primary_r.label)
+                class_display = (self._get_surface_form(self.lattice.resonators[best_target_id].label)
+                                 if best_target_id in self.lattice.resonators else best_target)
                 sentence = self.CONSTRUCTIONS["IS_A"].format(
-                    Entity=primary_lbl.capitalize(), Class=best_target)
+                    Entity=entity_display.capitalize(), Class=class_display)
             elif best_relation == EDGE_CAUSE:
                 sentence = self.CONSTRUCTIONS["CAUSATION"].format(
                     Cause=primary_lbl.capitalize(), Effect=best_target)

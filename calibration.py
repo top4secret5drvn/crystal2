@@ -37,7 +37,7 @@ class CalibrationProfile:
     syngrammy_jaccard_thresh: float = 0.45
     mdl_triad_min_weight: int = 30
     mdl_triad_min_energy: int = 30
-    mdl_triad_count_thresh: int = 3
+    mdl_triad_count_thresh: int = 2
     
     # === Обратная волна (Tick Backward) ===
     backward_max_depth: int = 7

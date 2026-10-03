@@ -1655,6 +1655,9 @@ class CrystalLattice:
             degrees.append((len(resonator.connections), resonator.id))
         if not degrees:
             return set()
+        # 🆕 Фикс: при малом графе (< 15 узлов) не определяем хабы
+        if len(degrees) < 15:
+            return set()
         degrees.sort(reverse=True)
         degree_values = [degree for degree, _ in degrees]
         degree_threshold = max(median(degree_values), degrees[min(len(degrees) - 1, int(len(degrees) * 0.15))][0])
@@ -2007,7 +2010,10 @@ class CrystalLattice:
         """Раздел 36: Сингамия — обнаружение топологического изоморфизма."""
         dreams = []
         attractors = [r for r in self.resonators.values()
-                    if r.label.startswith('root:') and r.energy > self.calibration.syngrammy_min_attractor_energy]
+                    if not r.label.startswith(('mod:', 'cluster:', 'mdl:', 'skill:', 'EPOCH:'))
+                    and r.label != 'SELF'
+                    and '->' not in r.label and '+' not in r.label
+                    and r.energy > self.calibration.syngrammy_min_attractor_energy]
         profiles = {}
         for attr in attractors:
             profile = []
@@ -2129,7 +2135,7 @@ class CrystalLattice:
         for r in list(self.resonators.values()):
             for tgt_id, packed in list(r.connections.items()):
                 w, _ = unpack_edge(packed)
-                if w > 80 and tgt_id in self.resonators:
+                if w > 40 and tgt_id in self.resonators:  # 🆕 было 80: IS_A связи с весом 50 теперь проходят
                     pair = tuple(sorted((r.id, tgt_id)))
                     if pair not in checked_pairs:
                         checked_pairs.add(pair)
