@@ -8,7 +8,7 @@ import os
 from typing import List, Dict, Tuple, Optional, Set
 from dataclasses import dataclass
 from engine import (TruthValue, EDGE_CAUSE, EDGE_EXCEPT, EDGE_COND, EDGE_SYNTAGM,
-                    unpack_edge, MarkerType, Marker, DependencyNode, CrystalReason)
+                    EDGE_IS_A, EDGE_PART_OF, unpack_edge, MarkerType, Marker, DependencyNode, CrystalReason)
 from calibration import CalibrationProfile
 
 
@@ -72,6 +72,115 @@ class SuffixTrie:
         return candidates[:top_k]
 
 
+class RussianStemmer:
+    """Упрощённый стеммер Портера для русского. Без зависимостей."""
+
+    PERFECTIVE_GERUND = ('ив', 'ивши', 'ившись', 'ыв', 'ывши', 'ывшись')
+    REFLEXIVE = ('ся', 'сь')
+    ADJECTIVE = (
+        'ее', 'ие', 'ые', 'ое', 'ими', 'ыми', 'ей', 'ий', 'ый', 'ой',
+        'ем', 'им', 'ым', 'ом', 'его', 'ого', 'ему', 'ому', 'их', 'ых',
+        'ую', 'юю', 'ая', 'яя', 'ою', 'ею',
+    )
+    PARTICIPLE = ('ем', 'нн', 'вш', 'ющ', 'щ')
+    VERB = (
+        'ила', 'ыла', 'ена', 'ейте', 'уйте', 'ите', 'или', 'ыли', 'ей',
+        'уй', 'ил', 'ыл', 'им', 'ым', 'ен', 'ило', 'ыло', 'ено', 'ят',
+        'ует', 'уют', 'ит', 'ыт', 'ены', 'ить', 'ыть', 'ишь', 'ую', 'ю',
+        'ать', 'еть', 'оть', 'уть', 'ть',
+    )
+    NOUN = (
+        'а', 'ев', 'ов', 'ие', 'ье', 'е', 'иями', 'ями', 'ами', 'еи',
+        'ии', 'и', 'ией', 'ей', 'ой', 'ий', 'й', 'иям', 'ям', 'ием',
+        'ем', 'ам', 'ом', 'о', 'у', 'ах', 'иях', 'ях', 'ы', 'ь', 'ию',
+        'ью', 'ю', 'ия', 'ья', 'я',
+    )
+    SUPERLATIVE = ('ейш', 'ейше')
+    DERIVATIONAL = ('ост', 'ость')
+
+    def stem(self, word: str) -> str:
+        word = word.lower().strip()
+        if len(word) <= 3:
+            return word
+
+        # Шаг 1: Найти окончание (окончание = последняя гласная + всё после)
+        rv_region = self._find_rv(word)
+        if not rv_region:
+            return word
+
+        stem = word[:len(word) - len(rv_region)]
+        ending = rv_region
+
+        # Шаг 2: Удалить совершенный герундий
+        for suffix in sorted(self.PERFECTIVE_GERUND, key=len, reverse=True):
+            if ending.endswith(suffix):
+                ending = ending[:-len(suffix)]
+                break
+        else:
+            # Шаг 3: Удалить возвратное
+            for suffix in self.REFLEXIVE:
+                if ending.endswith(suffix):
+                    ending = ending[:-len(suffix)]
+                    break
+            # Шаг 4: Удалить прилагательное, причастие или глагол
+            done = False
+            for group in (self.ADJECTIVE, self.PARTICIPLE, self.VERB):
+                for suffix in sorted(group, key=len, reverse=True):
+                    if ending.endswith(suffix):
+                        ending = ending[:-len(suffix)]
+                        done = True
+                        break
+                if done:
+                    break
+            if not done:
+                # Шаг 5: Удалить существительное
+                for suffix in sorted(self.NOUN, key=len, reverse=True):
+                    if ending.endswith(suffix):
+                        ending = ending[:-len(suffix)]
+                        break
+
+        result = stem + ending
+
+        # Шаг 6: Удалить превосходную степень
+        for suffix in self.SUPERLATIVE:
+            if result.endswith(suffix):
+                result = result[:-len(suffix)]
+                break
+
+        # Шаг 7: Удалить деривационный суффикс
+        for suffix in self.DERIVATIONAL:
+            if result.endswith(suffix) and len(result) - len(suffix) >= 3:
+                result = result[:-len(suffix)]
+                break
+
+        # Шаг 8: Удалить конечный мягкий знак
+        if result.endswith('ь') and len(result) > 3:
+            result = result[:-1]
+
+        # 🆕 Фикс: минимальная длина стема — 4 символа для существительных
+        # (предотвращает "яблоко" → "яб", "цитрус" → "ци")
+        if len(result) < 4:
+            return word
+        return result
+
+    def _find_rv(self, word: str) -> str:
+        """Найти RV-регион: всё после ПЕРВОЙ гласной."""
+        vowels = set('аеиоуыэюяё')
+        found_first = False
+        for i, ch in enumerate(word):
+            if ch in vowels:
+                if not found_first:
+                    found_first = True
+                    continue
+                # Нашли вторую гласную — RV начинается после неё
+                return word[i + 1:]
+        # Если гласная только одна — возвращаем всё после неё
+        for i, ch in enumerate(word):
+            if ch in vowels:
+                return word[i + 1:]
+        return ''
+
+
 class LanguageMembrane:
     """
     Сенсорная мембрана: единственная точка входа текста в Кристалл.
@@ -98,11 +207,13 @@ class LanguageMembrane:
     }
 
     CONSTRUCTIONS = {
-        "CAUSATION": "{Cause} вызывает {Effect}",
-        "STATE": "{Entity} обладает свойством {Property}",
-        "IDENTITY": "{Entity} является {Property}",
-        "LOCATION": "{Entity} находится в {Location}",
-        "POSSESSION": "{Entity} имеет {Possession}",
+        "CAUSATION": "{Cause} приводит к {Effect}.",
+        "STATE_ADJ": "{Entity} — {Property}.",
+        "STATE_NOUN": "{Entity} — это {Property}.",
+        "IS_A": "{Entity} является {Class}.",
+        "PART_OF": "{Part} входит в состав {Whole}.",
+        "COMPARISON": "{Entity1} и {Entity2} имеют общие черты: {Common}.",
+        "NEGATION": "{Entity} не является {Class}.",
     }
 
     CAUSE_MARKERS = frozenset([
@@ -117,7 +228,7 @@ class LanguageMembrane:
     COND_MARKERS = frozenset([
         'если', 'когда', 'условие', 'случай', 'при', 'допустим'
     ])
-    IS_A_MARKERS = frozenset(['является', 'это'])  # 🆕 Приоритет 2.3
+    IS_A_MARKERS = frozenset(['является', 'есть', 'представляет'])  # 🆕 Приоритет 2.3 ('это' — теперь оператор, не маркер-концепт)
     # 🆕 Приоритет 2.2: Детекция намерений вопросов
     QUESTION_INTENTS = {
         'why': frozenset(['почему', 'зачем', 'отчего']),
@@ -138,6 +249,7 @@ class LanguageMembrane:
         self.trigram_neighbors: Dict[Tuple[str, str], Dict[str, float]] = {}
         self.learned_rules_path = os.path.join(os.getcwd(), 'learned_language_rules.json')
         self._label_cache: Dict[str, str] = {}
+        self.stemmer = RussianStemmer()
         self.last_query_intent: Optional[str] = None  # 🆕 Приоритет 2.2
         self._load_learned_rules()
 
@@ -255,27 +367,11 @@ class LanguageMembrane:
             print(f"   ⚠️ Не удалось загрузить правила: {e}")
 
     def resolve_query(self, word_str: str) -> str:
-        w_bytes = word_str.lower().encode('utf-8')
-        best_lcs = b''
-        for other in self.known_words:
-            if other == w_bytes: continue
-            lcs = self.trie.find_lcs([w_bytes, other])
-            if len(lcs) > len(best_lcs):
-                best_lcs = lcs
-        lcs_str = best_lcs.decode('utf-8', errors='ignore')
-        if len(lcs_str) >= self.calibration.min_root_len and best_lcs in w_bytes:
-            root_idx = w_bytes.find(best_lcs)
-            if root_idx == 0:
-                return f"root:{lcs_str}"
-        if w_bytes not in self.known_words:
-            for other in self.known_words:
-                lcs = self.trie.find_lcs([w_bytes, other])
-                if len(lcs) > len(best_lcs):
-                    best_lcs = lcs
-            lcs_str = best_lcs.decode('utf-8', errors='ignore')
-            if len(lcs_str) >= self.calibration.min_root_len and best_lcs in w_bytes:
-                return f"root:{lcs_str}"
-        return word_str.lower()
+        cleaned = word_str.strip().lower()
+        stem = self.stemmer.stem(cleaned)
+        if stem != cleaned and len(stem) >= self.calibration.min_root_len:
+            return f"root:{stem}"
+        return cleaned
 
     # ================================================================
     # 🔤 Токенизация и Морфология
@@ -316,22 +412,20 @@ class LanguageMembrane:
     def _resolve_label(self, word_str: str) -> str:
         if word_str in self._label_cache:
             return self._label_cache[word_str]
+
         w_bytes = word_str.encode('utf-8')
-        is_new = w_bytes not in self.known_words
-        if is_new:
+        if w_bytes not in self.known_words:
             self.known_words.add(w_bytes)
             self.trie.insert(w_bytes)
-        result = word_str
-        if len(self.known_words) > 1:
-            lcs = self._find_best_lcs(w_bytes)
-            lcs_str = lcs.decode('utf-8', errors='ignore')
-            len_ratio = len(lcs_str) / len(word_str) if len(word_str) > 0 else 0
-            if (len(lcs_str) >= self.calibration.min_root_len and
-                lcs in w_bytes and
-                len_ratio >= 0.60):
-                root_idx = w_bytes.find(lcs)
-                if root_idx == 0:
-                    result = f"root:{lcs_str}"
+
+        # НОВЫЙ ПОДХОД: стемминг вместо LCS
+        stem = self.stemmer.stem(word_str)
+
+        if stem != word_str and len(stem) >= self.calibration.min_root_len:
+            result = f"root:{stem}"
+        else:
+            result = word_str.lower()
+
         self._label_cache[word_str] = result
         return result
 
@@ -373,6 +467,7 @@ class LanguageMembrane:
 
         # 🆕 Приоритет 2.1: Флаг отрицания
         negation_pending = False
+        pending_is_a = False  # 🆕 'это' — оператор связки X IS_A Y
 
         for w in words:
             # 🆕 Обработка "не" — не пропускаем, а активируем флаг отрицания
@@ -380,6 +475,14 @@ class LanguageMembrane:
                 negation_pending = True
                 stats.negations += 1
                 resolved_labels.append(None)
+                continue
+
+            # 🆕 'это' — оператор связки, не концепт
+            if w == 'это':
+                # Не создаём узел. Просто запоминаем, что следующий концепт
+                # будет связан с предыдущим через IS_A
+                pending_is_a = True
+                resolved_labels.append(None)  # не материализуем
                 continue
 
             # Пропускаем обычные стоп-слова (кроме маркеров связок)
@@ -391,10 +494,14 @@ class LanguageMembrane:
                 resolved_labels.append(None)
                 continue
 
+            # 🆕 Фикс: после 'это' или 'не' принудительно материализуем следующий концепт
+            force_materialize = pending_is_a or negation_pending
+
             label = self._resolve_label(w)
             resolved_labels.append(label)
             occurrence_count = self.word_occurrence_count.get(w, 0)
             should_materialize = (
+                force_materialize or          # ← ДОБАВЛЕНО
                 occurrence_count >= 2 or
                 label in self.lattice.label_to_id or
                 label.startswith("root:")
@@ -443,6 +550,25 @@ class LanguageMembrane:
                     edge_type=EDGE_SYNTAGM
                 )
 
+        # 🆕 Обработка паттерна "X это Y" → IS_A (оператор связки, без узла 'это')
+        if pending_is_a and len(valid_concepts) >= 2:
+            subj = valid_concepts[-2]  # X
+            obj = valid_concepts[-1]   # Y
+            reason = CrystalReason(
+                kind="input",
+                source_label=f"{subj} IS_A {obj}",
+                source_type="text",
+                confidence=0.95,
+                context=self.lattice.active_context,
+                timestamp=self.lattice.tick_count,
+                metadata={"relation": "is_a", "marker": "это"}
+            )
+            self.lattice.connect(subj, obj, weight=self.calibration.causal_marker_weight,
+                                 edge_type=EDGE_IS_A, reason=reason)
+            stats.is_a_links += 1
+
+        pending_is_a = False
+
         self._learn_contextual_rules(words, resolved_labels)
 
         # 🆕 Приоритет 2.3: Извлечение примитивных триплетов с маркерами
@@ -459,6 +585,11 @@ class LanguageMembrane:
                 edge_type = EDGE_COND
             elif marker in self.IS_A_MARKERS:
                 edge_type = EDGE_SYNTAGM
+                relation_meta = "is_a"
+
+            # 🆕 Задача 2: оператор связки 'это' (не входит в IS_A_MARKERS как концепт)
+            if marker == 'это':
+                edge_type = EDGE_IS_A
                 relation_meta = "is_a"
 
             if edge_type is not None:
@@ -541,6 +672,14 @@ class LanguageMembrane:
         for c in seed_concepts:
             if not c: continue
             resolved = self.resolve_query(c)
+            # 🆕 Фикс: пробуем найти и с префиксом root:
+            if resolved not in self.lattice.label_to_id:
+                if f"root:{resolved}" in self.lattice.label_to_id:
+                    resolved = f"root:{resolved}"
+                elif c in self.lattice.label_to_id:
+                    resolved = c
+                elif f"root:{c}" in self.lattice.label_to_id:
+                    resolved = f"root:{c}"
             if resolved in self.lattice.label_to_id:
                 seed_ids.append(self.lattice.label_to_id[resolved])
                 intention_vectors.append(self.lattice.resonators[self.lattice.label_to_id[resolved]].hdc_vector)
@@ -594,50 +733,55 @@ class LanguageMembrane:
         primary_r = self.lattice.resonators.get(primary_seed_id)
         sentence = ""
         if primary_r:
-            primary_lbl = primary_r.label[5:] if primary_r.label.startswith("root:") else primary_r.label
-            cause_target = None
+            primary_lbl = self._get_surface_form(primary_r.label)
+            # 🆕 ЗАДАЧА 7: выбор конструкции по типу сильнейшего отношения
+            best_relation = None
+            best_target = None
+            best_weight = 0
+
+            best_target_id = None
             for tgt_id, packed in primary_r.connections.items():
                 w, et = unpack_edge(packed)
-                if et == EDGE_CAUSE and w > 30 and tgt_id in self.lattice.resonators:
-                    tgt_r = self.lattice.resonators[tgt_id]
-                    if tgt_r.is_active():
-                        cause_target = tgt_r.label[5:] if tgt_r.label.startswith("root:") else tgt_r.label
-                        break
-            if cause_target:
-                template = self.CONSTRUCTIONS.get("CAUSATION", "{Cause} вызывает {Effect}")
-                sentence = template.format(Cause=primary_lbl.capitalize(), Effect=cause_target)
-            else:
+                if tgt_id not in self.lattice.resonators:
+                    continue
+                tgt_r = self.lattice.resonators[tgt_id]
+                if not tgt_r.is_active():
+                    continue
+                # 🆕 Фикс: служебные абстракции не подходят как объект высказывания
+                if tgt_r.label.startswith(('mod:', 'cluster:', 'mdl:', 'skill:', 'EPOCH:')) or '->' in tgt_r.label:
+                    continue
+                tgt_lbl = self._get_surface_form(tgt_r.label)
+                if len(tgt_lbl) < 3 or tgt_lbl == primary_lbl:
+                    continue
+                if w > best_weight:
+                    best_weight = w
+                    best_target = tgt_lbl
+                    best_target_id = tgt_id
+                    best_relation = et
+
+            if best_relation == EDGE_IS_A:
+                entity_display = self._get_surface_form(primary_r.label)
+                class_display = (self._get_surface_form(self.lattice.resonators[best_target_id].label)
+                                 if best_target_id in self.lattice.resonators else best_target)
+                sentence = self.CONSTRUCTIONS["IS_A"].format(
+                    Entity=entity_display.capitalize(), Class=class_display)
+            elif best_relation == EDGE_CAUSE:
+                sentence = self.CONSTRUCTIONS["CAUSATION"].format(
+                    Cause=primary_lbl.capitalize(), Effect=best_target)
+            elif best_relation == EDGE_PART_OF:
+                sentence = self.CONSTRUCTIONS["PART_OF"].format(
+                    Part=primary_lbl.capitalize(), Whole=best_target)
+            elif best_relation == EDGE_EXCEPT:
+                sentence = self.CONSTRUCTIONS["NEGATION"].format(
+                    Entity=primary_lbl.capitalize(), Class=best_target)
+            elif best_target:
                 ADJ_ENDINGS = ('ый', 'ий', 'ой', 'ая', 'яя', 'ое', 'ее', 'ые', 'ие')
-                VERB_ENDINGS = ('ть', 'ти', 'чь', 'ют', 'ут', 'ат', 'ят', 'ит', 'ет', 'ла', 'ли', 'ло', 'лся', 'лась', 'лись', 'лось', 'утся', 'ятся')
-                best_adj = None
-                best_adj_w = 0
-                best_noun = None
-                best_noun_w = 0
-                for tgt_id, packed in primary_r.connections.items():
-                    w, et = unpack_edge(packed)
-                    if et == EDGE_SYNTAGM and w > 0 and tgt_id in self.lattice.resonators:
-                        tgt_r = self.lattice.resonators[tgt_id]
-                        tgt_lbl = tgt_r.label[5:] if tgt_r.label.startswith("root:") else tgt_r.label
-                        if len(tgt_lbl) < 3 or tgt_lbl == primary_lbl:
-                            continue
-                        is_adj = tgt_lbl.endswith(ADJ_ENDINGS)
-                        is_verb = tgt_lbl.endswith(VERB_ENDINGS)
-                        if is_adj:
-                            if w > best_adj_w:
-                                best_adj_w = w
-                                best_adj = tgt_lbl
-                        elif not is_verb:
-                            if w > best_noun_w:
-                                best_noun_w = w
-                                best_noun = tgt_lbl
-                        else:
-                            if w > best_noun_w:
-                                best_noun_w = w
-                                best_noun = tgt_lbl
-                if best_adj:
-                    sentence = f"{primary_lbl.capitalize()} обладает свойством {best_adj}."
-                elif best_noun:
-                    sentence = f"{primary_lbl.capitalize()} это {best_noun}."
+                if best_target.endswith(ADJ_ENDINGS):
+                    sentence = self.CONSTRUCTIONS["STATE_ADJ"].format(
+                        Entity=primary_lbl.capitalize(), Property=best_target)
+                else:
+                    sentence = self.CONSTRUCTIONS["STATE_NOUN"].format(
+                        Entity=primary_lbl.capitalize(), Property=best_target)
         if not sentence:
             analogies = self.lattice.find_analogies(primary_lbl)
             if analogies:
@@ -688,6 +832,7 @@ class LanguageMembrane:
                 else:
                     if r1.id in plan_set and r2.id in plan_set:
                         connected_pairs += 1
-        if total_pairs > 0 and (connected_pairs / total_pairs) < 0.40:
+        # 🆕 ЗАДАЧА 7: снижен порог связности 0.40 -> 0.25 (меньше ложных "Мысль фрагментарна")
+        if total_pairs > 0 and (connected_pairs / total_pairs) < 0.25:
             return "Мысль фрагментарна. Требуется больше фактов."
         return text

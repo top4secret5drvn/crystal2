@@ -19,13 +19,15 @@ EDGE_COND    = 0x30000000
 EDGE_EXCEPT  = 0x40000000
 EDGE_ANALOG  = 0x50000000
 EDGE_GOAL    = 0x80000000
+EDGE_IS_A    = 0x60000000
+EDGE_PART_OF = 0x70000000
 MASK_TYPE   = 0xF0000000
 MASK_WEIGHT = 0x0FFFFFFF
 
 EDGE_NAMES = {
     EDGE_SYNTAGM: "SYN", EDGE_CAUSE: "CAUSE", EDGE_EFFECT: "EFFECT",
     EDGE_COND: "COND", EDGE_EXCEPT: "EXCEPT", EDGE_ANALOG: "ANALOG",
-    EDGE_GOAL: "GOAL",
+    EDGE_GOAL: "GOAL", EDGE_IS_A: "IS_A", EDGE_PART_OF: "PART_OF",
 }
 
 # 🆕 Приоритет 1.6: Ограничения типов связей
@@ -37,6 +39,8 @@ EDGE_CONSTRAINTS = {
     EDGE_EXCEPT:  {"description": "Исключение / Опровержение", "bidirectional": True},
     EDGE_ANALOG:  {"description": "Аналогия", "bidirectional": True},
     EDGE_GOAL:    {"description": "Цель", "bidirectional": False},
+    EDGE_IS_A:    {"description": "Классовое включение", "bidirectional": False},
+    EDGE_PART_OF: {"description": "Часть целого", "bidirectional": False},
 }
 
 def pack_edge(weight: int, edge_type: int = EDGE_SYNTAGM) -> int:
@@ -352,14 +356,17 @@ class Resonator:
                     if len(self.activation_sources) > 5:
                         self.activation_sources.pop(0)
     
-    def decay(self, base_decay: int = 15):
-        """🧬 Затухание управляется Геномом. Чистый int."""
+    def decay(self, base_decay: int = 25):
+        """🧬 Затухание управляется Геномом. Нелинейное: чем выше энергия, тем быстрее падает."""
         if self.energy < 20:
             self.energy = 0
         else:
-            factor = base_decay
-            if self.energy > 500:
-                factor = min(95, base_decay * 3)
+            if self.energy > 2000:
+                factor = min(90, base_decay * 4)
+            elif self.energy > 500:
+                factor = min(70, base_decay * 2)
+            else:
+                factor = base_decay
             self.energy = (self.energy * (100 - factor)) // 100
     
     def is_active(self, threshold: int = 15) -> bool:
@@ -417,7 +424,7 @@ class CrystalLattice:
         
         # 🧬 Когнитивный Геном
         self.genome: int = (
-            (15 << GENE_DECAY_SHIFT) |
+            (25 << GENE_DECAY_SHIFT) |
             (800 << GENE_ENTROPY_THRESH) |
             (150 << GENE_MUTATION_RATE) |
             (10 << GENE_MAX_DEPTH) |
@@ -472,6 +479,7 @@ class CrystalLattice:
             ("COMMUNICATION", ["Speaker", "Hearer", "Message"]),
             ("CAUSATION", ["Cause", "Effect"]),
             ("STATE", ["Entity", "Property"]),
+            ("TAXONOMY", ["Instance", "Class", "Attribute"]),
         ]
         for label, roles in primitives:
             fid = self._next_frame_id
@@ -765,7 +773,7 @@ class CrystalLattice:
             f"разведены через инверсию оси P (Топологический парадокс)."
         )
     
-    def _scan_for_antonyms_in_sleep(self, similarity_threshold: float = 0.85, min_common_neighbors: int = 3) -> int:
+    def _scan_for_antonyms_in_sleep(self, similarity_threshold: float = 0.92, min_common_neighbors: int = 5) -> int:
         """
         💤 Фаза сна: Поиск топологических парадоксов.
         """
@@ -1011,16 +1019,37 @@ class CrystalLattice:
             if not r.is_active(): continue
             for tgt_id, packed in r.connections.items():
                 w, et = unpack_edge(packed)
-                if et == EDGE_CAUSE and w > 30 and tgt_id in self.resonators:
+                # 🆕 ЗАДАЧА 8: CAUSATION фрейм эвоцируется от CAUSE, EFFECT, COND
+                # (раньше — только EDGE_CAUSE с w > 30, из-за чего фреймы почти никогда
+                #  не эвоцировались: большинство связей — SYNTAGM/IS_A).
+                if et in (EDGE_CAUSE, EDGE_EFFECT, EDGE_COND) and w > 15 and tgt_id in self.resonators:
                     tgt_r = self.resonators[tgt_id]
                     if tgt_r.is_active():
                         for frame in self.active_frames.values():
                             if frame.label == "CAUSATION":
-                                act = min(1.0, (r.energy + tgt_r.energy + w) / 2000.0)
+                                act = min(1.0, (r.energy + tgt_r.energy + w) / 3000.0)
                                 if act > frame.activation:
                                     frame.activation = act
                                     frame.bind_slot("Cause", r.id, act)
                                     frame.bind_slot("Effect", tgt_id, act)
+
+                # 🆕 ЗАДАЧА 8: IS_A связи эвоцируют TAXONOMY (и усиливают STATE)
+                if et == EDGE_IS_A and w > 10 and tgt_id in self.resonators:
+                    tgt_r = self.resonators[tgt_id]
+                    if tgt_r.is_active():
+                        for frame in self.active_frames.values():
+                            if frame.label == "STATE":
+                                act = min(1.0, (r.energy + tgt_r.energy) / 2000.0)
+                                if act > frame.activation:
+                                    frame.activation = act
+                                    frame.bind_slot("Entity", r.id, act)
+                                    frame.bind_slot("Property", tgt_id, act)
+                            elif frame.label == "TAXONOMY":
+                                act = min(1.0, (r.energy + tgt_r.energy) / 2000.0)
+                                if act > frame.activation:
+                                    frame.activation = act
+                                    frame.bind_slot("Instance", r.id, act)
+                                    frame.bind_slot("Class", tgt_id, act)
         
         ADJ_ENDINGS = ('ый', 'ий', 'ой', 'ая', 'яя', 'ое', 'ее', 'ые', 'ие')
         for r in self.resonators.values():
@@ -1311,9 +1340,13 @@ class CrystalLattice:
                         effective_weight = weight // 2
                     if edge_type == EDGE_GOAL:
                         effective_weight = min(MASK_WEIGHT, weight + (weight // 2))
+                    if edge_type == EDGE_IS_A:
+                        effective_weight = min(MASK_WEIGHT, weight + (weight // 4))  # 🆕 Усиление классовых связей
                     transferred = int((r.energy * effective_weight * energy_mult) // 256)
                     if conn_count > 5 and transferred > 0:
                         transferred = (transferred * 5) // conn_count
+                    # 🆕 Жёсткий потолок на одну передачу за такт (перебалансировка энергии)
+                    transferred = min(transferred, 200)
                     if transferred > 0:
                         if target_id not in transfers:
                             transfers[target_id] = (0, [])
@@ -1364,9 +1397,11 @@ class CrystalLattice:
         attractors = []
         for r in self.resonators.values():
             if r.label == 'SELF': continue
-            if r.label.startswith(('mod:', 'cluster:', 'mdl:', 'skill:', 'EPOCH:')): continue
-            if '->' in r.label or '+' in r.label: continue
-            if not r.label.startswith('root:'): continue
+            # 🆕 v7.2: пропускаем только служебные узлы (раньше отбрасывались все не-root)
+            if r.label.startswith(('mod:', 'cluster:', 'mdl:', 'skill:', 'EPOCH:')):
+                continue
+            if '->' in r.label or '+' in r.label:
+                continue
             gravity = r.energy * math.log2(1 + len(r.connections))
             attractors.append((gravity, r))
         attractors.sort(key=lambda x: x[0], reverse=True)
@@ -1374,6 +1409,17 @@ class CrystalLattice:
         spore_node_ids = set()
         for _, r in top_attractors:
             spore_node_ids.add(r.id)
+        # 🆕 v7.2: расширение ядра на 1-hop соседей (топ-3 по весу с каждого узла ядра)
+        extended_ids = set(spore_node_ids)
+        for node_id in spore_node_ids:
+            if node_id in self.resonators:
+                r = self.resonators[node_id]
+                sorted_conns = sorted(r.connections.items(),
+                                      key=lambda x: unpack_edge(x[1])[0], reverse=True)
+                for tgt_id, _ in sorted_conns[:3]:
+                    if tgt_id in self.resonators:
+                        extended_ids.add(tgt_id)
+        spore_node_ids = extended_ids
         for node_id in spore_node_ids:
             if node_id in self.resonators:
                 spore.add_resonator(self.resonators[node_id], label_id_map)
@@ -1394,12 +1440,11 @@ class CrystalLattice:
     def enter_dormancy(self):
         """Переводит кристалл в режим Проводника с высоким трением."""
         self.is_dormant = True
+        # Увеличиваем трение, но НЕ удаляем навыки и контексты (v7.2)
         self.genome &= ~(0xFFFFFFFF << GENE_DECAY_SHIFT)
         self.genome |= (80 << GENE_DECAY_SHIFT)
-        for r in self.resonators.values():
-            r.context_sources.clear()
-            r.context_mask = 0
-        self.skills.clear()
+        # 🆕 v7.2: УБРАНО: skills.clear() и очистка context_sources/context_mask —
+        # родитель-«проводник» сохраняет накопленный опыт для будущих поколений.
     
     def do_intervention(self, label: str, energy: int = 500) -> List[str]:
         r = self.get_or_create(label)
@@ -1610,6 +1655,9 @@ class CrystalLattice:
             degrees.append((len(resonator.connections), resonator.id))
         if not degrees:
             return set()
+        # 🆕 Фикс: при малом графе (< 15 узлов) не определяем хабы
+        if len(degrees) < 15:
+            return set()
         degrees.sort(reverse=True)
         degree_values = [degree for degree, _ in degrees]
         degree_threshold = max(median(degree_values), degrees[min(len(degrees) - 1, int(len(degrees) * 0.15))][0])
@@ -1691,39 +1739,16 @@ class CrystalLattice:
                     f"structural_strength={structural_strength} root_like={root_like} "
                     f"hdc_sim={self.encoder.similarity(u1_r.hdc_vector, u2_r.hdc_vector):.3f}"
                 )
-                if not direct_except and not root_like and structural_strength < 6:
-                    emit_debug("skip: weak non-root pair")
+                # Требование: ТОЛЬКО прямая EXCEPT-связь или очень сильное структурное доказательство
+                if not direct_except:
+                    # Без прямой EXCEPT-связи антагонизм не создаём
+                    # (убираем эвристики "shared context" и "hdc_sim < 0.56")
                     continue
-                if direct_except:
-                    if self._is_false_antagonism(l1, l2):
-                        emit_debug("skip: user-marked false antagonism")
-                        continue
-                    emit_debug("accept: direct EXCEPT edge")
-                    antagonisms.append((l1, l2))
+                if self._is_false_antagonism(l1, l2):
+                    emit_debug("skip: user-marked false antagonism")
                     continue
-                shared_context = (set(u1_r.connections.keys()) & set(u2_r.connections.keys())) - hubs - {r1.id, r2.id}
-                if len(shared_context) >= 2:
-                    hdc_sim = self.encoder.similarity(u1_r.hdc_vector, u2_r.hdc_vector)
-                    if hdc_sim < 0.56 and (root_like or direct_strength >= 60):
-                        neighbor_jaccard = self._jaccard_similarity(set(u1_r.connections.keys()) - hubs, set(u2_r.connections.keys()) - hubs)
-                        if neighbor_jaccard > 0.30 and (root_like or structural_strength >= 12):
-                            emit_debug("accept: strong shared-context contrast")
-                            if self._is_false_antagonism(l1, l2):
-                                emit_debug("skip: user-marked false antagonism")
-                                continue
-                            antagonisms.append((l1, l2))
-                            continue
-                if len(shared_context) >= 1:
-                    hdc_sim = self.encoder.similarity(u1_r.hdc_vector, u2_r.hdc_vector)
-                    if hdc_sim < 0.46 and (root_like or direct_strength >= 60):
-                        neighbor_jaccard = self._jaccard_similarity(set(u1_r.connections.keys()) - hubs, set(u2_r.connections.keys()) - hubs)
-                        if neighbor_jaccard > 0.40 and (root_like or structural_strength >= 10):
-                            emit_debug("accept: shared-context contrast")
-                            if self._is_false_antagonism(l1, l2):
-                                emit_debug("skip: user-marked false antagonism")
-                                continue
-                            antagonisms.append((l1, l2))
-                            continue
+                emit_debug("accept: direct EXCEPT edge")
+                antagonisms.append((l1, l2))
                 if len(antagonisms) >= 15:
                     break
             if len(antagonisms) >= 15:
@@ -1871,33 +1896,9 @@ class CrystalLattice:
         contrast_candidates.discard(r1.id)
         contrast_candidates.discard(r2.id)
         antagonisms = self._find_antagonisms(unique1_ids, unique2_ids, r1, r2, hubs, n1, n2, debug=debug)
-        if not antagonisms:
-            for u1_id in contrast_candidates:
-                if u1_id in service_ids or u1_id in {r1.id, r2.id}:
-                    continue
-                if u1_id not in self.resonators:
-                    continue
-                u1_r = self.resonators[u1_id]
-                for u2_id in contrast_candidates:
-                    if u2_id in service_ids or u2_id in {r1.id, r2.id} or u2_id == u1_id:
-                        continue
-                    if u2_id not in self.resonators:
-                        continue
-                    u2_r = self.resonators[u2_id]
-                    if u1_r.id == u2_r.id:
-                        continue
-                    has_except = False
-                    if u2_id in u1_r.connections:
-                        _, edge_type = unpack_edge(u1_r.connections[u2_id])
-                        has_except = edge_type == EDGE_EXCEPT
-                    if not has_except and u1_id in u2_r.connections:
-                        _, edge_type = unpack_edge(u2_r.connections[u1_id])
-                        has_except = edge_type == EDGE_EXCEPT
-                    if has_except:
-                        antagonisms.append((display_label(u1_r.label), display_label(u2_r.label)))
-                        break
-                if antagonisms:
-                    break
+        # 🆕 Фикс: НЕ ищем антагонизмы в расширенном контексте.
+        # Только прямые EXCEPT-связи между уникальными соседями.
+        # (Убран fallback по contrast_candidates — он производит мусор)
         common_traits = [trait for trait in common_traits if trait not in {display_label(r1.label), display_label(r2.label)}]
         common_traits = common_traits[:7]
         if synonym_traits:
@@ -1985,7 +1986,10 @@ class CrystalLattice:
         """Раздел 36: Сингамия — обнаружение топологического изоморфизма."""
         dreams = []
         attractors = [r for r in self.resonators.values()
-                    if r.label.startswith('root:') and r.energy > self.calibration.syngrammy_min_attractor_energy]
+                    if not r.label.startswith(('mod:', 'cluster:', 'mdl:', 'skill:', 'EPOCH:'))
+                    and r.label != 'SELF'
+                    and '->' not in r.label and '+' not in r.label
+                    and r.energy > self.calibration.syngrammy_min_attractor_energy]
         profiles = {}
         for attr in attractors:
             profile = []
@@ -2000,8 +2004,13 @@ class CrystalLattice:
             profile.sort()
             profiles[attr.id] = (attr, profile)
         checked = set()
+        syngrammy_created = 0
         for id1, (r1, p1) in profiles.items():
+            if syngrammy_created >= 5:  # 🆕 максимум 5 сингамий за сон
+                break
             for id2, (r2, p2) in profiles.items():
+                if syngrammy_created >= 5:
+                    break
                 if id1 >= id2: continue
                 pair = tuple(sorted((id1, id2)))
                 if pair in checked: continue
@@ -2053,6 +2062,7 @@ class CrystalLattice:
                                 dreams.append(f"🍎 Сингамия: '{abstract_label}' (Изоморфизм: {jaccard:.2f}, поддержка: {support}) ✓")
                             else:
                                 dreams.append(f"🍎 Сингамия: '{abstract_label}' (Изоморфизм: {jaccard:.2f}, поддержка: {support}) [гипотеза]")
+                            syngrammy_created += 1  # 🆕 учёт и в ветке гипотезы
         return dreams
     
     # --- Сон ---
@@ -2107,13 +2117,13 @@ class CrystalLattice:
         for r in list(self.resonators.values()):
             for tgt_id, packed in list(r.connections.items()):
                 w, _ = unpack_edge(packed)
-                if w > 80 and tgt_id in self.resonators:
+                if w > 40 and tgt_id in self.resonators:  # 🆕 было 80: IS_A связи с весом 50 теперь проходят
                     pair = tuple(sorted((r.id, tgt_id)))
                     if pair not in checked_pairs:
                         checked_pairs.add(pair)
                         strong_bonds.append((w, r.id, tgt_id))
         strong_bonds.sort(key=lambda x: x[0], reverse=True)
-        for weight, r_id, tgt_id in strong_bonds[:3]:
+        for weight, r_id, tgt_id in strong_bonds[:5]:  # 🆕 фикс: максимум 5 кластеров за сон
             r = self.resonators[r_id]
             target_r = self.resonators[tgt_id]
             cluster_label = f"cluster:{r.label}+{target_r.label}"
@@ -2163,7 +2173,10 @@ class CrystalLattice:
                     if w2 < self.calibration.mdl_triad_min_weight or tgt2_id == r.id or tgt2_id not in self.resonators: continue
                     key = (r.id, tgt2_id)
                     triads[key] = triads.get(key, 0) + 1
+        mdl_created = 0
         for (a_id, c_id), count in triads.items():
+            if mdl_created >= 10:  # 🆕 максимум 10 MDL за сон
+                break
             if count >= self.calibration.mdl_triad_count_thresh:
                 a_r = self.resonators[a_id]
                 c_r = self.resonators[c_id]
@@ -2206,6 +2219,7 @@ class CrystalLattice:
                         dreams.append(f"🗜️ MDL: '{shortcut_label}' (×{count}) ✓")
                     else:
                         dreams.append(f"🗜️ MDL: '{shortcut_label}' (×{count}) [гипотеза]")
+                    mdl_created += 1
         potential_antagonists = []
         for r in list(self.resonators.values()):
             if r.label.startswith(('mdl:', 'cluster:', 'SELF', 'EPOCH:', 'mod:', 'skill:')): continue
@@ -2223,10 +2237,10 @@ class CrystalLattice:
             for j in range(i + 1, len(potential_antagonists)):
                 id2, base2 = potential_antagonists[j]
                 common_base = base1 & base2
-                if len(common_base) >= 1:
+                if len(common_base) >= 5:  # было >= 3
                     r1, r2 = self.resonators[id1], self.resonators[id2]
                     sim = self.encoder.similarity(r1.hdc_vector, r2.hdc_vector)
-                    if sim < 0.45:
+                    if sim < 0.20:  # только реально далёкие векторы (было < 0.30)
                         if id2 not in r1.connections or unpack_edge(r1.connections[id2])[1] != EDGE_EXCEPT:
                             self.connect(r1.label, r2.label, weight=self.calibration.except_antonym_weight, edge_type=EDGE_EXCEPT)
                             dreams.append(f"🛡 Авто-EXCEPT: '{r1.label}' ↔ '{r2.label}' (общая база: {len(common_base)})")
@@ -2239,7 +2253,7 @@ class CrystalLattice:
         annealed = self.anneal_paradoxes()
         if annealed > 0:
             dreams.append(f"🔥 Отжиг: {annealed} узлов мутировали.")
-        antonyms_diverged = self._scan_for_antonyms_in_sleep(similarity_threshold=0.85, min_common_neighbors=3)
+        antonyms_diverged = self._scan_for_antonyms_in_sleep(similarity_threshold=0.92, min_common_neighbors=5)
         if antonyms_diverged > 0:
             dreams.append(f"🎭 Структурализм: Разведено {antonyms_diverged} пар антонимов (Соссюр).")
         seed = self.tick_count ^ len(self.resonators)
@@ -2469,7 +2483,7 @@ class CrystalPopulation:
         """
         parent = self.active
         print(f"\n🧬 [МИТОЗ] Перенасыщение кристалла #{self.active_index + 1} ({len(parent.resonators)} узлов). Деление...")
-        spore = parent.extract_spore(top_k_attractors=3)
+        spore = parent.extract_spore(top_k_attractors=20)
         print(f"   📦 Извлечено ядро: {len(spore.resonators)} узлов")
         child = CrystalLattice()
         child.genome = self._mutate_genome(parent.genome)
@@ -2493,8 +2507,8 @@ class CrystalPopulation:
         parent1 = self.crystals[idx1]
         parent2 = self.crystals[idx2]
         print(f"\n🧬 [КОНЪЮГАЦИЯ] Скрещивание кристаллов #{idx1+1} и #{idx2+1}...")
-        spore1 = parent1.extract_spore(top_k_attractors=3)
-        spore2 = parent2.extract_spore(top_k_attractors=3)
+        spore1 = parent1.extract_spore(top_k_attractors=20)
+        spore2 = parent2.extract_spore(top_k_attractors=20)
         print(f"   📦 Ядро #{idx1+1}: {len(spore1.resonators)} узлов")
         print(f"   📦 Ядро #{idx2+1}: {len(spore2.resonators)} узлов")
         child = CrystalLattice()
