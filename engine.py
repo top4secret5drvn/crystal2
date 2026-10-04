@@ -225,6 +225,113 @@ class HDCEncoder:
         return (kept_bits | random_bits) & mask
 
 # ============================================================
+# 🌐 Многомерное семантическое пространство (ФАЗА 0)
+# ============================================================
+@dataclass
+class SemanticAxis:
+    """Одна интерпретируемая ось семантического пространства."""
+    name: str          # "taxonomic", "functional", "physical", "causal", ...
+    weight: float = 1.0  # вес оси при итоговом сравнении
+
+# Стартовый набор осей (потом Кристалл будет добавлять свои)
+DEFAULT_AXES = [
+    SemanticAxis("taxonomic",   1.0),   # живое/неживое, фрукт/овощ
+    SemanticAxis("functional",  0.8),   # для чего используется
+    SemanticAxis("physical",    0.7),   # форма, размер, материал
+    SemanticAxis("causal",      0.9),   # причина/следствие
+    SemanticAxis("syntactic",   0.5),   # роль в предложении
+    SemanticAxis("temporal",    0.4),   # временное/постоянное
+    SemanticAxis("agency",      0.6),   # агент/объект
+    SemanticAxis("abstract",    0.5),   # конкретное/абстрактное
+]
+
+class SemanticVector:
+    """
+    Многомерный семантический профиль.
+    Каждая ось — float в диапазоне [-1.0, 1.0].
+    Это НЕ замена HDC. Это второй, интерпретируемый носитель смысла.
+    HDC = структурный код (binding, superposition).
+    SemanticVector = координаты в пространстве качеств.
+    """
+    def __init__(self, axes: List[SemanticAxis] = None):
+        # ВАЖНО: проверка `is None`, а не `or` — иначе пустой список axes=[]
+        # ложно триггерил бы загрузку DEFAULT_AXES (ломает from_bytes).
+        self.axes: List[SemanticAxis] = list(axes) if axes is not None else [SemanticAxis(a.name, a.weight) for a in DEFAULT_AXES]
+        # Значения по осям: dict[axis_name] -> float
+        self.values: Dict[str, float] = {a.name: 0.0 for a in self.axes}
+
+    def set(self, axis_name: str, value: float):
+        if axis_name in self.values:
+            self.values[axis_name] = max(-1.0, min(1.0, value))
+
+    def get(self, axis_name: str) -> float:
+        return self.values.get(axis_name, 0.0)
+
+    def add_axis(self, name: str, weight: float = 0.5):
+        """Кристалл может обнаруживать и добавлять новые оси (идея #3)."""
+        if name not in self.values:
+            self.axes.append(SemanticAxis(name, weight))
+            self.values[name] = 0.0
+
+    def similarity(self, other: 'SemanticVector') -> float:
+        """Взвешенное косинусное расстояние по всем общим осям."""
+        import math
+        dot = 0.0; norm_a = 0.0; norm_b = 0.0
+        for name, w in [(a.name, a.weight) for a in self.axes]:
+            va = self.values.get(name, 0.0)
+            vb = other.values.get(name, 0.0)
+            dot   += va * vb * w
+            norm_a += va * va * w
+            norm_b += vb * vb * w
+        if norm_a == 0 or norm_b == 0:
+            return 0.0
+        return dot / (math.sqrt(norm_a) * math.sqrt(norm_b))
+
+    def similarity_by_axis(self, other: 'SemanticVector') -> Dict[str, float]:
+        """Раздельная близость по каждой оси (идея #1)."""
+        result = {}
+        for a in self.axes:
+            va = self.values.get(a.name, 0.0)
+            vb = other.values.get(a.name, 0.0)
+            # Простое расстояние → близость
+            result[a.name] = 1.0 - abs(va - vb) / 2.0
+        return result
+
+    def to_bytes(self) -> bytes:
+        """Сериализация для persistence."""
+        import struct
+        buf = struct.pack('<H', len(self.axes))
+        for a in self.axes:
+            name_b = a.name.encode('utf-8')
+            buf += struct.pack(f'<H {len(name_b)}s f f',
+                               len(name_b), name_b, a.weight,
+                               self.values.get(a.name, 0.0))
+        return buf
+
+    @classmethod
+    def from_bytes(cls, data: bytes, offset: int = 0) -> Tuple['SemanticVector', int]:
+        import struct
+        count, = struct.unpack_from('<H', data, offset)
+        offset += 2
+        # axes=[] теперь корректно даёт пустой профиль (проверка `is None` в __init__)
+        sv = cls(axes=[])
+        for _ in range(count):
+            nlen, = struct.unpack_from('<H', data, offset); offset += 2
+            fmt = f'<{nlen}s f f'
+            name_b, weight, val = struct.unpack_from(fmt, data, offset)
+            offset += struct.calcsize(fmt)
+            name = name_b.decode('utf-8')
+            axis = SemanticAxis(name, weight)
+            sv.axes.append(axis)
+            sv.values[name] = val
+        return sv, offset
+
+    def __repr__(self):
+        parts = [f"{k}={v:.2f}" for k, v in self.values.items() if abs(v) > 0.01]
+        return f"SemVec({', '.join(parts) or 'empty'})"
+
+
+# ============================================================
 # 🧠 Раздел 40: Когнитивные структуры (Symbolic AI / 80s)
 # ============================================================
 class MarkerType(IntEnum):
