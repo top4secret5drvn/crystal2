@@ -4,10 +4,11 @@ engine.py — Кремниевая подложка Кристалла (v4.0 Cog
 """
 import hashlib
 import random
+from collections import deque
 from enum import IntEnum, auto
 from dataclasses import dataclass, field
 from statistics import median
-from typing import Dict, List, Optional, Tuple, Set, Any
+from typing import Deque, Dict, List, Optional, Tuple, Set, Any
 
 # ============================================================
 # 🧩 Раздел 27.1: Битовые тензоры связей (Causal Typology)
@@ -225,6 +226,179 @@ class HDCEncoder:
         return (kept_bits | random_bits) & mask
 
 # ============================================================
+# 🌐 Многомерное семантическое пространство (ФАЗА 0)
+# ============================================================
+@dataclass
+class SemanticAxis:
+    """Одна интерпретируемая ось семантического пространства."""
+    name: str          # "taxonomic", "functional", "physical", "causal", ...
+    weight: float = 1.0  # вес оси при итоговом сравнении
+
+# Стартовый набор осей (потом Кристалл будет добавлять свои)
+DEFAULT_AXES = [
+    SemanticAxis("taxonomic",   1.0),   # живое/неживое, фрукт/овощ
+    SemanticAxis("functional",  0.8),   # для чего используется
+    SemanticAxis("physical",    0.7),   # форма, размер, материал
+    SemanticAxis("causal",      0.9),   # причина/следствие
+    SemanticAxis("syntactic",   0.5),   # роль в предложении
+    SemanticAxis("temporal",    0.4),   # временное/постоянное
+    SemanticAxis("agency",      0.6),   # агент/объект
+    SemanticAxis("abstract",    0.5),   # конкретное/абстрактное
+]
+
+class SemanticVector:
+    """
+    Многомерный семантический профиль.
+    Каждая ось — float в диапазоне [-1.0, 1.0].
+    Это НЕ замена HDC. Это второй, интерпретируемый носитель смысла.
+    HDC = структурный код (binding, superposition).
+    SemanticVector = координаты в пространстве качеств.
+    """
+    def __init__(self, axes: List[SemanticAxis] = None):
+        # ВАЖНО: проверка `is None`, а не `or` — иначе пустой список axes=[]
+        # ложно триггерил бы загрузку DEFAULT_AXES (ломает from_bytes).
+        self.axes: List[SemanticAxis] = list(axes) if axes is not None else [SemanticAxis(a.name, a.weight) for a in DEFAULT_AXES]
+        # Значения по осям: dict[axis_name] -> float
+        self.values: Dict[str, float] = {a.name: 0.0 for a in self.axes}
+
+    def set(self, axis_name: str, value: float):
+        if axis_name in self.values:
+            self.values[axis_name] = max(-1.0, min(1.0, value))
+
+    def get(self, axis_name: str) -> float:
+        return self.values.get(axis_name, 0.0)
+
+    def add_axis(self, name: str, weight: float = 0.5):
+        """Кристалл может обнаруживать и добавлять новые оси (идея #3)."""
+        if name not in self.values:
+            self.axes.append(SemanticAxis(name, weight))
+            self.values[name] = 0.0
+
+    def similarity(self, other: 'SemanticVector') -> float:
+        """Взвешенное косинусное расстояние по всем общим осям."""
+        import math
+        dot = 0.0; norm_a = 0.0; norm_b = 0.0
+        for name, w in [(a.name, a.weight) for a in self.axes]:
+            va = self.values.get(name, 0.0)
+            vb = other.values.get(name, 0.0)
+            dot   += va * vb * w
+            norm_a += va * va * w
+            norm_b += vb * vb * w
+        if norm_a == 0 or norm_b == 0:
+            return 0.0
+        return dot / (math.sqrt(norm_a) * math.sqrt(norm_b))
+
+    def similarity_by_axis(self, other: 'SemanticVector') -> Dict[str, float]:
+        """Раздельная близость по каждой оси (идея #1)."""
+        result = {}
+        for a in self.axes:
+            va = self.values.get(a.name, 0.0)
+            vb = other.values.get(a.name, 0.0)
+            # Простое расстояние → близость
+            result[a.name] = 1.0 - abs(va - vb) / 2.0
+        return result
+
+    def to_bytes(self) -> bytes:
+        """Сериализация для persistence."""
+        import struct
+        buf = struct.pack('<H', len(self.axes))
+        for a in self.axes:
+            name_b = a.name.encode('utf-8')
+            buf += struct.pack(f'<H {len(name_b)}s f f',
+                               len(name_b), name_b, a.weight,
+                               self.values.get(a.name, 0.0))
+        return buf
+
+    @classmethod
+    def from_bytes(cls, data: bytes, offset: int = 0) -> Tuple['SemanticVector', int]:
+        import struct
+        count, = struct.unpack_from('<H', data, offset)
+        offset += 2
+        # axes=[] теперь корректно даёт пустой профиль (проверка `is None` в __init__)
+        sv = cls(axes=[])
+        for _ in range(count):
+            nlen, = struct.unpack_from('<H', data, offset); offset += 2
+            fmt = f'<{nlen}s f f'
+            name_b, weight, val = struct.unpack_from(fmt, data, offset)
+            offset += struct.calcsize(fmt)
+            name = name_b.decode('utf-8')
+            axis = SemanticAxis(name, weight)
+            sv.axes.append(axis)
+            sv.values[name] = val
+        return sv, offset
+
+    def __repr__(self):
+        parts = [f"{k}={v:.2f}" for k, v in self.values.items() if abs(v) > 0.01]
+        return f"SemVec({', '.join(parts) or 'empty'})"
+
+
+# ============================================================
+# 🆕 ФАЗА 3, Шаг 3.1: Концепт как ОБЛАСТЬ, а не точка (идеи #7/#13/#14)
+# ============================================================
+@dataclass
+class ConceptRegion:
+    """
+    Концепт как область в семантическом пространстве (идея #13).
+    prototype — центр (самый типичный представитель).
+    members — точки внутри области.
+    boundary_radius — радиус области.
+    """
+    concept_id: int
+    prototype: SemanticVector = field(default_factory=SemanticVector)
+    member_ids: List[int] = field(default_factory=list)
+    boundary_radius: float = 0.5  # в единицах семантического расстояния
+
+    def membership(self, sv: SemanticVector) -> float:
+        """Нечёткая принадлежность: 0.0..1.0 (идея #14)."""
+        sim = self.prototype.similarity(sv)
+        # Преобразуем [-1,1] → [0,1] и обрезаем по границе
+        normalized = (sim + 1.0) / 2.0
+        if normalized < (1.0 - self.boundary_radius):
+            return 0.0
+        return min(1.0, normalized)
+
+    def update_prototype(self, lattice: 'CrystalLattice'):
+        """Пересчитать прототип как среднее участников."""
+        if not self.member_ids:
+            return
+        for axis_name in self.prototype.values:
+            vals = []
+            for mid in self.member_ids:
+                if mid in lattice.resonators:
+                    vals.append(lattice.resonators[mid].semantic.get(axis_name))
+            if vals:
+                self.prototype.set(axis_name, sum(vals) / len(vals))
+
+    def to_bytes(self) -> bytes:
+        """Сериализация региона для persistence (v3+)."""
+        import struct
+        sem = self.prototype.to_bytes()
+        buf = struct.pack('<I f H', self.concept_id, self.boundary_radius, len(sem))
+        buf += sem
+        buf += struct.pack(f'<{len(self.member_ids)}I', *self.member_ids) if self.member_ids else b''
+        return buf
+
+    @classmethod
+    def from_bytes(cls, data: bytes, offset: int = 0) -> Tuple['ConceptRegion', int]:
+        import struct
+        concept_id, radius, sem_len = struct.unpack_from('<I f H', data, offset)
+        offset += 10
+        proto, offset = SemanticVector.from_bytes(data, offset)
+        region = cls(concept_id=concept_id, prototype=proto, boundary_radius=radius)
+        # Число участников выводим из остатка блока: вызывающий код передаёт
+        # точный срез байтов региона, поэтому читаем все оставшиеся uint32.
+        while offset + 4 <= len(data):
+            mid, = struct.unpack_from('<I', data, offset)
+            offset += 4
+            region.member_ids.append(mid)
+        return region, offset
+
+    def __repr__(self):
+        return (f"ConceptRegion(id={self.concept_id}, members={len(self.member_ids)}, "
+                f"r={self.boundary_radius:.2f}, proto={self.prototype!r})")
+
+
+# ============================================================
 # 🧠 Раздел 40: Когнитивные структуры (Symbolic AI / 80s)
 # ============================================================
 class MarkerType(IntEnum):
@@ -321,13 +495,27 @@ class CognitiveBlackboard:
         self.hypotheses.clear()
 
 # ============================================================
+# 🆕 ФАЗА 1, Шаг 1.1: Типология узлов (Слово / Смысл / Сущность)
+# ============================================================
+class NodeType(IntEnum):
+    """Тип узла в Кристалле (идея #3)."""
+    TOKEN    = auto()  # конкретное словоупотребление: "банке" в предложении
+    LEMMA    = auto()  # нормализованная форма: "банка"
+    SENSE    = auto()  # конкретный смысл: "банка_стеклянная" vs "банка_речная"
+    CONCEPT  = auto()  # абстрактное понятие: "ЁМКОСТЬ"
+    ENTITY   = auto()  # конкретный объект мира: "ЭТА_БАНКА_НА_СТОЛЕ"
+    OPERATOR = auto()  # служебное слово-оператор (идея #7): "не", "и", "если"
+
+# ============================================================
 # Резонатор (Узел решетки)
 # ============================================================
 @dataclass
 class Resonator:
     id: int
     label: str
-    hdc_vector: int
+    node_type: NodeType = NodeType.CONCEPT    # 🆕 Шаг 1.1: тип узла
+    hdc_vector: int = 0                       # ← оставить как есть (структурный код)
+    semantic: SemanticVector = field(default_factory=SemanticVector)  # 🆕 Шаг 0.2: второй носитель смысла
     state: TruthValue = TruthValue.VOID
     energy: int = 0
     connections: Dict[int, int] = field(default_factory=dict)
@@ -343,6 +531,12 @@ class Resonator:
     belief_confidence: float = 0.0
     belief_reason: Optional[CrystalReason] = None
     belief_context: str = "global"
+
+    # 🆕 Шаг 1.1: Ссылки между слоями (идея #3):
+    lemma_id: Optional[int] = None                        # TOKEN → LEMMA
+    sense_ids: List[int] = field(default_factory=list)    # LEMMA → [SENSE]
+    concept_id: Optional[int] = None                      # SENSE → CONCEPT
+    lexical_form: Optional[str] = None                    # TOKEN: поверхностная форма слова
     
     def inject_energy(self, amount: int, tick: int, source_ids: List[int] = None, cap: int = 5000):
         self.energy += amount
@@ -402,6 +596,196 @@ GENE_MAX_DEPTH        = 128
 GENE_ANALOGY_TOL      = 160
 GENE_PARADOX_PENALTY  = 192
 GENE_PHASE_LOCK       = 224
+
+# ============================================================
+# 🆕 ФАЗА 4 (Шаг 4.1): Event-Driven ядро (идеи #10, #11, #42–47)
+# Событие → локальная обработка вместо обхода всех узлов.
+# ============================================================
+class EventType(IntEnum):
+    FACT_ADDED         = auto()
+    RELATION_CHANGED   = auto()
+    CONTRADICTION      = auto()
+    HYPOTHESIS_UPDATED = auto()
+    CONTEXT_CHANGED    = auto()
+    GOAL_ACTIVATED     = auto()
+    ENERGY_DECAY       = auto()  # периодическое затухание
+    SLEEP_TRIGGER      = auto()  # пора спать
+
+EVENT_NAMES = {
+    EventType.FACT_ADDED: "FACT_ADDED",
+    EventType.RELATION_CHANGED: "RELATION_CHANGED",
+    EventType.CONTRADICTION: "CONTRADICTION",
+    EventType.HYPOTHESIS_UPDATED: "HYPOTHESIS_UPDATED",
+    EventType.CONTEXT_CHANGED: "CONTEXT_CHANGED",
+    EventType.GOAL_ACTIVATED: "GOAL_ACTIVATED",
+    EventType.ENERGY_DECAY: "ENERGY_DECAY",
+    EventType.SLEEP_TRIGGER: "SLEEP_TRIGGER",
+}
+
+@dataclass
+class CrystalEvent:
+    event_type: EventType
+    source_id: int
+    target_id: Optional[int] = None
+    data: dict = field(default_factory=dict)
+    timestamp: int = 0
+    energy_budget: int = 100  # ← бюджет вычислений (идея #46)
+
+class EventQueue:
+    """FIFO-очередь событий с подписками (идея #43)."""
+    def __init__(self):
+        self._queue: Deque[CrystalEvent] = deque()
+        self._listeners: Dict[EventType, List[callable]] = {}
+
+    def subscribe(self, event_type: EventType, handler: callable):
+        self._listeners.setdefault(event_type, []).append(handler)
+
+    def emit(self, event: CrystalEvent):
+        self._queue.append(event)
+
+    def process_one(self, lattice: 'CrystalLattice') -> bool:
+        """Обработать одно событие. Возвращает False если очередь пуста."""
+        if not self._queue:
+            return False
+        event = self._queue.popleft()
+        handlers = self._listeners.get(event.event_type, [])
+        for h in handlers:
+            h(lattice, event)
+        return True
+
+    def process_batch(self, lattice: 'CrystalLattice', max_events: int = 50) -> int:
+        processed = 0
+        while processed < max_events and self.process_one(lattice):
+            processed += 1
+        return processed
+
+    def pending_count(self) -> int:
+        return len(self._queue)
+
+    def clear(self):
+        self._queue.clear()
+
+# ----------------------------------------------------------------
+# 🆕 ФАЗА 4 (Шаг 4.2): Обработчики событий.
+# Module-level функции с сигнатурой (lattice, event) — контракт EventQueue.
+# ----------------------------------------------------------------
+def _on_fact_added(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Локальное распространение от нового факта (идея #44).
+    Активируются ТОЛЬКО ближайшие соседи источника; budget ограничивает
+    цепную реакцию (идея #46), visited защищает от циклов."""
+    source = lattice.resonators.get(event.source_id)
+    if not source:
+        return
+    budget = event.energy_budget
+    visited = {source.id}
+    frontier = [(source, budget)]
+    while frontier and budget > 0:
+        node, node_budget = frontier.pop(0)
+        for tgt_id, packed in list(node.connections.items()):
+            if node_budget <= 0:
+                break
+            w, et = unpack_edge(packed)
+            if et == EDGE_EXCEPT or tgt_id in visited:
+                continue
+            tgt = lattice.resonators.get(tgt_id)
+            if not tgt:
+                continue
+            visited.add(tgt_id)
+            gain = max(1, w // 10)
+            tgt.energy = min(tgt.energy + gain, lattice.calibration.energy_cap)
+            tgt.last_tick = lattice.tick_count
+            node_budget -= 10
+            budget -= 10
+            # Цепная реакция: если энергии достаточно, эмитим дальше
+            if tgt.is_active() and node_budget > 10:
+                lattice.event_queue.emit(CrystalEvent(
+                    EventType.FACT_ADDED, tgt.id,
+                    energy_budget=max(10, node_budget // 2),
+                    timestamp=lattice.tick_count,
+                ))
+    lattice.interference_log.append(
+        f"Такт {lattice.tick_count}: ⚡ FACT_ADDED '{source.label}' "
+        f"(затронуто узлов: {len(visited)}, бюджет: {event.energy_budget})")
+    if len(lattice.interference_log) > 10:
+        lattice.interference_log = lattice.interference_log[-10:]
+
+
+def _on_contradiction(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Обработка противоречия (идея #34): не удалять, а создать объект CONFLICT."""
+    src = lattice.resonators.get(event.source_id)
+    tgt = lattice.resonators.get(event.target_id) if event.target_id is not None else None
+    if not src or not tgt:
+        return
+    conflict_label = f"conflict:{src.id}:{tgt.id}"
+    conflict_r = lattice.get_or_create(conflict_label)
+    conflict_r.semantic.set('abstract', 1.0)
+    conflict_r.energy = max(conflict_r.energy, 100)
+    lattice.connect(conflict_label, src.label, weight=90)
+    lattice.connect(conflict_label, tgt.label, weight=90)
+    lattice.paradox_log.append(
+        f"Такт {lattice.tick_count}: ⚔️ Конфликт-объект '{conflict_label}' "
+        f"({src.label} ↔ {tgt.label})")
+    if len(lattice.paradox_log) > 10:
+        lattice.paradox_log = lattice.paradox_log[-10:]
+
+
+def _on_relation_changed(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Связь изменилась — локально подкрепить оба конца (идея #44)."""
+    r1 = lattice.resonators.get(event.source_id)
+    r2 = lattice.resonators.get(event.target_id) if event.target_id is not None else None
+    for r in (r1, r2):
+        if r is not None:
+            r.inject_energy(5, lattice.tick_count)
+
+
+def _on_hypothesis_updated(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Гипотеза создана/подтверждена/опровергнута — событие для надстроек."""
+    r = lattice.resonators.get(event.source_id)
+    if r is None:
+        return
+    status = event.data.get("status", "")
+    if status == "confirmed":
+        r.inject_energy(10, lattice.tick_count)
+    elif status == "retracted":
+        r.energy = max(0, r.energy - 20)
+
+
+def _on_context_changed(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Смена активного контекста — подсветить узлы нового контекста (идея #10)."""
+    ctx_name = event.data.get("context", lattice.active_context)
+    ctx = lattice.contexts.get(ctx_name)
+    if not ctx:
+        return
+    for node_id in getattr(ctx, "node_ids", []):
+        r = lattice.resonators.get(node_id)
+        if r is not None:
+            r.inject_energy(3, lattice.tick_count)
+
+
+def _on_goal_activated(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Цель активирована — усилить GOAL-ребра и их концы (идея #47)."""
+    boost = max(1, event.energy_budget // 10)
+    for r in lattice.resonators.values():
+        for tgt_id, packed in list(r.connections.items()):
+            w, et = unpack_edge(packed)
+            if et == EDGE_GOAL:
+                r.connections[tgt_id] = pack_edge(min(MASK_WEIGHT, w + boost), et)
+                tgt = lattice.resonators.get(tgt_id)
+                if tgt is not None:
+                    tgt.inject_energy(boost * 2, lattice.tick_count)
+
+
+def _on_energy_decay(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Периодическое затухание — только для АКТИВНЫХ узлов (идея #45)."""
+    active = lattice.get_active(top_k=event.energy_budget or 50)
+    for r in active:
+        r.decay(lattice.decay_percent)
+
+
+def _on_sleep_trigger(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Пора спать (идея #10): выставляем флаг — сам сон дорог, запускается
+    на следующем тике один раз вместо проверки расписания каждый тик."""
+    lattice._sleep_due = True
 
 # ============================================================
 # CrystalLattice (Ядро)
@@ -469,7 +853,120 @@ class CrystalLattice:
             "analogy": 0.3,
             "hypothesis": 0.2,
         }
-    
+
+        # 🆕 ФАЗА 1, Шаг 1.2: SYN-граф хранит ТОЛЬКО языковую структуру (идея #8).
+        # Ключ: (token_id, token_id), значение: packed_edge.
+        # Семантический граф остаётся в resonators[].connections.
+        self.syn_graph: Dict[Tuple[int, int], int] = {}
+
+        # 🆕 ФАЗА 2, Шаг 2.3: Рабочая память — временные суперпозиции HDC
+        # (результат оператора 'и'/bind, идея #56). Эфемерна, не сериализуется.
+        self.working_memory: List[int] = []
+
+        # 🆕 ФАЗА 2, Шаг 2.3: Реестр постоянных узлов-операторов (op:<тип>).
+        # Заполняется лениво через ensure_operators() — прямая ссылка на
+        # LanguageMembrane.OPERATORS создавала бы circular import.
+        self.operator_nodes: Dict[str, Resonator] = {}
+
+        # 🆕 ФАЗА 3, Шаг 3.2: Концепты как ОБЛАСТИ (идея #7/#13).
+        # concept_id → ConceptRegion (прототип + участники + радиус).
+        self.concept_regions: Dict[int, ConceptRegion] = {}
+
+        # 🆕 ФАЗА 3, Шаг 3.4: Порог нечёткой принадлежности для IS_A-вывода.
+        self.MEMBERSHIP_THRESHOLD = 0.5
+
+        # 🆕 ФАЗА 4, Шаг 4.2: Event-Driven ядро (идея #10/#43).
+        self.event_queue = EventQueue()
+        self._events_processed_total = 0   # статистика для команды 'думай'
+        self._sleep_due = False            # флаг: SLEEP_TRIGGER обработан, пора спать
+        self._register_event_handlers()
+
+    # ================================================================
+    # 🆕 ФАЗА 4 (Шаг 4.2): Event-driven обработчики (идеи #10, #44)
+    # ================================================================
+    def _register_event_handlers(self):
+        """Подписка обработчиков. Хендлеры — module-level функции с сигнатурой
+        (lattice, event), что соответствует контракту EventQueue.process_one."""
+        eq = self.event_queue
+        eq.subscribe(EventType.FACT_ADDED, _on_fact_added)
+        eq.subscribe(EventType.CONTRADICTION, _on_contradiction)
+        eq.subscribe(EventType.RELATION_CHANGED, _on_relation_changed)
+        eq.subscribe(EventType.HYPOTHESIS_UPDATED, _on_hypothesis_updated)
+        eq.subscribe(EventType.CONTEXT_CHANGED, _on_context_changed)
+        eq.subscribe(EventType.GOAL_ACTIVATED, _on_goal_activated)
+        eq.subscribe(EventType.ENERGY_DECAY, _on_energy_decay)
+        eq.subscribe(EventType.SLEEP_TRIGGER, _on_sleep_trigger)
+
+    def emit_event(self, event_type: EventType, source_id: int,
+                   target_id: Optional[int] = None, data: dict = None,
+                   energy_budget: int = 100):
+        """Публичный API эмита событий (используется мембраной, main.py)."""
+        self.event_queue.emit(CrystalEvent(
+            event_type=event_type,
+            source_id=source_id,
+            target_id=target_id,
+            data=data or {},
+            timestamp=self.tick_count,
+            energy_budget=energy_budget,
+        ))
+
+    def goal_nodes(self) -> List['Resonator']:
+        """Узлы, в которые входят GOAL-ребра (для события GOAL_ACTIVATED)."""
+        result = []
+        for r in self.resonators.values():
+            if any(unpack_edge(p)[1] == EDGE_GOAL for p in r.connections.values()):
+                result.append(r)
+        return result
+
+    # ================================================================
+    # 🆕 ФАЗА 3 (Шаг 3.4): Концепт как ОБЛАСТЬ — вывод через принадлежность
+    # ================================================================
+    def infer_is_a_from_regions(self) -> List[str]:
+        """
+        Для каждого ConceptRegion: узлы с membership >= порога, но БЕЗ явного
+        IS_A-ребра к классу, получают выведенную связь IS_A (вес 20) и
+        становятся участниками региона (прототип пересчитывается).
+        Так «камень» не попадёт в ФРУКТ (membership≈0), а свежий «слива» —
+        попадёт, даже если про него никогда не говорили.
+        """
+        notes: List[str] = []
+        if not self.concept_regions:
+            return notes
+        for cid in list(self.concept_regions.keys()):
+            region = self.concept_regions.get(cid)
+            if region is None or cid not in self.resonators:
+                continue
+            c_label = self.resonators[cid].label
+            for r in list(self.resonators.values()):
+                if r.id == cid or r.id in region.member_ids:
+                    continue
+                if r.label.startswith(('tok:', 'op:', 'root:', 'mod:', 'cluster:',
+                                       'mdl:', 'skill:', 'EPOCH:', 'SELF')):
+                    continue
+                if any(unpack_edge(p)[1] == EDGE_IS_A for p in r.connections.values()):
+                    continue  # уже классифицирован явно
+                m = region.membership(r.semantic)
+                if m >= self.MEMBERSHIP_THRESHOLD:
+                    self.connect_ids(r.id, cid, weight=20, edge_type=EDGE_IS_A)
+                    region.member_ids.append(r.id)
+                    region.update_prototype(self)
+                    notes.append(f"🍎 Вывод: '{r.label}' ∈ '{c_label}' (membership={m:.2f})")
+        return notes
+
+    # ================================================================
+    # 🆕 ФАЗА 2, Шаг 2.3: Операторные узлы (постоянные, всегда активны)
+    # ================================================================
+    def ensure_operators(self):
+        """Создать/обновить постоянные узлы-операторы op:<op_type>."""
+        from membrane import LanguageMembrane  # локальный импорт: нет цикла на уровне модулей
+        for word, op_type in LanguageMembrane.OPERATORS.items():
+            r = self.get_or_create(f"op:{op_type}", NodeType.OPERATOR)
+            r.energy = max(r.energy, 500)  # операторы всегда активны
+            r.semantic.set('abstract', 1.0)
+            r.semantic.set('functional', 1.0)
+            self.operator_nodes[op_type] = r
+        return self.operator_nodes
+
     def _register_primitive_frames(self):
         """Регистрация базовых фреймов (Fillmore)."""
         primitives = [
@@ -554,19 +1051,186 @@ class CrystalLattice:
         return mask
     
     # --- Создание и связывание ---
-    def get_or_create(self, label: str) -> Resonator:
+    # ================================================================
+    # 🆕 ФАЗА 3, Шаг 3.4: Нечёткая принадлежность концепту (идея #14)
+    # ================================================================
+    def check_membership(self, entity_id: int, concept_id: int) -> float:
+        """Проверить принадлежность сущности к концепту-области: 0.0..1.0."""
+        if concept_id not in self.concept_regions:
+            return 0.0
+        entity = self.resonators.get(entity_id)
+        if not entity:
+            return 0.0
+        return self.concept_regions[concept_id].membership(entity.semantic)
+
+    def register_concept_region(self, concept_id: int, member_ids: List[int],
+                                radius: float = 0.5) -> Optional[ConceptRegion]:
+        """
+        🆕 ФАЗА 3, Шаг 3.3: Создать/обновить область концепта по участникам.
+        Прототип = среднее семантических векторов участников (идея #13).
+        """
+        if concept_id not in self.resonators:
+            return None
+        members = [mid for mid in dict.fromkeys(member_ids)
+                   if mid in self.resonators and mid != concept_id]
+        region = self.concept_regions.get(concept_id)
+        if region is None:
+            proto_src = self.resonators[concept_id].semantic
+            region = ConceptRegion(concept_id=concept_id,
+                                   prototype=SemanticVector(),
+                                   boundary_radius=radius)
+            # Копируем набор осей концепта (в т.ч. добавленные Кристаллом оси)
+            region.prototype.axes = [SemanticAxis(a.name, a.weight) for a in proto_src.axes]
+            region.prototype.values = {a.name: 0.0 for a in region.prototype.axes}
+            self.concept_regions[concept_id] = region
+        region.member_ids = members
+        region.update_prototype(self)
+        return region
+
+    def _build_concept_regions_from_is_a(self) -> List[str]:
+        """
+        🆕 ФАЗА 3, Шаг 3.3 (автоматизация): строить регионы из IS_A-графa.
+        Любой узел, которому через IS_A приписано >= 2 участников, становится
+        центром области (концепт-регион), а его прототип — среднее участников.
+        Вызывается во сне (defragment) перед кластеризацией.
+        """
+        notes: List[str] = []
+        classes: Dict[int, List[int]] = {}
+        for r in self.resonators.values():
+            for tgt_id, packed in r.connections.items():
+                w, et = unpack_edge(packed)
+                if et == EDGE_IS_A and w > 10 and tgt_id in self.resonators:
+                    classes.setdefault(tgt_id, []).append(r.id)
+        for cid, members in classes.items():
+            uniq = list(dict.fromkeys(members))
+            if len(uniq) < 2 or cid not in self.resonators:
+                continue
+            existing = self.concept_regions.get(cid)
+            # Радиус расширяем до охвата всех участников (нечёткая граница)
+            region = self.register_concept_region(cid, uniq)
+            if region is None:
+                continue
+            max_mem = min((region.membership(self.resonators[m].semantic) for m in region.member_ids), default=0.0)
+            needed = 1.0 - max_mem  # membership > 0 ⇔ normalized >= 1 - r
+            if needed > region.boundary_radius:
+                region.boundary_radius = min(1.0, round(needed + 0.05, 4))
+            if existing is None or set(existing.member_ids) != set(region.member_ids):
+                c_lbl = self.resonators[cid].label
+                m_lbls = [self.resonators[m].label for m in region.member_ids if m in self.resonators]
+                notes.append(f"🍎 Регион: '{c_lbl}' = {{{', '.join(m_lbls)}}} (r={region.boundary_radius:.2f})")
+        return notes
+
+    def get_or_create(self, label: str, node_type: NodeType = NodeType.CONCEPT) -> Resonator:
+        """🆕 Шаг 1.1/1.3: node_type — тип создаваемого узла (TOKEN/LEMMA/.../OPERATOR)."""
         if label not in self.label_to_id:
             new_id = self._next_id
             self._next_id += 1
             hdc = self.encoder.encode(label)
             if getattr(self, 'current_epoch', None) and label != "SELF" and not label.startswith("EPOCH:"):
                 hdc ^= self.epochs[self.current_epoch]
-            res = Resonator(id=new_id, label=label, hdc_vector=hdc)
+            res = Resonator(id=new_id, label=label, hdc_vector=hdc, node_type=node_type)
             if getattr(self, 'current_epoch_id', 0) != 0 and label != "SELF" and not label.startswith("EPOCH:"):
                 res.context_mask = self.current_epoch_id
             self.resonators[new_id] = res
             self.label_to_id[label] = new_id
         return self.resonators[self.label_to_id[label]]
+
+    # 🆕 ФАЗА 1, Шаг 1.4: Очистка эфемерных токенов
+    TOKEN_TTL = 50  # токены живут не дольше N тактов
+
+    def _prune_concept_regions(self):
+        """🆕 ФАЗА 3 (Шаг 3.3): поддержать регионы в согласии с графом.
+        - выбросить удалённых/схлопнутых участников;
+        - пересобрать состав из актуальных IS_A-рёбер (defragment мог
+          перенести связи на root:-узел);
+        - удалить регион, если класс исчез или участников осталось < 2."""
+        if not self.concept_regions:
+            return
+        for cid in list(self.concept_regions.keys()):
+            region = self.concept_regions[cid]
+            if cid not in self.resonators:
+                del self.concept_regions[cid]
+                continue
+            is_a_members = [src.id for src in self.resonators.values()
+                            if any(unpack_edge(p)[1] == EDGE_IS_A and tgt == cid
+                                   for tgt, p in src.connections.items())]
+            merged = list(dict.fromkeys(
+                [m for m in region.member_ids if m in self.resonators] + is_a_members))
+            merged = [m for m in merged if m != cid]
+            if len(merged) < 2:
+                del self.concept_regions[cid]
+                continue
+            region.member_ids = merged
+            region.update_prototype(self)
+
+    def _canonicalize_region_members(self):
+        """
+        🆕 ФАЗА 3 (Шаг 3.3): привязать регион к устойчивым узлам.
+        Если участник — raw-дубль существующего root:-узла ('яблоко' vs
+        'root:яблок'), переносим членство и IS_A-ребро на root: до того,
+        как defragment схлопнет raw-узел (иначе регион теряет участников).
+        """
+        if not self.concept_regions:
+            return
+        roots = {r.label[5:]: r for r in self.resonators.values()
+                 if r.label.startswith('root:')}
+        for cid, region in list(self.concept_regions.items()):
+            remap: Dict[int, int] = {}
+            for mid in list(region.member_ids):
+                mr = self.resonators.get(mid)
+                if mr is None or mid == cid:
+                    continue
+                root_r = roots.get(mr.label)
+                if root_r is not None and root_r.id != mid:
+                    remap[mid] = root_r.id
+            if not remap:
+                continue
+            new_members = []
+            for mid in region.member_ids:
+                nid = remap.get(mid, mid)
+                if nid not in new_members and nid != cid:
+                    new_members.append(nid)
+            region.member_ids = new_members
+            # Переносим IS_A-рёбра участника на его root-двойник
+            for old_id, new_id in remap.items():
+                old_r = self.resonators.get(old_id)
+                if old_r is None:
+                    continue
+                for tgt, packed in list(old_r.connections.items()):
+                    w, et = unpack_edge(packed)
+                    if et == EDGE_IS_A and w >= 20:
+                        nr = self.resonators[new_id]
+                        cur_w, cur_et = unpack_edge(nr.connections.get(tgt, 0))
+                        if cur_et != EDGE_IS_A or cur_w < w:
+                            nr.connections[tgt] = pack_edge(max(cur_w, w), EDGE_IS_A)
+                            tr = self.resonators.get(tgt)
+                            if tr is not None:
+                                tr.connections[new_id] = pack_edge(
+                                    max(unpack_edge(tr.connections.get(new_id, 0))[0], w),
+                                    EDGE_IS_A)
+            region.update_prototype(self)
+
+    def cleanup_tokens(self):
+        """Удалить эфемерные токены старше N тиков."""
+        to_remove = [
+            rid for rid, r in self.resonators.items()
+            if r.node_type == NodeType.TOKEN and (self.tick_count - r.last_tick) > self.TOKEN_TTL
+        ]
+        for rid in to_remove:
+            r = self.resonators[rid]
+            # Удалить из syn_graph
+            self.syn_graph = {
+                k: v for k, v in self.syn_graph.items()
+                if rid not in k
+            }
+            # Токен мог оставить SYN-след в connections леммы/узлов — чистим обратные ссылки
+            for other in self.resonators.values():
+                other.connections.pop(rid, None)
+            del self.resonators[rid]
+            self.label_to_id.pop(r.label, None)
+        # 🆕 ФАЗА 3: регионы переживают очистку/слияния без «мёртвых» id
+        self._prune_concept_regions()
+        return len(to_remove)
     
     def validate_edge(self, source_id: int, target_id: int, edge_type: int) -> Tuple[bool, str]:
         """🆕 Приоритет 1.6: Валидация создаваемой связи."""
@@ -773,6 +1437,35 @@ class CrystalLattice:
             f"разведены через инверсию оси P (Топологический парадокс)."
         )
     
+    # ============================================================
+    # 🆕 ФАЗА 0, Шаг 0.3: Многомерное семантическое сравнение
+    # ============================================================
+    def multi_similarity(self, id1: int, id2: int) -> Dict[str, float]:
+        """
+        Полная картина близости: HDC + каждая семантическая ось отдельно.
+        Возвращает dict: {'hdc': 0.73, 'taxonomic': 0.91, 'physical': 0.42, ...}
+        """
+        r1 = self.resonators.get(id1)
+        r2 = self.resonators.get(id2)
+        if not r1 or not r2:
+            return {}
+        result = {'hdc': self.encoder.similarity(r1.hdc_vector, r2.hdc_vector)}
+        result.update(r1.semantic.similarity_by_axis(r2.semantic))
+        return result
+
+    def weighted_similarity(self, id1: int, id2: int) -> float:
+        """Итоговая близость: 40% HDC + 60% семантические оси."""
+        profiles = self.multi_similarity(id1, id2)
+        if not profiles:
+            return 0.0
+        hdc_part = profiles.pop('hdc', 0.0) * 0.4
+        sem_part = sum(
+            v * next((a.weight for a in self.resonators[id1].semantic.axes if a.name == k), 0.5)
+            for k, v in profiles.items()
+        )
+        total_weight = sum(a.weight for a in self.resonators[id1].semantic.axes) or 1.0
+        return hdc_part + (sem_part / total_weight) * 0.6
+
     def _scan_for_antonyms_in_sleep(self, similarity_threshold: float = 0.92, min_common_neighbors: int = 5) -> int:
         """
         💤 Фаза сна: Поиск топологических парадоксов.
@@ -788,7 +1481,7 @@ class CrystalLattice:
             for j in range(i + 1, len(candidates)):
                 r_a = candidates[i]
                 r_b = candidates[j]
-                sim = self.encoder.similarity(r_a.hdc_vector, r_b.hdc_vector)
+                sim = self.weighted_similarity(r_a.id, r_b.id)
                 if sim < similarity_threshold:
                     continue
                 packed_edge = r_a.connections.get(r_b.id, 0)
@@ -1323,6 +2016,11 @@ class CrystalLattice:
     
     def tick(self):
         self.tick_count += 1
+        # 🆕 ФАЗА 2, Шаг 2.3: операторные узлы всегда активны — подновляем реестр
+        if not self.operator_nodes:
+            self.ensure_operators()
+        for r in self.operator_nodes.values():
+            r.energy = max(r.energy, 500)
         self.tick_markers(max_steps=2)
         self.evoke_frames()
         transfers: Dict[int, Tuple[int, List[int]]] = {}
@@ -1386,6 +2084,9 @@ class CrystalLattice:
             self.interference_log = self.interference_log[-10:]
         if len(self.paradox_log) > 10:
             self.paradox_log = self.paradox_log[-10:]
+        # 🆕 ФАЗА 1, Шаг 1.4: периодическая очистка эфемерных токенов
+        if self.tick_count % 10 == 0:
+            self.cleanup_tokens()
     
     def extract_spore(self, top_k_attractors: int = 3) -> 'Spore':
         """
@@ -1514,7 +2215,7 @@ class CrystalLattice:
                 if r.connections and r.state != TruthValue.FALSE
             ][:search_limit]
             for rid, r in candidates:
-                sim = self.encoder.similarity(vac_hdc, r.hdc_vector)
+                sim = self.weighted_similarity(vacuum_id, rid)
                 if sim > best_sim:
                     best_sim = sim
                     best_anchor_id = rid
@@ -1567,7 +2268,7 @@ class CrystalLattice:
                 if prefer_syn and edge_type == EDGE_SYNTAGM:
                     effective_weight = int(weight * 1.5)
                 if edge_type == EDGE_SYNTAGM:
-                    sim_to_vac = self.encoder.similarity(vac_hdc, neighbor.hdc_vector)
+                    sim_to_vac = self.weighted_similarity(vacuum_id, neighbor.id)
                     decayed_threshold = anchor_min + (depth * 0.03)
                     if sim_to_vac < decayed_threshold:
                         continue
@@ -1575,7 +2276,7 @@ class CrystalLattice:
                 context_penalty = 0
                 if cur_ctx and neighbor_ctx and (cur_ctx != neighbor_ctx):
                     context_penalty = -200
-                semantic_sim = self.encoder.similarity(vac_hdc, neighbor.hdc_vector)
+                semantic_sim = self.weighted_similarity(vacuum_id, neighbor.id)
                 if edge_type == EDGE_SYNTAGM:
                     score = int(semantic_sim * 180) + (effective_weight * 2)
                 else:
@@ -1737,7 +2438,7 @@ class CrystalLattice:
                     f"candidate '{display_label(l1)}' vs '{display_label(l2)}' "
                     f"direct_except={direct_except} direct_strength={direct_strength} "
                     f"structural_strength={structural_strength} root_like={root_like} "
-                    f"hdc_sim={self.encoder.similarity(u1_r.hdc_vector, u2_r.hdc_vector):.3f}"
+                    f"hdc_sim={self.weighted_similarity(u1_r.id, u2_r.id):.3f}"
                 )
                 # Требование: ТОЛЬКО прямая EXCEPT-связь или очень сильное структурное доказательство
                 if not direct_except:
@@ -1866,7 +2567,7 @@ class CrystalLattice:
                     if other_id in service_ids or other_id in hubs or other_id in {r1.id, r2.id}:
                         continue
                     other_res = self.resonators[other_id]
-                    sim = self.encoder.similarity(resonator.hdc_vector, other_res.hdc_vector)
+                    sim = self.weighted_similarity(resonator.id, other_res.id)
                     if sim > best_sim:
                         best_sim = sim
                         best_other_id = other_id
@@ -1882,7 +2583,7 @@ class CrystalLattice:
                     continue
                 if u1_id in hubs or u2_id in hubs:
                     continue
-                hdc_sim = self.encoder.similarity(u1_r.hdc_vector, u2_r.hdc_vector)
+                hdc_sim = self.weighted_similarity(u1_r.id, u2_r.id)
                 neighbor_jaccard = self._jaccard_similarity(set(u1_r.connections.keys()), set(u2_r.connections.keys()))
                 if hdc_sim > 0.75 and neighbor_jaccard > 0.25:
                     synonym_traits.append(display_label(u1_r.label))
@@ -2070,6 +2771,24 @@ class CrystalLattice:
         merged_count = 0
         pruned_count = 0
         dreams = []
+
+        # 🆕 ФАЗА 3, Шаг 3.3: Концепт-регионы из IS_A-графa (до кластеризации,
+        # пока метки участников не схлопнуты в root:-формы).
+        try:
+            region_notes = self._build_concept_regions_from_is_a()
+            dreams.extend(region_notes)
+        except Exception as e:  # регионы — надстройка, сон не должен падать
+            self.paradox_log.append(f"Такт {self.tick_count}: ⚠️ Регионы: {e}")
+
+        # 🆕 ФАЗА 3, Шаг 3.4: вывод IS_A через нечёткую принадлежность регионам
+        region_inferences = self.infer_is_a_from_regions()
+        dreams.extend(region_inferences)
+
+        # 🆕 ФАЗА 3 (Шаг 3.3): семантические связи переживают схлопывание raw→root.
+        # defragment ниже переносит connections на root:-узел, но регионы хранят
+        # id участников — фиксируем canonical-id до слияний.
+        self._canonicalize_region_members()
+
         raw_nodes = {r.label: r for r in self.resonators.values() if not r.label.startswith(('root:', 'mod:', 'cluster:', 'mdl:', 'skill:'))}
         root_nodes = {r.label.replace('root:', ''): r for r in self.resonators.values() if r.label.startswith('root:')}
         to_delete_ids = []
@@ -2155,7 +2874,16 @@ class CrystalLattice:
                 
                 self.connect(cluster_label, r.label, weight=50, reason=reason)
                 self.connect(cluster_label, target_r.label, weight=50, reason=reason)
-                
+
+                # 🆕 ФАЗА 3, Шаг 3.3: кластер = зачаток концепт-области.
+                # Прототип — среднее участников (идея #13); семантика кластера
+                # центрируется по прототипу, радиус растёт в последующих снах.
+                region = self.register_concept_region(new_id, [r.id, target_r.id])
+                if region is not None:
+                    cluster_r.semantic = SemanticVector()
+                    for ax_name in region.prototype.values:
+                        cluster_r.semantic.set(ax_name, region.prototype.get(ax_name))
+
                 self.add_hypothesis(new_id, reason)
                 if support >= 3:
                     self.confirm_hypothesis(new_id)
@@ -2239,7 +2967,7 @@ class CrystalLattice:
                 common_base = base1 & base2
                 if len(common_base) >= 5:  # было >= 3
                     r1, r2 = self.resonators[id1], self.resonators[id2]
-                    sim = self.encoder.similarity(r1.hdc_vector, r2.hdc_vector)
+                    sim = self.weighted_similarity(r1.id, r2.id)
                     if sim < 0.20:  # только реально далёкие векторы (было < 0.30)
                         if id2 not in r1.connections or unpack_edge(r1.connections[id2])[1] != EDGE_EXCEPT:
                             self.connect(r1.label, r2.label, weight=self.calibration.except_antonym_weight, edge_type=EDGE_EXCEPT)
