@@ -4,10 +4,11 @@ engine.py — Кремниевая подложка Кристалла (v4.0 Cog
 """
 import hashlib
 import random
+from collections import deque
 from enum import IntEnum, auto
 from dataclasses import dataclass, field
 from statistics import median
-from typing import Dict, List, Optional, Tuple, Set, Any
+from typing import Deque, Dict, List, Optional, Tuple, Set, Any
 
 # ============================================================
 # 🧩 Раздел 27.1: Битовые тензоры связей (Causal Typology)
@@ -597,6 +598,196 @@ GENE_PARADOX_PENALTY  = 192
 GENE_PHASE_LOCK       = 224
 
 # ============================================================
+# 🆕 ФАЗА 4 (Шаг 4.1): Event-Driven ядро (идеи #10, #11, #42–47)
+# Событие → локальная обработка вместо обхода всех узлов.
+# ============================================================
+class EventType(IntEnum):
+    FACT_ADDED         = auto()
+    RELATION_CHANGED   = auto()
+    CONTRADICTION      = auto()
+    HYPOTHESIS_UPDATED = auto()
+    CONTEXT_CHANGED    = auto()
+    GOAL_ACTIVATED     = auto()
+    ENERGY_DECAY       = auto()  # периодическое затухание
+    SLEEP_TRIGGER      = auto()  # пора спать
+
+EVENT_NAMES = {
+    EventType.FACT_ADDED: "FACT_ADDED",
+    EventType.RELATION_CHANGED: "RELATION_CHANGED",
+    EventType.CONTRADICTION: "CONTRADICTION",
+    EventType.HYPOTHESIS_UPDATED: "HYPOTHESIS_UPDATED",
+    EventType.CONTEXT_CHANGED: "CONTEXT_CHANGED",
+    EventType.GOAL_ACTIVATED: "GOAL_ACTIVATED",
+    EventType.ENERGY_DECAY: "ENERGY_DECAY",
+    EventType.SLEEP_TRIGGER: "SLEEP_TRIGGER",
+}
+
+@dataclass
+class CrystalEvent:
+    event_type: EventType
+    source_id: int
+    target_id: Optional[int] = None
+    data: dict = field(default_factory=dict)
+    timestamp: int = 0
+    energy_budget: int = 100  # ← бюджет вычислений (идея #46)
+
+class EventQueue:
+    """FIFO-очередь событий с подписками (идея #43)."""
+    def __init__(self):
+        self._queue: Deque[CrystalEvent] = deque()
+        self._listeners: Dict[EventType, List[callable]] = {}
+
+    def subscribe(self, event_type: EventType, handler: callable):
+        self._listeners.setdefault(event_type, []).append(handler)
+
+    def emit(self, event: CrystalEvent):
+        self._queue.append(event)
+
+    def process_one(self, lattice: 'CrystalLattice') -> bool:
+        """Обработать одно событие. Возвращает False если очередь пуста."""
+        if not self._queue:
+            return False
+        event = self._queue.popleft()
+        handlers = self._listeners.get(event.event_type, [])
+        for h in handlers:
+            h(lattice, event)
+        return True
+
+    def process_batch(self, lattice: 'CrystalLattice', max_events: int = 50) -> int:
+        processed = 0
+        while processed < max_events and self.process_one(lattice):
+            processed += 1
+        return processed
+
+    def pending_count(self) -> int:
+        return len(self._queue)
+
+    def clear(self):
+        self._queue.clear()
+
+# ----------------------------------------------------------------
+# 🆕 ФАЗА 4 (Шаг 4.2): Обработчики событий.
+# Module-level функции с сигнатурой (lattice, event) — контракт EventQueue.
+# ----------------------------------------------------------------
+def _on_fact_added(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Локальное распространение от нового факта (идея #44).
+    Активируются ТОЛЬКО ближайшие соседи источника; budget ограничивает
+    цепную реакцию (идея #46), visited защищает от циклов."""
+    source = lattice.resonators.get(event.source_id)
+    if not source:
+        return
+    budget = event.energy_budget
+    visited = {source.id}
+    frontier = [(source, budget)]
+    while frontier and budget > 0:
+        node, node_budget = frontier.pop(0)
+        for tgt_id, packed in list(node.connections.items()):
+            if node_budget <= 0:
+                break
+            w, et = unpack_edge(packed)
+            if et == EDGE_EXCEPT or tgt_id in visited:
+                continue
+            tgt = lattice.resonators.get(tgt_id)
+            if not tgt:
+                continue
+            visited.add(tgt_id)
+            gain = max(1, w // 10)
+            tgt.energy = min(tgt.energy + gain, lattice.calibration.energy_cap)
+            tgt.last_tick = lattice.tick_count
+            node_budget -= 10
+            budget -= 10
+            # Цепная реакция: если энергии достаточно, эмитим дальше
+            if tgt.is_active() and node_budget > 10:
+                lattice.event_queue.emit(CrystalEvent(
+                    EventType.FACT_ADDED, tgt.id,
+                    energy_budget=max(10, node_budget // 2),
+                    timestamp=lattice.tick_count,
+                ))
+    lattice.interference_log.append(
+        f"Такт {lattice.tick_count}: ⚡ FACT_ADDED '{source.label}' "
+        f"(затронуто узлов: {len(visited)}, бюджет: {event.energy_budget})")
+    if len(lattice.interference_log) > 10:
+        lattice.interference_log = lattice.interference_log[-10:]
+
+
+def _on_contradiction(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Обработка противоречия (идея #34): не удалять, а создать объект CONFLICT."""
+    src = lattice.resonators.get(event.source_id)
+    tgt = lattice.resonators.get(event.target_id) if event.target_id is not None else None
+    if not src or not tgt:
+        return
+    conflict_label = f"conflict:{src.id}:{tgt.id}"
+    conflict_r = lattice.get_or_create(conflict_label)
+    conflict_r.semantic.set('abstract', 1.0)
+    conflict_r.energy = max(conflict_r.energy, 100)
+    lattice.connect(conflict_label, src.label, weight=90)
+    lattice.connect(conflict_label, tgt.label, weight=90)
+    lattice.paradox_log.append(
+        f"Такт {lattice.tick_count}: ⚔️ Конфликт-объект '{conflict_label}' "
+        f"({src.label} ↔ {tgt.label})")
+    if len(lattice.paradox_log) > 10:
+        lattice.paradox_log = lattice.paradox_log[-10:]
+
+
+def _on_relation_changed(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Связь изменилась — локально подкрепить оба конца (идея #44)."""
+    r1 = lattice.resonators.get(event.source_id)
+    r2 = lattice.resonators.get(event.target_id) if event.target_id is not None else None
+    for r in (r1, r2):
+        if r is not None:
+            r.inject_energy(5, lattice.tick_count)
+
+
+def _on_hypothesis_updated(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Гипотеза создана/подтверждена/опровергнута — событие для надстроек."""
+    r = lattice.resonators.get(event.source_id)
+    if r is None:
+        return
+    status = event.data.get("status", "")
+    if status == "confirmed":
+        r.inject_energy(10, lattice.tick_count)
+    elif status == "retracted":
+        r.energy = max(0, r.energy - 20)
+
+
+def _on_context_changed(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Смена активного контекста — подсветить узлы нового контекста (идея #10)."""
+    ctx_name = event.data.get("context", lattice.active_context)
+    ctx = lattice.contexts.get(ctx_name)
+    if not ctx:
+        return
+    for node_id in getattr(ctx, "node_ids", []):
+        r = lattice.resonators.get(node_id)
+        if r is not None:
+            r.inject_energy(3, lattice.tick_count)
+
+
+def _on_goal_activated(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Цель активирована — усилить GOAL-ребра и их концы (идея #47)."""
+    boost = max(1, event.energy_budget // 10)
+    for r in lattice.resonators.values():
+        for tgt_id, packed in list(r.connections.items()):
+            w, et = unpack_edge(packed)
+            if et == EDGE_GOAL:
+                r.connections[tgt_id] = pack_edge(min(MASK_WEIGHT, w + boost), et)
+                tgt = lattice.resonators.get(tgt_id)
+                if tgt is not None:
+                    tgt.inject_energy(boost * 2, lattice.tick_count)
+
+
+def _on_energy_decay(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Периодическое затухание — только для АКТИВНЫХ узлов (идея #45)."""
+    active = lattice.get_active(top_k=event.energy_budget or 50)
+    for r in active:
+        r.decay(lattice.decay_percent)
+
+
+def _on_sleep_trigger(lattice: 'CrystalLattice', event: CrystalEvent):
+    """Пора спать (идея #10): выставляем флаг — сам сон дорог, запускается
+    на следующем тике один раз вместо проверки расписания каждый тик."""
+    lattice._sleep_due = True
+
+# ============================================================
 # CrystalLattice (Ядро)
 # ============================================================
 class CrystalLattice:
@@ -682,7 +873,50 @@ class CrystalLattice:
         self.concept_regions: Dict[int, ConceptRegion] = {}
 
         # 🆕 ФАЗА 3, Шаг 3.4: Порог нечёткой принадлежности для IS_A-вывода.
-        MEMBERSHIP_THRESHOLD = 0.5
+        self.MEMBERSHIP_THRESHOLD = 0.5
+
+        # 🆕 ФАЗА 4, Шаг 4.2: Event-Driven ядро (идея #10/#43).
+        self.event_queue = EventQueue()
+        self._events_processed_total = 0   # статистика для команды 'думай'
+        self._sleep_due = False            # флаг: SLEEP_TRIGGER обработан, пора спать
+        self._register_event_handlers()
+
+    # ================================================================
+    # 🆕 ФАЗА 4 (Шаг 4.2): Event-driven обработчики (идеи #10, #44)
+    # ================================================================
+    def _register_event_handlers(self):
+        """Подписка обработчиков. Хендлеры — module-level функции с сигнатурой
+        (lattice, event), что соответствует контракту EventQueue.process_one."""
+        eq = self.event_queue
+        eq.subscribe(EventType.FACT_ADDED, _on_fact_added)
+        eq.subscribe(EventType.CONTRADICTION, _on_contradiction)
+        eq.subscribe(EventType.RELATION_CHANGED, _on_relation_changed)
+        eq.subscribe(EventType.HYPOTHESIS_UPDATED, _on_hypothesis_updated)
+        eq.subscribe(EventType.CONTEXT_CHANGED, _on_context_changed)
+        eq.subscribe(EventType.GOAL_ACTIVATED, _on_goal_activated)
+        eq.subscribe(EventType.ENERGY_DECAY, _on_energy_decay)
+        eq.subscribe(EventType.SLEEP_TRIGGER, _on_sleep_trigger)
+
+    def emit_event(self, event_type: EventType, source_id: int,
+                   target_id: Optional[int] = None, data: dict = None,
+                   energy_budget: int = 100):
+        """Публичный API эмита событий (используется мембраной, main.py)."""
+        self.event_queue.emit(CrystalEvent(
+            event_type=event_type,
+            source_id=source_id,
+            target_id=target_id,
+            data=data or {},
+            timestamp=self.tick_count,
+            energy_budget=energy_budget,
+        ))
+
+    def goal_nodes(self) -> List['Resonator']:
+        """Узлы, в которые входят GOAL-ребра (для события GOAL_ACTIVATED)."""
+        result = []
+        for r in self.resonators.values():
+            if any(unpack_edge(p)[1] == EDGE_GOAL for p in r.connections.values()):
+                result.append(r)
+        return result
 
     # ================================================================
     # 🆕 ФАЗА 3 (Шаг 3.4): Концепт как ОБЛАСТЬ — вывод через принадлежность
