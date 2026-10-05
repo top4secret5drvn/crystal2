@@ -332,6 +332,72 @@ class SemanticVector:
 
 
 # ============================================================
+# 🆕 ФАЗА 3, Шаг 3.1: Концепт как ОБЛАСТЬ, а не точка (идеи #7/#13/#14)
+# ============================================================
+@dataclass
+class ConceptRegion:
+    """
+    Концепт как область в семантическом пространстве (идея #13).
+    prototype — центр (самый типичный представитель).
+    members — точки внутри области.
+    boundary_radius — радиус области.
+    """
+    concept_id: int
+    prototype: SemanticVector = field(default_factory=SemanticVector)
+    member_ids: List[int] = field(default_factory=list)
+    boundary_radius: float = 0.5  # в единицах семантического расстояния
+
+    def membership(self, sv: SemanticVector) -> float:
+        """Нечёткая принадлежность: 0.0..1.0 (идея #14)."""
+        sim = self.prototype.similarity(sv)
+        # Преобразуем [-1,1] → [0,1] и обрезаем по границе
+        normalized = (sim + 1.0) / 2.0
+        if normalized < (1.0 - self.boundary_radius):
+            return 0.0
+        return min(1.0, normalized)
+
+    def update_prototype(self, lattice: 'CrystalLattice'):
+        """Пересчитать прототип как среднее участников."""
+        if not self.member_ids:
+            return
+        for axis_name in self.prototype.values:
+            vals = []
+            for mid in self.member_ids:
+                if mid in lattice.resonators:
+                    vals.append(lattice.resonators[mid].semantic.get(axis_name))
+            if vals:
+                self.prototype.set(axis_name, sum(vals) / len(vals))
+
+    def to_bytes(self) -> bytes:
+        """Сериализация региона для persistence (v3+)."""
+        import struct
+        sem = self.prototype.to_bytes()
+        buf = struct.pack('<I f H', self.concept_id, self.boundary_radius, len(sem))
+        buf += sem
+        buf += struct.pack(f'<{len(self.member_ids)}I', *self.member_ids) if self.member_ids else b''
+        return buf
+
+    @classmethod
+    def from_bytes(cls, data: bytes, offset: int = 0) -> Tuple['ConceptRegion', int]:
+        import struct
+        concept_id, radius, sem_len = struct.unpack_from('<I f H', data, offset)
+        offset += 10
+        proto, offset = SemanticVector.from_bytes(data, offset)
+        region = cls(concept_id=concept_id, prototype=proto, boundary_radius=radius)
+        # Число участников выводим из остатка блока: вызывающий код передаёт
+        # точный срез байтов региона, поэтому читаем все оставшиеся uint32.
+        while offset + 4 <= len(data):
+            mid, = struct.unpack_from('<I', data, offset)
+            offset += 4
+            region.member_ids.append(mid)
+        return region, offset
+
+    def __repr__(self):
+        return (f"ConceptRegion(id={self.concept_id}, members={len(self.member_ids)}, "
+                f"r={self.boundary_radius:.2f}, proto={self.prototype!r})")
+
+
+# ============================================================
 # 🧠 Раздел 40: Когнитивные структуры (Symbolic AI / 80s)
 # ============================================================
 class MarkerType(IntEnum):
@@ -611,6 +677,13 @@ class CrystalLattice:
         # LanguageMembrane.OPERATORS создавала бы circular import.
         self.operator_nodes: Dict[str, Resonator] = {}
 
+        # 🆕 ФАЗА 3, Шаг 3.2: Концепты как ОБЛАСТИ (идея #7/#13).
+        # concept_id → ConceptRegion (прототип + участники + радиус).
+        self.concept_regions: Dict[int, ConceptRegion] = {}
+
+        # 🆕 ФАЗА 3, Шаг 3.4: Порог нечёткой принадлежности для IS_A-вывода.
+        MEMBERSHIP_THRESHOLD = 0.5
+
     # ================================================================
     # 🆕 ФАЗА 2, Шаг 2.3: Операторные узлы (постоянные, всегда активны)
     # ================================================================
@@ -709,6 +782,75 @@ class CrystalLattice:
         return mask
     
     # --- Создание и связывание ---
+    # ================================================================
+    # 🆕 ФАЗА 3, Шаг 3.4: Нечёткая принадлежность концепту (идея #14)
+    # ================================================================
+    def check_membership(self, entity_id: int, concept_id: int) -> float:
+        """Проверить принадлежность сущности к концепту-области: 0.0..1.0."""
+        if concept_id not in self.concept_regions:
+            return 0.0
+        entity = self.resonators.get(entity_id)
+        if not entity:
+            return 0.0
+        return self.concept_regions[concept_id].membership(entity.semantic)
+
+    def register_concept_region(self, concept_id: int, member_ids: List[int],
+                                radius: float = 0.5) -> Optional[ConceptRegion]:
+        """
+        🆕 ФАЗА 3, Шаг 3.3: Создать/обновить область концепта по участникам.
+        Прототип = среднее семантических векторов участников (идея #13).
+        """
+        if concept_id not in self.resonators:
+            return None
+        members = [mid for mid in dict.fromkeys(member_ids)
+                   if mid in self.resonators and mid != concept_id]
+        region = self.concept_regions.get(concept_id)
+        if region is None:
+            proto_src = self.resonators[concept_id].semantic
+            region = ConceptRegion(concept_id=concept_id,
+                                   prototype=SemanticVector(),
+                                   boundary_radius=radius)
+            # Копируем набор осей концепта (в т.ч. добавленные Кристаллом оси)
+            region.prototype.axes = [SemanticAxis(a.name, a.weight) for a in proto_src.axes]
+            region.prototype.values = {a.name: 0.0 for a in region.prototype.axes}
+            self.concept_regions[concept_id] = region
+        region.member_ids = members
+        region.update_prototype(self)
+        return region
+
+    def _build_concept_regions_from_is_a(self) -> List[str]:
+        """
+        🆕 ФАЗА 3, Шаг 3.3 (автоматизация): строить регионы из IS_A-графa.
+        Любой узел, которому через IS_A приписано >= 2 участников, становится
+        центром области (концепт-регион), а его прототип — среднее участников.
+        Вызывается во сне (defragment) перед кластеризацией.
+        """
+        notes: List[str] = []
+        classes: Dict[int, List[int]] = {}
+        for r in self.resonators.values():
+            for tgt_id, packed in r.connections.items():
+                w, et = unpack_edge(packed)
+                if et == EDGE_IS_A and w > 10 and tgt_id in self.resonators:
+                    classes.setdefault(tgt_id, []).append(r.id)
+        for cid, members in classes.items():
+            uniq = list(dict.fromkeys(members))
+            if len(uniq) < 2 or cid not in self.resonators:
+                continue
+            existing = self.concept_regions.get(cid)
+            # Радиус расширяем до охвата всех участников (нечёткая граница)
+            region = self.register_concept_region(cid, uniq)
+            if region is None:
+                continue
+            max_mem = min((region.membership(self.resonators[m].semantic) for m in region.member_ids), default=0.0)
+            needed = 1.0 - max_mem  # membership > 0 ⇔ normalized >= 1 - r
+            if needed > region.boundary_radius:
+                region.boundary_radius = min(1.0, round(needed + 0.05, 4))
+            if existing is None or set(existing.member_ids) != set(region.member_ids):
+                c_lbl = self.resonators[cid].label
+                m_lbls = [self.resonators[m].label for m in region.member_ids if m in self.resonators]
+                notes.append(f"🍎 Регион: '{c_lbl}' = {{{', '.join(m_lbls)}}} (r={region.boundary_radius:.2f})")
+        return notes
+
     def get_or_create(self, label: str, node_type: NodeType = NodeType.CONCEPT) -> Resonator:
         """🆕 Шаг 1.1/1.3: node_type — тип создаваемого узла (TOKEN/LEMMA/.../OPERATOR)."""
         if label not in self.label_to_id:
@@ -2286,6 +2428,15 @@ class CrystalLattice:
         merged_count = 0
         pruned_count = 0
         dreams = []
+
+        # 🆕 ФАЗА 3, Шаг 3.3: Концепт-регионы из IS_A-графa (до кластеризации,
+        # пока метки участников не схлопнуты в root:-формы).
+        try:
+            region_notes = self._build_concept_regions_from_is_a()
+            dreams.extend(region_notes)
+        except Exception as e:  # регионы — надстройка, сон не должен падать
+            self.paradox_log.append(f"Такт {self.tick_count}: ⚠️ Регионы: {e}")
+
         raw_nodes = {r.label: r for r in self.resonators.values() if not r.label.startswith(('root:', 'mod:', 'cluster:', 'mdl:', 'skill:'))}
         root_nodes = {r.label.replace('root:', ''): r for r in self.resonators.values() if r.label.startswith('root:')}
         to_delete_ids = []
@@ -2371,7 +2522,16 @@ class CrystalLattice:
                 
                 self.connect(cluster_label, r.label, weight=50, reason=reason)
                 self.connect(cluster_label, target_r.label, weight=50, reason=reason)
-                
+
+                # 🆕 ФАЗА 3, Шаг 3.3: кластер = зачаток концепт-области.
+                # Прототип — среднее участников (идея #13); семантика кластера
+                # центрируется по прототипу, радиус растёт в последующих снах.
+                region = self.register_concept_region(new_id, [r.id, target_r.id])
+                if region is not None:
+                    cluster_r.semantic = SemanticVector()
+                    for ax_name in region.prototype.values:
+                        cluster_r.semantic.set(ax_name, region.prototype.get(ax_name))
+
                 self.add_hypothesis(new_id, reason)
                 if support >= 3:
                     self.confirm_hypothesis(new_id)
