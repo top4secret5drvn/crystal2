@@ -23,6 +23,7 @@ class CalibrationProfile:
     lcs_search_limit: int = 1000
     syntagm_weight_direct: int = 20
     syntagm_weight_skip: int = 10
+    syntagm_weight_adj: int = 15  # 🆕 Фаза 1 (Шаг 1.3): вес SYN-связей мембраны (adjacency)
     causal_marker_weight: int = 50
     except_antonym_weight: int = 80
     

@@ -8,7 +8,8 @@ import os
 from typing import List, Dict, Tuple, Optional, Set
 from dataclasses import dataclass
 from engine import (TruthValue, EDGE_CAUSE, EDGE_EXCEPT, EDGE_COND, EDGE_SYNTAGM,
-                    EDGE_IS_A, EDGE_PART_OF, unpack_edge, MarkerType, Marker, DependencyNode, CrystalReason)
+                    EDGE_IS_A, EDGE_PART_OF, unpack_edge, pack_edge, MarkerType, Marker, DependencyNode, CrystalReason,
+                    NodeType)  # 🆕 Фаза 1: типология узлов + SYN-слой
 from calibration import CalibrationProfile
 
 
@@ -444,6 +445,72 @@ class LanguageMembrane:
     # ================================================================
     # 💉 Инжекция текста и Опровержение
     # ================================================================
+    def _lemmatize(self, word: str) -> str:
+        """🆕 Шаг 1.3: Простая лемматизация через существующий stemmer мембраны."""
+        return self.stemmer.stem(word.lower())
+
+    def _build_lexical_layers(self, words: List[str], resolved_labels: List[Optional[str]]):
+        """
+        🆕 ФАЗА 1 (Шаги 1.3/1.4): Разделение «Слово / Смысл / Сущность» (идея #3).
+
+        1. Для каждого словаупотребления создаётся эфемерный TOKEN ("tok:...").
+           Токены уникальны для каждого вхождения — порядок слов в предложении
+           различается именно на этом слое.
+        2. Лемматизация: tok:банке → lem:банка (LEMMA-узел переиспользуется).
+        3. SYN-граф (lattice.syn_graph): связи МЕЖДУ ТОКЕНАМИ — чистая языковая
+           структура (идея #8), живёт отдельно от семантического графа.
+        4. Семантический граф (connections LEMMA-узлов): связи между леммами —
+           НЕ между токенами. "Пётр ударил Ивана" и "Иван ударил Петра" дают
+           разные syn_graph-связи, но одинаковые смысловые (лемма-лемма).
+        """
+        token_ids: List[int] = []
+        token_words: List[str] = []
+        tick = self.lattice.tick_count
+
+        # 1. TOKEN-слой: каждый токен ЭФЕМЕРЕН — уникален для каждого вхождения
+        # (один и тот же "иван" в разных предложениях = разные узлы, иначе
+        # syn_graph не различал бы порядок слов).
+        seq = getattr(self, '_token_seq', 0) + 1
+        self._token_seq = seq + len(words)  # резервируем диапазон под это предложение
+        for w, lbl in zip(words, resolved_labels):
+            if lbl is None:
+                continue  # стоп-слова/операторы не материализуются даже как токены
+            tok_label = f"tok:{w.lower()}@{tick}#{seq}"
+            seq += 1
+            token_r = self.lattice.get_or_create(tok_label, NodeType.TOKEN)
+            token_r.lexical_form = w.lower()  # 🆕 Шаг 1.1: поверхностная форма слова
+            token_r.last_tick = tick          # эфемерные: живут до cleanup_tokens()
+            token_ids.append(token_r.id)
+            token_words.append(w.lower())
+
+        # 2. Лемматизация: tok:банке → lem:банка; TOKEN → LEMMA (lemma_id)
+        for tok_id, tok in zip(token_ids, token_words):
+            lemma = self._lemmatize(tok)
+            if not lemma:
+                continue
+            lemma_r = self.lattice.get_or_create(f"lem:{lemma}", NodeType.LEMMA)
+            token_r = self.lattice.resonators[tok_id]
+            token_r.lemma_id = lemma_r.id
+            # Активация леммы следует за активацией её токена (смысл ≠ слово)
+            src_r = self.lattice.resonators[tok_id]
+            if src_r.is_active():
+                lemma_r.inject_energy(src_r.energy // 2, tick, source_ids=[src_r.id])
+
+        # 3. SYN-граф: связи между ТОКЕНАМИ в предложении (только язык!)
+        for i in range(len(token_ids) - 1):
+            packed = pack_edge(self.calibration.syntagm_weight_adj, EDGE_SYNTAGM)
+            self.lattice.syn_graph[(token_ids[i], token_ids[i + 1])] = packed
+
+        # 4. Семантический граф: связи между леммами (НЕ токенами!)
+        lemma_ids = [self.lattice.resonators[tid].lemma_id for tid in token_ids]
+        lemma_ids = [lid for lid in lemma_ids if lid is not None]
+        for i in range(len(lemma_ids) - 1):
+            r1 = self.lattice.resonators[lemma_ids[i]]
+            r2 = self.lattice.resonators[lemma_ids[i + 1]]
+            packed = pack_edge(self.calibration.syntagm_weight_adj, EDGE_SYNTAGM)
+            r1.connections[r2.id] = packed
+            r2.connections[r1.id] = packed  # SYN — двунаправленная связь
+
     def inject_text(self, text: str) -> CausalStats:
         words = self.tokenize(text)
         stats = CausalStats()
@@ -570,6 +637,9 @@ class LanguageMembrane:
         pending_is_a = False
 
         self._learn_contextual_rules(words, resolved_labels)
+
+        # 🆕 ФАЗА 1 (Шаг 1.3): Слово/Смысл/Сущность — TOKEN→LEMMA слои + SYN-граф
+        self._build_lexical_layers(words, resolved_labels)
 
         # 🆕 Приоритет 2.3: Извлечение примитивных триплетов с маркерами
         for i in range(len(words)):

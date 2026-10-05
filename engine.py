@@ -428,13 +428,26 @@ class CognitiveBlackboard:
         self.hypotheses.clear()
 
 # ============================================================
+# 🆕 ФАЗА 1, Шаг 1.1: Типология узлов (Слово / Смысл / Сущность)
+# ============================================================
+class NodeType(IntEnum):
+    """Тип узла в Кристалле (идея #3)."""
+    TOKEN    = auto()  # конкретное словоупотребление: "банке" в предложении
+    LEMMA    = auto()  # нормализованная форма: "банка"
+    SENSE    = auto()  # конкретный смысл: "банка_стеклянная" vs "банка_речная"
+    CONCEPT  = auto()  # абстрактное понятие: "ЁМКОСТЬ"
+    ENTITY   = auto()  # конкретный объект мира: "ЭТА_БАНКА_НА_СТОЛЕ"
+    OPERATOR = auto()  # служебное слово-оператор (идея #7): "не", "и", "если"
+
+# ============================================================
 # Резонатор (Узел решетки)
 # ============================================================
 @dataclass
 class Resonator:
     id: int
     label: str
-    hdc_vector: int            # ← оставить как есть (структурный код)
+    node_type: NodeType = NodeType.CONCEPT    # 🆕 Шаг 1.1: тип узла
+    hdc_vector: int = 0                       # ← оставить как есть (структурный код)
     semantic: SemanticVector = field(default_factory=SemanticVector)  # 🆕 Шаг 0.2: второй носитель смысла
     state: TruthValue = TruthValue.VOID
     energy: int = 0
@@ -451,6 +464,12 @@ class Resonator:
     belief_confidence: float = 0.0
     belief_reason: Optional[CrystalReason] = None
     belief_context: str = "global"
+
+    # 🆕 Шаг 1.1: Ссылки между слоями (идея #3):
+    lemma_id: Optional[int] = None                        # TOKEN → LEMMA
+    sense_ids: List[int] = field(default_factory=list)    # LEMMA → [SENSE]
+    concept_id: Optional[int] = None                      # SENSE → CONCEPT
+    lexical_form: Optional[str] = None                    # TOKEN: поверхностная форма слова
     
     def inject_energy(self, amount: int, tick: int, source_ids: List[int] = None, cap: int = 5000):
         self.energy += amount
@@ -577,6 +596,11 @@ class CrystalLattice:
             "analogy": 0.3,
             "hypothesis": 0.2,
         }
+
+        # 🆕 ФАЗА 1, Шаг 1.2: SYN-граф хранит ТОЛЬКО языковую структуру (идея #8).
+        # Ключ: (token_id, token_id), значение: packed_edge.
+        # Семантический граф остаётся в resonators[].connections.
+        self.syn_graph: Dict[Tuple[int, int], int] = {}
     
     def _register_primitive_frames(self):
         """Регистрация базовых фреймов (Fillmore)."""
@@ -662,19 +686,43 @@ class CrystalLattice:
         return mask
     
     # --- Создание и связывание ---
-    def get_or_create(self, label: str) -> Resonator:
+    def get_or_create(self, label: str, node_type: NodeType = NodeType.CONCEPT) -> Resonator:
+        """🆕 Шаг 1.1/1.3: node_type — тип создаваемого узла (TOKEN/LEMMA/.../OPERATOR)."""
         if label not in self.label_to_id:
             new_id = self._next_id
             self._next_id += 1
             hdc = self.encoder.encode(label)
             if getattr(self, 'current_epoch', None) and label != "SELF" and not label.startswith("EPOCH:"):
                 hdc ^= self.epochs[self.current_epoch]
-            res = Resonator(id=new_id, label=label, hdc_vector=hdc)
+            res = Resonator(id=new_id, label=label, hdc_vector=hdc, node_type=node_type)
             if getattr(self, 'current_epoch_id', 0) != 0 and label != "SELF" and not label.startswith("EPOCH:"):
                 res.context_mask = self.current_epoch_id
             self.resonators[new_id] = res
             self.label_to_id[label] = new_id
         return self.resonators[self.label_to_id[label]]
+
+    # 🆕 ФАЗА 1, Шаг 1.4: Очистка эфемерных токенов
+    TOKEN_TTL = 50  # токены живут не дольше N тактов
+
+    def cleanup_tokens(self):
+        """Удалить эфемерные токены старше N тиков."""
+        to_remove = [
+            rid for rid, r in self.resonators.items()
+            if r.node_type == NodeType.TOKEN and (self.tick_count - r.last_tick) > self.TOKEN_TTL
+        ]
+        for rid in to_remove:
+            r = self.resonators[rid]
+            # Удалить из syn_graph
+            self.syn_graph = {
+                k: v for k, v in self.syn_graph.items()
+                if rid not in k
+            }
+            # Токен мог оставить SYN-след в connections леммы/узлов — чистим обратные ссылки
+            for other in self.resonators.values():
+                other.connections.pop(rid, None)
+            del self.resonators[rid]
+            self.label_to_id.pop(r.label, None)
+        return len(to_remove)
     
     def validate_edge(self, source_id: int, target_id: int, edge_type: int) -> Tuple[bool, str]:
         """🆕 Приоритет 1.6: Валидация создаваемой связи."""
@@ -1523,6 +1571,9 @@ class CrystalLattice:
             self.interference_log = self.interference_log[-10:]
         if len(self.paradox_log) > 10:
             self.paradox_log = self.paradox_log[-10:]
+        # 🆕 ФАЗА 1, Шаг 1.4: периодическая очистка эфемерных токенов
+        if self.tick_count % 10 == 0:
+            self.cleanup_tokens()
     
     def extract_spore(self, top_k_attractors: int = 3) -> 'Spore':
         """
