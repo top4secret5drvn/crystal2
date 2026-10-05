@@ -8,8 +8,8 @@ import os
 from typing import List, Dict, Tuple, Optional, Set
 from dataclasses import dataclass
 from engine import (TruthValue, EDGE_CAUSE, EDGE_EXCEPT, EDGE_COND, EDGE_SYNTAGM,
-                    EDGE_IS_A, EDGE_PART_OF, unpack_edge, pack_edge, MarkerType, Marker, DependencyNode, CrystalReason,
-                    NodeType)  # 🆕 Фаза 1: типология узлов + SYN-слой
+                    EDGE_IS_A, EDGE_PART_OF, EDGE_GOAL, EDGE_ANALOG, unpack_edge, pack_edge, MarkerType, Marker, DependencyNode, CrystalReason,
+                    NodeType)  # 🆕 Фаза 1: типология узлов + SYN-слой; 🆕 Фаза 2: EDGE_GOAL/EDGE_ANALOG (операторы 'для'/'или')
 from calibration import CalibrationProfile
 
 
@@ -186,15 +186,40 @@ class LanguageMembrane:
     """
     Сенсорная мембрана: единственная точка входа текста в Кристалл.
     """
-    # 🛡 Жесткий стоп-лист (🆕 'не' УБРАНО — теперь это оператор отрицания)
+    # 🆕 ФАЗА 2, Шаг 2.1 (идея #7): Реестр служебных слов-операторов.
+    # «и», «не», «если», «но» — НЕ концепты. Это ОПЕРАЦИИ над графом.
+    # Ключ: словоформа; значение: тип операции.
+    OPERATORS = {
+        'и':      'bind',        # объединение (суперпозиция в working_memory)
+        'или':    'branch',      # развилка
+        'не':     'negate',      # отрицание (уже частично было)
+        'но':     'contrast',    # конфликт/контраст → EDGE_EXCEPT
+        'если':   'condition',   # условие → EDGE_COND
+        'то':     'consequence', # следствие
+        'в':      'container',   # пространственное отношение
+        'на':     'surface',
+        'для':    'purpose',     # целевая направленность → EDGE_GOAL
+        'из-за':  'cause',       # причинная связь → EDGE_CAUSE
+        'потому': 'cause',
+        'поэтому': 'consequence',
+        'это':    'is_a',        # связка (уже была!) → EDGE_IS_A
+        'является': 'is_a',
+        'часть':  'part_of',     # → EDGE_PART_OF
+        'из':     'part_of',
+    }
+
+    # 🛡 Жесткий стоп-лист — только РЕАЛЬНО пустые слова.
+    # ⚠️ ФАЗА 2: 'не', 'и', 'но', 'если', 'для', 'из-за', 'это', 'является',
+    # 'часть', 'или', 'то', 'потому', 'поэтому' УБРАНЫ — они операторы (OPERATORS),
+    # а не мусор. Операторы перехватываются раньше стоп-листа.
     STOP_WORDS = {
-        'в', 'а', 'и', 'но', 'на', 'с', 'к', 'о', 'у', 'от', 'по',
-        'за', 'до', 'из', 'он', 'она', 'оно', 'мы', 'вы', 'я', 'же', 'ли',
-        'бы', 'то', 'что', 'как', 'это', 'вот', 'еще', 'ещё', 'уже', 'или',
+        'а', 'с', 'к', 'о', 'у', 'от', 'по',
+        'за', 'до', 'он', 'она', 'оно', 'мы', 'вы', 'я', 'же', 'ли',
+        'бы', 'что', 'как', 'вот', 'еще', 'ещё', 'уже',
         'да', 'нет', 'был', 'была', 'было', 'были', 'будет', 'есть',
         'ни', 'её', 'его', 'их', 'мой', 'твой', 'наш', 'ваш', 'свой',
-        'этот', 'тот', 'такой', 'там', 'тут', 'где', 'когда', 'если', 'для',
-        'без', 'под', 'над', 'про', 'при', 'через', 'между', 'лишь', 'только',
+        'этот', 'тот', 'такой', 'там', 'тут', 'где', 'когда', 'без',
+        'под', 'над', 'про', 'при', 'через', 'между', 'лишь', 'только',
         'том', 'тому', 'тем', 'тех', 'того', 'та', 'те', 'весь', 'вся', 'всё',
         'все', 'всего', 'всей', 'всем', 'всех', 'сам', 'сама', 'само', 'сами',
         'который', 'которая', 'которое', 'которые', 'именно',
@@ -251,6 +276,15 @@ class LanguageMembrane:
         self.learned_rules_path = os.path.join(os.getcwd(), 'learned_language_rules.json')
         self._label_cache: Dict[str, str] = {}
         self.stemmer = RussianStemmer()
+        # 🆕 ФАЗА 2 (Шаг 2.2): состояние отложенных операторов + карта
+        # "концепт → последний токен" для SYN-ребра BIND (оператор 'и')
+        self._last_token_by_label: Dict[str, int] = {}
+        self._pending_negate = False
+        self._pending_condition = False
+        self._pending_cause = False
+        self._pending_is_a = False
+        self._pending_goal = False
+        self._goal_target_label: Optional[str] = None
         self.last_query_intent: Optional[str] = None  # 🆕 Приоритет 2.2
         self._load_learned_rules()
 
@@ -449,6 +483,162 @@ class LanguageMembrane:
         """🆕 Шаг 1.3: Простая лемматизация через существующий stemmer мембраны."""
         return self.stemmer.stem(word.lower())
 
+    # ================================================================
+    # 🆕 ФАЗА 2 (Шаг 2.2): Обработка слов-операторов (идея #7)
+    # ================================================================
+    def _op_node(self, op_type: str):
+        """Операторный узел op:<op_type> из реестра Кристалла (или None)."""
+        return self.lattice.operator_nodes.get(op_type)
+
+    def _apply_operator(self, op_word: str, context_concepts: list) -> Optional[str]:
+        """
+        Применить оператор к текущему контексту концептов (идея #7).
+        Возвращает тип операции — чтобы inject_text мог синхронизировать
+        существующие флаги пайплайна (negation_pending / pending_is_a).
+        Часть операций дублирует работу маркерного прохода ниже (contrast/
+        condition/cause/is_a/part_of) — connect() идемпотентен, это безопасно.
+        """
+        op_type = self.OPERATORS.get(op_word.lower())
+        if not op_type:
+            return None
+
+        tick = self.lattice.tick_count
+        reason = lambda src: CrystalReason(
+            kind="input", source_label=src, source_type="text",
+            context=self.lattice.active_context, timestamp=tick)
+
+        # 🆕 Контекст приходит из valid_concepts — это НЕ всегда метки узлов
+        # (например "яблоко" резолвится в "root:яблок"). Разрешаем каждую метку
+        # через label_to_id с fallback на root:-форму; неразрешённые отбрасываем.
+        ctx_ids: list = []
+        for lbl in context_concepts:
+            rid = self.lattice.label_to_id.get(lbl) or self.lattice.label_to_id.get(f"root:{lbl}")
+            if rid is not None:
+                ctx_ids.append(rid)
+
+        if op_type == 'negate':
+            # Следующий концепт получит state = FALSE (флаг ставит inject_text)
+            self._pending_negate = True
+
+        elif op_type == 'bind':
+            # Объединить последние два концепта: bundled HDC (суперпозиция, идея #56)
+            if len(ctx_ids) >= 2:
+                a = ctx_ids[-2]
+                b = ctx_ids[-1]
+                bundled = self.lattice.encoder.bundle([
+                    self.lattice.resonators[a].hdc_vector,
+                    self.lattice.resonators[b].hdc_vector
+                ])
+                # Временная суперпозиция в рабочей памяти Кристалла
+                self.lattice.working_memory.append(bundled)
+                # Операторный узел 'bind' активируется фактом применения (шаг 2.3)
+                op_r = self._op_node('bind')
+                if op_r is not None:
+                    op_r.inject_energy(20, tick, source_ids=[a, b])
+                # SYN-слой (идея #8): языковая связь BIND между токенами
+                # последних вхождений этих концептов в тексте
+                ta = self._last_token_by_label.get(context_concepts[-2])
+                tb = self._last_token_by_label.get(context_concepts[-1])
+                if ta is not None and tb is not None and ta != tb:
+                    self.lattice.syn_graph[(ta, tb)] = pack_edge(
+                        self.calibration.syntagm_weight_adj, EDGE_SYNTAGM)
+
+        elif op_type == 'branch':
+            # 'или' — развилка: аналогично bind, но как альтернатива (ANALOG-связь)
+            if len(ctx_ids) >= 2:
+                la = self.lattice.resonators[ctx_ids[-2]].label
+                lb = self.lattice.resonators[ctx_ids[-1]].label
+                self.lattice.connect(la, lb,
+                                     weight=self.calibration.syntagm_weight_direct,
+                                     edge_type=EDGE_ANALOG)
+
+        elif op_type == 'contrast':
+            # Конфликт как знание (идея #34): EDGE_EXCEPT с весом 80
+            if len(ctx_ids) >= 2:
+                la = self.lattice.resonators[ctx_ids[-2]].label
+                lb = self.lattice.resonators[ctx_ids[-1]].label
+                self.lattice.connect(la, lb,
+                                     weight=80, edge_type=EDGE_EXCEPT,
+                                     reason=reason(f"{la} {op_word} {lb}"))
+
+        elif op_type == 'condition':
+            # Следующая пара: A если B → EDGE_COND(B, A)
+            self._pending_condition = True
+
+        elif op_type == 'consequence':
+            # 'то'/'поэтому': предыдущий концепт — причина следующего
+            if len(ctx_ids) >= 2:
+                la = self.lattice.resonators[ctx_ids[-2]].label
+                lb = self.lattice.resonators[ctx_ids[-1]].label
+                self.lattice.connect(la, lb,
+                                     weight=self.calibration.causal_marker_weight,
+                                     edge_type=EDGE_CAUSE,
+                                     reason=reason(f"{la} -> {lb} ({op_word})"))
+
+        elif op_type in ('container', 'surface'):
+            # Пространственные отношения: предлог связывает соседние концепты
+            # как часть→целое (X в/на Y ⇒ X PART_OF Y на время предложения)
+            if len(ctx_ids) >= 2:
+                la = self.lattice.resonators[ctx_ids[-1]].label
+                lb = self.lattice.resonators[ctx_ids[-2]].label
+                self.lattice.connect(la, lb,
+                                     weight=self.calibration.syntagm_weight_direct,
+                                     edge_type=EDGE_PART_OF,
+                                     reason=reason(f"{la} {op_word} {lb}"))
+
+        elif op_type == 'cause':
+            # из-за X → Y: CAUSE(X, Y) — маркерный проход построит связь;
+            # флаг запоминаем для усиления
+            self._pending_cause = True
+
+        elif op_type == 'is_a':
+            # уже реализовано через pending_is_a — оставить
+            self._pending_is_a = True
+
+        elif op_type == 'purpose':
+            # для X → целевая связь EDGE_GOAL (X — цель последнего концепта)
+            self._pending_goal = True
+            if ctx_ids:
+                goal_r = self._op_node('purpose')
+                if goal_r is not None:
+                    # помечаем: следующий материализованный концепт — цель
+                    # (каноническая метка узла, а не raw-метка контекста)
+                    self._goal_target_label = self.lattice.resonators[ctx_ids[-1]].label
+
+        elif op_type == 'part_of':
+            # часть/из: X часть Y → EDGE_PART_OF(X, Y)
+            if len(ctx_ids) >= 2:
+                la = self.lattice.resonators[ctx_ids[-2]].label
+                lb = self.lattice.resonators[ctx_ids[-1]].label
+                self.lattice.connect(la, lb,
+                                     weight=self.calibration.causal_marker_weight,
+                                     edge_type=EDGE_PART_OF,
+                                     reason=reason(f"{la} {op_word} {lb}"))
+
+        return op_type
+
+    def _finalize_operator_state(self, valid_concepts: list, stats: CausalStats):
+        """
+        🆕 Шаг 2.2: «доиграть» отложенные операторы после основного цикла.
+        - 'для X' (purpose): EDGE_GOAL(цель ← субъект)
+        - операторные узлы получают энергию за каждое применение (шаг 2.3)
+        """
+        if getattr(self, '_pending_goal', False):
+            goal_lbl = getattr(self, '_goal_target_label', None)
+            if goal_lbl and len(valid_concepts) >= 2:
+                subj = next((c for c in reversed(valid_concepts[:-1]) if c != goal_lbl), None)
+                if subj:
+                    self.lattice.connect(subj, goal_lbl,
+                                         weight=self.calibration.causal_marker_weight,
+                                         edge_type=EDGE_GOAL,
+                                         reason=CrystalReason(
+                                             kind="input", source_label=f"{subj} для {goal_lbl}",
+                                             source_type="text",
+                                             context=self.lattice.active_context,
+                                             timestamp=self.lattice.tick_count))
+            self._pending_goal = False
+            self._goal_target_label = None
+
     def _build_lexical_layers(self, words: List[str], resolved_labels: List[Optional[str]]):
         """
         🆕 ФАЗА 1 (Шаги 1.3/1.4): Разделение «Слово / Смысл / Сущность» (идея #3).
@@ -484,13 +674,18 @@ class LanguageMembrane:
             token_words.append(w.lower())
 
         # 2. Лемматизация: tok:банке → lem:банка; TOKEN → LEMMA (lemma_id)
-        for tok_id, tok in zip(token_ids, token_words):
+        for tok_id, tok, (w, lbl) in zip(token_ids, token_words,
+                                         [(w, l) for w, l in zip(words, resolved_labels) if l is not None]):
             lemma = self._lemmatize(tok)
             if not lemma:
                 continue
             lemma_r = self.lattice.get_or_create(f"lem:{lemma}", NodeType.LEMMA)
             token_r = self.lattice.resonators[tok_id]
             token_r.lemma_id = lemma_r.id
+            # 🆕 Фаза 2 (bind): запоминаем последний токен каждого концепта —
+            # оператор 'и' строит по ним SYN-ребро BIND в syn_graph
+            if lbl:
+                self._last_token_by_label[lbl] = tok_id
             # Активация леммы следует за активацией её токена (смысл ≠ слово)
             src_r = self.lattice.resonators[tok_id]
             if src_r.is_active():
@@ -536,20 +731,36 @@ class LanguageMembrane:
         negation_pending = False
         pending_is_a = False  # 🆕 'это' — оператор связки X IS_A Y
 
+        # 🆕 ФАЗА 2 (Шаг 1.3/2.2): SYN-граф строится ДО применения операторов:
+        # bind-оператору нужны id токенов, а _last_token_by_label заполняется
+        # внутри _build_lexical_layers. Связи в syn_graph идемпотентны (key-value),
+        # повторное применение оператора безопасно.
+        pre_labels: List[Optional[str]] = []
         for w in words:
-            # 🆕 Обработка "не" — не пропускаем, а активируем флаг отрицания
-            if w == 'не':
-                negation_pending = True
-                stats.negations += 1
-                resolved_labels.append(None)
-                continue
+            if w.lower() in self.OPERATORS or (
+                    w in self.STOP_WORDS and
+                    w not in self.CAUSE_MARKERS and
+                    w not in self.EXCEPT_MARKERS and
+                    w not in self.COND_MARKERS and
+                    w not in self.IS_A_MARKERS):
+                pre_labels.append(None)
+            else:
+                pre_labels.append(self._resolve_label(w))
+        self._build_lexical_layers(words, pre_labels)
 
-            # 🆕 'это' — оператор связки, не концепт
-            if w == 'это':
-                # Не создаём узел. Просто запоминаем, что следующий концепт
-                # будет связан с предыдущим через IS_A
-                pending_is_a = True
-                resolved_labels.append(None)  # не материализуем
+        for w in words:
+            # 🆕 ФАЗА 2, Шаг 2.2 (идея #7): служебные слова — ОПЕРАТОРЫ, не концепты.
+            # Перехватываем ДО стоп-листа; контекст (valid_concepts) к этому
+            # моменту уже наполнен предыдущими словами цикла.
+            if w.lower() in self.OPERATORS:
+                resolved_labels.append(None)     # оператор НЕ материализуется как узел
+                op_type = self._apply_operator(w.lower(), valid_concepts)
+                # Совместимость с существующими флагами пайплайна:
+                if op_type == 'negate':
+                    negation_pending = True      # следующий концепт → FALSE/defeated
+                    stats.negations += 1
+                elif op_type == 'is_a':
+                    pending_is_a = True          # X это Y → EDGE_IS_A
                 continue
 
             # Пропускаем обычные стоп-слова (кроме маркеров связок)
@@ -636,10 +847,11 @@ class LanguageMembrane:
 
         pending_is_a = False
 
-        self._learn_contextual_rules(words, resolved_labels)
+        # 🆕 ФАЗА 2 (Шаг 2.2): доиграть отложенные операторы ('для' → EDGE_GOAL)
+        # (SYN-граф построен раньше — перед циклом операторов, шаг 1.3/2.2)
+        self._finalize_operator_state(valid_concepts, stats)
 
-        # 🆕 ФАЗА 1 (Шаг 1.3): Слово/Смысл/Сущность — TOKEN→LEMMA слои + SYN-граф
-        self._build_lexical_layers(words, resolved_labels)
+        self._learn_contextual_rules(words, resolved_labels)
 
         # 🆕 Приоритет 2.3: Извлечение примитивных триплетов с маркерами
         for i in range(len(words)):

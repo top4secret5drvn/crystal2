@@ -601,7 +601,30 @@ class CrystalLattice:
         # Ключ: (token_id, token_id), значение: packed_edge.
         # Семантический граф остаётся в resonators[].connections.
         self.syn_graph: Dict[Tuple[int, int], int] = {}
-    
+
+        # 🆕 ФАЗА 2, Шаг 2.3: Рабочая память — временные суперпозиции HDC
+        # (результат оператора 'и'/bind, идея #56). Эфемерна, не сериализуется.
+        self.working_memory: List[int] = []
+
+        # 🆕 ФАЗА 2, Шаг 2.3: Реестр постоянных узлов-операторов (op:<тип>).
+        # Заполняется лениво через ensure_operators() — прямая ссылка на
+        # LanguageMembrane.OPERATORS создавала бы circular import.
+        self.operator_nodes: Dict[str, Resonator] = {}
+
+    # ================================================================
+    # 🆕 ФАЗА 2, Шаг 2.3: Операторные узлы (постоянные, всегда активны)
+    # ================================================================
+    def ensure_operators(self):
+        """Создать/обновить постоянные узлы-операторы op:<op_type>."""
+        from membrane import LanguageMembrane  # локальный импорт: нет цикла на уровне модулей
+        for word, op_type in LanguageMembrane.OPERATORS.items():
+            r = self.get_or_create(f"op:{op_type}", NodeType.OPERATOR)
+            r.energy = max(r.energy, 500)  # операторы всегда активны
+            r.semantic.set('abstract', 1.0)
+            r.semantic.set('functional', 1.0)
+            self.operator_nodes[op_type] = r
+        return self.operator_nodes
+
     def _register_primitive_frames(self):
         """Регистрация базовых фреймов (Fillmore)."""
         primitives = [
@@ -1508,6 +1531,11 @@ class CrystalLattice:
     
     def tick(self):
         self.tick_count += 1
+        # 🆕 ФАЗА 2, Шаг 2.3: операторные узлы всегда активны — подновляем реестр
+        if not self.operator_nodes:
+            self.ensure_operators()
+        for r in self.operator_nodes.values():
+            r.energy = max(r.energy, 500)
         self.tick_markers(max_steps=2)
         self.evoke_frames()
         transfers: Dict[int, Tuple[int, List[int]]] = {}
