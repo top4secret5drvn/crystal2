@@ -9,6 +9,10 @@ from pathlib import Path
 class CrystalSnapshot:
     MAGIC_FULL = b'CRYSTAL\x01'
     MAGIC_DELTA = b'CRYSTAL\x02'
+    # 🆕 Шаг 0.5 (исправление): явный признак формата v2 — резонаторные рекорды
+    # содержат SemanticVector после HDC. Эвристический probe по содержимому
+    # давал ложные срабатывания; версия кодируется в magic-сигнатуре файла.
+    MAGIC_FULL_V2 = b'CRYSTAL\x03'
     HEADER_FORMAT = '<8s Q Q I I I I'
     HEADER_SIZE = struct.calcsize(HEADER_FORMAT)
     BYTES_PER_VECTOR = 1250
@@ -104,7 +108,7 @@ class CrystalSnapshot:
         buffer = bytearray()
         header = struct.pack(
             CrystalSnapshot.HEADER_FORMAT,
-            CrystalSnapshot.MAGIC_FULL, timestamp, tick_count, res_count,
+            CrystalSnapshot.MAGIC_FULL_V2, timestamp, tick_count, res_count,
             len(connections), len(contexts), len(defeaters)
         )
         buffer.extend(header)

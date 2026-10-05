@@ -288,6 +288,7 @@ class LanguageMembrane:
         # 🆕 Фаза 2 (двухпроходные операторы): левый член пары 'A и B' / 'A или B'
         self._pending_bind: str = ''
         self._pending_branch: str = ''
+        self._pending_contrast: str = ''   # левый член пары 'A но B' (EDGE_EXCEPT)
         self._goal_target_label: Optional[str] = None
         self.last_query_intent: Optional[str] = None  # 🆕 Приоритет 2.2
         self._load_learned_rules()
@@ -536,13 +537,19 @@ class LanguageMembrane:
             self._pending_branch = context_concepts[-1] if context_concepts else ''
 
         elif op_type == 'contrast':
-            # Конфликт как знание (идея #34): EDGE_EXCEPT с весом 80
+            # Конфликт как знание (идея #34): EDGE_EXCEPT с весом 80.
+            # 🆕 Исправление KeyError: правый член пары ('но X') ещё НЕ
+            # материализован в основном цикле — ctx_ids содержит только левый.
+            # Ставим отложенный флаг; пару закроем в _finalize_operator_state,
+            # когда оба концепта уже в графе. Если правый уже есть — связываем сразу.
             if len(ctx_ids) >= 2:
                 la = self.lattice.resonators[ctx_ids[-2]].label
                 lb = self.lattice.resonators[ctx_ids[-1]].label
                 self.lattice.connect(la, lb,
                                      weight=80, edge_type=EDGE_EXCEPT,
                                      reason=reason(f"{la} {op_word} {lb}"))
+            elif len(ctx_ids) == 1:
+                self._pending_contrast = context_concepts[-1]
 
         elif op_type == 'condition':
             # Следующая пара: A если B → EDGE_COND(B, A)
@@ -686,6 +693,30 @@ class LanguageMembrane:
                         weight=self.calibration.syntagm_weight_direct,
                         edge_type=EDGE_ANALOG)
         self._pending_branch = ''
+
+        # --- contrast: 'A но B' — EDGE_EXCEPT(80) (исправление KeyError) ---
+        # В однопроходном цикле правый член ('вода' после 'но') ещё не был
+        # материализован; здесь оба концепта уже в valid_concepts.
+        pending_contrast = getattr(self, '_pending_contrast', '')
+        if pending_contrast and len(valid_concepts) >= 2:
+            right_lbl = next((c for c in reversed(valid_concepts)
+                              if c != pending_contrast), None)
+            if right_lbl:
+                la = resolve(pending_contrast)
+                lb = resolve(right_lbl)
+                if la is not None and lb is not None and la != lb:
+                    self.lattice.connect(
+                        self.lattice.resonators[la].label,
+                        self.lattice.resonators[lb].label,
+                        weight=80, edge_type=EDGE_EXCEPT,
+                        reason=CrystalReason(
+                            kind="input",
+                            source_label=f"{pending_contrast} но {right_lbl}",
+                            source_type="text",
+                            context=self.lattice.active_context,
+                            timestamp=tick))
+                    stats.except_links += 1
+        self._pending_contrast = ''
 
         if getattr(self, '_pending_goal', False):
             goal_lbl = getattr(self, '_goal_target_label', None)
@@ -845,10 +876,11 @@ class LanguageMembrane:
             resolved_labels.append(label)
             occurrence_count = self.word_occurrence_count.get(w, 0)
 
-            # 🆕 Фаза 2: висит отложенный bind/branch ('и'/'или' уже пройдено) —
+            # 🆕 Фаза 2: висит отложенный bind/branch/contrast ('и'/'или'/'но' уже пройдено) —
             # следующий концепт принудительно материализуется как правый член пары.
             if (getattr(self, '_pending_bind', '') or
-                    getattr(self, '_pending_branch', '')):
+                    getattr(self, '_pending_branch', '') or
+                    getattr(self, '_pending_contrast', '')):
                 force_materialize = True
 
             should_materialize = (
