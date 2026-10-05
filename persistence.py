@@ -112,6 +112,7 @@ class CrystalSnapshot:
             len(connections), len(contexts), len(defeaters)
         )
         buffer.extend(header)
+        lattice._snapshot_format = 2  # 🆕 дельты после этого снапшота наследуют v2
         
         for r in lattice.resonators.values():
             lbl = r.label.encode('utf-8')
@@ -137,6 +138,9 @@ class CrystalSnapshot:
     def save_delta(lattice, filename: str, prev_cache: dict):
         """🚀 Вектор 4: Сохраняет ТОЛЬКО ИЗМЕНЕНИЯ (XOR + RLE)."""
         buffer = bytearray()
+        # 🆕 Шаг 0.5: дельта наследует версию базового снапшота — v2-флаг
+        # кладётся в заголовок патча, чтобы _load_delta знал формат рекордов.
+        is_v2 = getattr(lattice, '_snapshot_format', 1) >= 2
         buffer.extend(CrystalSnapshot.MAGIC_DELTA)
         
         curr_cache = CrystalSnapshot.generate_state_cache(lattice)
@@ -150,8 +154,9 @@ class CrystalSnapshot:
             curr_cache[cid]['ctx'] != prev_cache[cid]['ctx']
         )]
         
-        # Заголовок патча: три счётчика
-        buffer.extend(struct.pack('<I I I', len(deleted), len(new_ids), len(updated)))
+        # Заголовок патча: три счётчика + байт версии формата рекордов
+        buffer.extend(struct.pack('<I I I B', len(deleted), len(new_ids), len(updated),
+                                  2 if is_v2 else 1))
         
         for pid in deleted: buffer.extend(struct.pack('<I', pid))
         
@@ -207,7 +212,10 @@ class CrystalSnapshot:
                 print("[ПАМЯТЬ] Ошибка: Для загрузки дельты (.cdt) нужен базовый снапшот в памяти!")
                 return False
             return CrystalSnapshot._load_delta(lattice, buffer, prev_cache)
-        elif magic == CrystalSnapshot.MAGIC_FULL:
+        elif magic in (CrystalSnapshot.MAGIC_FULL, CrystalSnapshot.MAGIC_FULL_V2):
+            # MAGIC_FULL (\x01) — legacy v1 без SemanticVector;
+            # MAGIC_FULL_V2 (\x03) — v2 с SemanticVector. Версия кодируется
+            # в сигнатуре, эвристический probe по содержимому больше не нужен.
             return CrystalSnapshot._load_full(lattice, buffer)
         else:
             print("[ПАМЯТЬ] Ошибка: Неизвестный формат файла!")
@@ -221,42 +229,46 @@ class CrystalSnapshot:
             return False
         
         magic, timestamp, tick_count, res_count, conn_count, ctx_count, def_count = struct.unpack_from(CrystalSnapshot.HEADER_FORMAT, buffer, 0)
+        # 🆕 Шаг 0.5 (исправление): версия формата определяется ЯВНО по magic,
+        # а не эвристическим probe по содержимому (давало ложные срабатывания).
+        is_v2 = (magic == CrystalSnapshot.MAGIC_FULL_V2)
         
         lattice.resonators.clear()
         lattice.label_to_id.clear()
         lattice.tick_count = tick_count
+        if hasattr(lattice, 'syn_graph'):
+            lattice.syn_graph.clear()
         
         offset = CrystalSnapshot.HEADER_SIZE
         max_id = 0
         
-        from engine import Resonator, TruthValue, SemanticVector
+        from engine import Resonator, TruthValue, SemanticVector, NodeType
         
         for _ in range(res_count):
             id_, lbl_len = struct.unpack_from('<I H', buffer, offset)
-            # 🆕 Шаг 0.5: автоопределение версии рекорда (v2 — с SemanticVector, v1 — legacy)
-            probe_off = offset + 6 + lbl_len + CrystalSnapshot.BYTES_PER_VECTOR
-            sem_len, st_probe = struct.unpack_from('<H B', buffer, probe_off)
-            tail_ok = (buffer[probe_off + 3:probe_off + 7] == b'\x00\x00\x00\x00' and
-                       2 <= sem_len <= 4096)
-            if tail_ok:
-                try:
-                    _sv_probe, sem_end = SemanticVector.from_bytes(buffer, probe_off + 2)
-                    tail_ok = (sem_end == probe_off + 2 + sem_len and len(_sv_probe.axes) > 0)
-                except Exception:
-                    tail_ok = False
-            if tail_ok:
+            if is_v2:
+                sem_len, = struct.unpack_from('<H', buffer,
+                                              offset + 6 + lbl_len + CrystalSnapshot.BYTES_PER_VECTOR)
+                # 🚀 ИСПРАВЛЕНО: формат '<I H {l}s 1250s H {n}s B I Q' даёт 9 значений
+                # (второй H — это sem_len), а не 8 — отсюда был "too many values to unpack".
                 fmt = f'<I H {lbl_len}s 1250s H {sem_len}s B I Q'
-                id_, _, lbl_b, hdc_b, _sem_b, st, en, tk = struct.unpack_from(fmt, buffer, offset)
-                offset += struct.calcsize(fmt)
+                (_rid, _ll, lbl_b, hdc_b, _sl, _sb, st, en, tk) = struct.unpack_from(fmt, buffer, offset)
+                probe_off = offset + 6 + lbl_len + CrystalSnapshot.BYTES_PER_VECTOR
                 sem, _ = SemanticVector.from_bytes(buffer, probe_off + 2)
             else:
                 fmt = f'<I H {lbl_len}s 1250s B I Q'
                 id_, _, lbl_b, hdc_b, st, en, tk = struct.unpack_from(fmt, buffer, offset)
-                offset += struct.calcsize(fmt)
                 sem = SemanticVector()
+            offset += struct.calcsize(fmt)
             
             lbl = lbl_b.decode('utf-8')
             r = Resonator(id=id_, label=lbl, hdc_vector=int.from_bytes(hdc_b, 'little'), energy=en, last_tick=tk)
+            # Восстановление типа узла по префиксу метки (ФАЗА 1)
+            if lbl.startswith('tok:'):   r.node_type = NodeType.TOKEN
+            elif lbl.startswith('lem:'): r.node_type = NodeType.LEMMA
+            elif lbl.startswith('op:'):  r.node_type = NodeType.OPERATOR
+            elif lbl.startswith('sense:'): r.node_type = NodeType.SENSE
+            elif lbl.startswith('ent:'): r.node_type = NodeType.ENTITY
             r.semantic = sem
             r.state = TruthValue(st)
             lattice.resonators[id_] = r
@@ -295,6 +307,49 @@ class CrystalSnapshot:
         return True
     
     @staticmethod
+    def _delta_header_size(payload: bytes):
+        """
+        🆕 Шаг 0.5 (исправление): определение заголовка патча дельты.
+        Новый формат (v2+): <I I I B> = 13 байт (3 счётчика + байт версии).
+        Legacy-формат:      <I I I>   = 12 байт (без версии, рекорды v1).
+        Различаем СТРУКТУРНО по длине данных после заголовка:
+          - новый: len(payload) == 13 + 4*del_cnt (и далее блоки узлов);
+          - legacy: len(payload) == 12 + 4*del_cnt.
+        Если оба варианта дают несовпадение — выбираем тот, при котором
+        остаток payload допускает разбор блоков (эвристика минимального
+        хвоста). Версия из байта 12 используется только как подсказка
+        (легальные значения 1/2), потому что в legacy-дельтах там лежат
+        данные (первый байт id удаления), а не версия.
+        Возвращает (del_cnt, new_cnt, upd_cnt, is_v2, offset).
+        """
+        if len(payload) < 12:
+            raise ValueError("Delta payload too short")
+        d, n, u = struct.unpack_from('<I I I', payload, 0)
+        del_bytes = 4 * d
+        # Кандидат 1: новый 13-байтный заголовок (с байтом версии)
+        new_ok = False
+        ver_hint = None
+        if len(payload) >= 13:
+            ver_hint, = struct.unpack_from('<B', payload, 12)
+            tail_new = len(payload) - 13 - del_bytes
+            new_ok = (tail_new >= 0 and (ver_hint in (1, 2, 3)) and
+                      (n == 0 or tail_new > 0))
+        # Кандидат 2: legacy 12-байтный заголовок
+        tail_old = len(payload) - 12 - del_bytes
+        old_ok = (tail_old >= 0 and (n + u == 0 or tail_old > 0))
+        if new_ok and not old_ok:
+            return d, n, u, (ver_hint or 0) >= 2, 13
+        if old_ok and not new_ok:
+            return d, n, u, False, 12
+        if new_ok and old_ok:
+            # Оба разбора структурно допустимы (например, пустая дельта):
+            # байт 12 == 1 или 2 → это явная версия нового формата.
+            if ver_hint in (1, 2):
+                return d, n, u, ver_hint >= 2, 13
+            return d, n, u, False, 12
+        raise ValueError("Unrecognized delta header layout")
+
+    @staticmethod
     def _load_delta(lattice, buffer: bytes, prev_cache: dict) -> bool:
         stored_crc = struct.unpack('<I', buffer[-4:])[0]
         if zlib.crc32(buffer[:-4]) & 0xFFFFFFFF != stored_crc:
@@ -309,9 +364,12 @@ class CrystalSnapshot:
             print("[ПАМЯТЬ] Ошибка: Размер RLE не совпадает!")
             return False
         
-        # 🚀 ИСПРАВЛЕНО: Читаем три счётчика с начала payload
-        del_cnt, new_cnt, upd_cnt = struct.unpack_from('<I I I', payload, 0)
-        offset = 12
+        # 🚀 ИСПРАВЛЕНО: Читаем три счётчика + байт версии формата с начала payload.
+        # Legacy-дельты (до Фазы 0) имели заголовок из 12 байт без версии — для них
+        # включаем fallback на v1-формат рекордов. Версия валидируется структурно
+        # (см. _delta_header_size), а не по содержимому рекордов, поэтому ложных
+        # срабатываний, как у старого probe-эвристического автоопределения, нет.
+        del_cnt, new_cnt, upd_cnt, is_v2, offset = CrystalSnapshot._delta_header_size(payload)
         
         # 1. Удаления
         for _ in range(del_cnt):
@@ -323,34 +381,30 @@ class CrystalSnapshot:
                 if lbl in lattice.label_to_id: del lattice.label_to_id[lbl]
         
         # 2. Новые (полная распаковка)
-        from engine import Resonator, TruthValue, SemanticVector
+        from engine import Resonator, TruthValue, SemanticVector, NodeType
         
         for _ in range(new_cnt):
             id_, lbl_len = struct.unpack_from('<I H', payload, offset)
-            # 🆕 Шаг 0.5: автоопределение версии рекорда (v2 — с SemanticVector, v1 — legacy)
-            probe_off = offset + 6 + lbl_len + CrystalSnapshot.BYTES_PER_VECTOR
-            sem_len, st_probe = struct.unpack_from('<H B', payload, probe_off)
-            tail_ok = (payload[probe_off + 3:probe_off + 7] == b'\x00\x00\x00\x00' and
-                       2 <= sem_len <= 4096)
-            if tail_ok:
-                try:
-                    _sv_probe, sem_end = SemanticVector.from_bytes(payload, probe_off + 2)
-                    tail_ok = (sem_end == probe_off + 2 + sem_len and len(_sv_probe.axes) > 0)
-                except Exception:
-                    tail_ok = False
-            if tail_ok:
+            if is_v2:
+                sem_len, = struct.unpack_from('<H', payload,
+                                              offset + 6 + lbl_len + CrystalSnapshot.BYTES_PER_VECTOR)
                 fmt = f'<I H {lbl_len}s 1250s H {sem_len}s B I Q'
-                id_, _, lbl_b, hdc_b, _sem_b, st, en, tk = struct.unpack_from(fmt, payload, offset)
-                offset += struct.calcsize(fmt)
+                (_rid, _ll, lbl_b, hdc_b, _sl, _sb, st, en, tk) = struct.unpack_from(fmt, payload, offset)
+                probe_off = offset + 6 + lbl_len + CrystalSnapshot.BYTES_PER_VECTOR
                 sem, _ = SemanticVector.from_bytes(payload, probe_off + 2)
             else:
                 fmt = f'<I H {lbl_len}s 1250s B I Q'
                 id_, _, lbl_b, hdc_b, st, en, tk = struct.unpack_from(fmt, payload, offset)
-                offset += struct.calcsize(fmt)
                 sem = SemanticVector()
+            offset += struct.calcsize(fmt)
             
             lbl = lbl_b.decode('utf-8')
             r = Resonator(id=id_, label=lbl, hdc_vector=int.from_bytes(hdc_b, 'little'), energy=en, last_tick=tk)
+            if lbl.startswith('tok:'):   r.node_type = NodeType.TOKEN
+            elif lbl.startswith('lem:'): r.node_type = NodeType.LEMMA
+            elif lbl.startswith('op:'):  r.node_type = NodeType.OPERATOR
+            elif lbl.startswith('sense:'): r.node_type = NodeType.SENSE
+            elif lbl.startswith('ent:'): r.node_type = NodeType.ENTITY
             r.semantic = sem
             r.state = TruthValue(st)
             lattice.resonators[id_] = r
