@@ -489,6 +489,46 @@ class LanguageMembrane:
         return self.stemmer.stem(word.lower())
 
     # ================================================================
+    # 🆕 ФАЗА 3 (Шаг 3.4): Начальная семантика — без заполнения осей все
+    # SemanticVector нулевые, косинусное similarity() даёт 0 и нечёткая
+    # принадлежность ConceptRegion всегда была бы 0.0. Грубая лексическая
+    # эвристика (аффиксы/корни) задаёт стартовые координаты; дальше их
+    # уточняют операторы, сон и update_prototype().
+    # ================================================================
+    _SEM_SUFFIXES = [
+        ('тель', 'agent', 0.8), ('щик', 'agent', 0.8), ('ец', 'agent', 0.7),
+        ('ист', 'agent', 0.6), ('ость', 'abstract', 0.8), ('ение', 'abstract', 0.7),
+        ('ние', 'abstract', 0.6), ('ство', 'abstract', 0.7), ('ция', 'abstract', 0.6),
+    ]
+    _SEM_ROOTS = {
+        'вод': ('physical', -0.3), 'огн': ('physical', 0.6), 'земл': ('physical', -0.5),
+        'дерев': ('taxonomic', 0.9), 'цвет': ('taxonomic', 0.8), 'птиц': ('taxonomic', 0.9),
+        'рыб': ('taxonomic', 0.8), 'звер': ('taxonomic', 0.9),
+        'человек': ('agent', 0.9), 'дом': ('functional', -0.4),
+        'город': ('abstract', 0.4), 'мысл': ('abstract', 0.9), 'чувств': ('abstract', 0.7),
+        'удар': ('causal', 0.8), 'стро': ('causal', 0.6), 'разруш': ('causal', -0.6),
+        'жизн': ('temporal', 0.6), 'смерт': ('temporal', -0.6),
+        'яблок': ('physical', 0.3), 'груш': ('physical', 0.25), 'лимон': ('physical', 0.2),
+        'помидор': ('physical', 0.2), 'камн': ('physical', -0.7),
+    }
+
+    def _seed_semantic(self, resonator, lemma: str):
+        """Заполнить оси SemanticVector простыми эвристиками (ФАЗА 3)."""
+        sv = resonator.semantic
+        for suf, axis, val in self._SEM_SUFFIXES:
+            if lemma.endswith(suf):
+                sv.set(axis, val)
+                break
+        for root, (axis, val) in self._SEM_ROOTS.items():
+            if lemma.startswith(root):
+                sv.set(axis, val)
+                if axis == 'taxonomic':
+                    sv.set('agency', 0.5)   # живое — активный таксономический класс
+                elif axis == 'physical':
+                    sv.set('taxonomic', -0.4)  # неживое/вещество
+                break
+
+    # ================================================================
     # 🆕 ФАЗА 2 (Шаг 2.2): Обработка слов-операторов (идея #7)
     # ================================================================
     def _op_node(self, op_type: str):
@@ -775,8 +815,15 @@ class LanguageMembrane:
             if not lemma:
                 continue
             lemma_r = self.lattice.get_or_create(f"lem:{lemma}", NodeType.LEMMA)
+            # 🆕 ФАЗА 3: стартовые координаты в семантическом пространстве —
+            # без них membership() ConceptRegion всегда 0 (нулевой косинус).
+            if not any(abs(v) > 1e-9 for v in lemma_r.semantic.values.values()):
+                self._seed_semantic(lemma_r, lemma)
             token_r = self.lattice.resonators[tok_id]
             token_r.lemma_id = lemma_r.id
+            # Токен наследует профиль леммы: «слово» и «смысл» согласованы
+            if all(v == 0.0 for v in token_r.semantic.values.values()):
+                token_r.semantic.values = dict(lemma_r.semantic.values)
             # 🆕 Фаза 2 (bind): запоминаем последний токен каждого концепта —
             # оператор 'и' строит по ним SYN-ребро BIND в syn_graph
             if lbl:

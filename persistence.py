@@ -16,6 +16,8 @@ class CrystalSnapshot:
     HEADER_FORMAT = '<8s Q Q I I I I'
     HEADER_SIZE = struct.calcsize(HEADER_FORMAT)
     BYTES_PER_VECTOR = 1250
+    # 🆕 ФАЗА 3: v3 — в хвосте полного снапшота добавлен блок ConceptRegion.
+    MAGIC_FULL_V3 = b'CRYSTAL\x04'
     # 🆕 ФАЗА 0, Шаг 0.5: версия формата записи резонатора
     #   v1 (старые файлы): <I H {lbl_len}s 1250s B I Q          — без семантического вектора
     #   v2 (новые файлы) : <I H {lbl_len}s 1250s H {sem_len}s B I Q — после HDC идут байты SemanticVector
@@ -108,11 +110,11 @@ class CrystalSnapshot:
         buffer = bytearray()
         header = struct.pack(
             CrystalSnapshot.HEADER_FORMAT,
-            CrystalSnapshot.MAGIC_FULL_V2, timestamp, tick_count, res_count,
+            CrystalSnapshot.MAGIC_FULL_V3, timestamp, tick_count, res_count,
             len(connections), len(contexts), len(defeaters)
         )
         buffer.extend(header)
-        lattice._snapshot_format = 2  # 🆕 дельты после этого снапшота наследуют v2
+        lattice._snapshot_format = 2  # 🆕 дельты после этого снапшота наследуют v2 (рекорды как в v2)
         
         for r in lattice.resonators.values():
             lbl = r.label.encode('utf-8')
@@ -127,7 +129,18 @@ class CrystalSnapshot:
         for rid, srcs in contexts:
             buffer.extend(struct.pack('<I H', rid, len(srcs)))
             for s in srcs: buffer.extend(s.to_bytes(CrystalSnapshot.BYTES_PER_VECTOR, 'little'))
-        
+
+        # 🆕 ФАЗА 3 (Шаг 3.2/3.3): регионы концептов — после основных блоков,
+        # в ХВОСТЕ файла (перед CRC). Старые читалки v1/v2 останавливаются на
+        # контекстах и игнорируют этот блок → обратная совместимость сохранена.
+        regions = getattr(lattice, 'concept_regions', {})
+        if regions:
+            buffer.extend(struct.pack('<I', len(regions)))  # маркер-счётчик
+            for region in regions.values():
+                rb = region.to_bytes()
+                buffer.extend(struct.pack('<H', len(rb)))
+                buffer.extend(rb)
+
         crc = zlib.crc32(buffer) & 0xFFFFFFFF
         buffer.extend(struct.pack('<I', crc))
         
@@ -212,10 +225,12 @@ class CrystalSnapshot:
                 print("[ПАМЯТЬ] Ошибка: Для загрузки дельты (.cdt) нужен базовый снапшот в памяти!")
                 return False
             return CrystalSnapshot._load_delta(lattice, buffer, prev_cache)
-        elif magic in (CrystalSnapshot.MAGIC_FULL, CrystalSnapshot.MAGIC_FULL_V2):
+        elif magic in (CrystalSnapshot.MAGIC_FULL, CrystalSnapshot.MAGIC_FULL_V2,
+                       CrystalSnapshot.MAGIC_FULL_V3):
             # MAGIC_FULL (\x01) — legacy v1 без SemanticVector;
-            # MAGIC_FULL_V2 (\x03) — v2 с SemanticVector. Версия кодируется
-            # в сигнатуре, эвристический probe по содержимому больше не нужен.
+            # MAGIC_FULL_V2 (\x03) — v2 с SemanticVector;
+            # MAGIC_FULL_V3 (\x04) — v3: + блок ConceptRegion в хвосте.
+            # Версия кодируется в сигнатуре, probe по содержимому не нужен.
             return CrystalSnapshot._load_full(lattice, buffer)
         else:
             print("[ПАМЯТЬ] Ошибка: Неизвестный формат файла!")
@@ -231,18 +246,21 @@ class CrystalSnapshot:
         magic, timestamp, tick_count, res_count, conn_count, ctx_count, def_count = struct.unpack_from(CrystalSnapshot.HEADER_FORMAT, buffer, 0)
         # 🆕 Шаг 0.5 (исправление): версия формата определяется ЯВНО по magic,
         # а не эвристическим probe по содержимому (давало ложные срабатывания).
-        is_v2 = (magic == CrystalSnapshot.MAGIC_FULL_V2)
+        is_v2 = (magic in (CrystalSnapshot.MAGIC_FULL_V2, CrystalSnapshot.MAGIC_FULL_V3))
         
         lattice.resonators.clear()
         lattice.label_to_id.clear()
         lattice.tick_count = tick_count
         if hasattr(lattice, 'syn_graph'):
             lattice.syn_graph.clear()
+        if hasattr(lattice, 'concept_regions'):
+            lattice.concept_regions.clear()
         
         offset = CrystalSnapshot.HEADER_SIZE
         max_id = 0
         
-        from engine import Resonator, TruthValue, SemanticVector, NodeType
+        from engine import (Resonator, TruthValue, SemanticVector, NodeType,
+                           ConceptRegion)
         
         for _ in range(res_count):
             id_, lbl_len = struct.unpack_from('<I H', buffer, offset)
@@ -298,6 +316,21 @@ class CrystalSnapshot:
                     offset += 1250
                     r.context_sources.append(int.from_bytes(hdc_b, 'little'))
         
+        # 🆕 ФАЗА 3: хвостовой блок регионов (только v3; старые файлы его не имеют)
+        if magic == CrystalSnapshot.MAGIC_FULL_V3 and offset < len(buffer) - 4:
+            reg_cnt, = struct.unpack_from('<I', buffer, offset)
+            offset += 4
+            for _ in range(reg_cnt):
+                rb_len, = struct.unpack_from('<H', buffer, offset)
+                offset += 2
+                region, _ = ConceptRegion.from_bytes(
+                    buffer[offset:offset + rb_len], 0)
+                offset += rb_len
+                if region.concept_id in lattice.resonators:
+                    region.member_ids = [m for m in region.member_ids
+                                         if m in lattice.resonators]
+                    lattice.concept_regions[region.concept_id] = region
+
         lattice._next_id = max_id + 1 if lattice.resonators else 0
         
         if not hasattr(lattice, 'interference_log'): lattice.interference_log = []
@@ -381,7 +414,8 @@ class CrystalSnapshot:
                 if lbl in lattice.label_to_id: del lattice.label_to_id[lbl]
         
         # 2. Новые (полная распаковка)
-        from engine import Resonator, TruthValue, SemanticVector, NodeType
+        from engine import (Resonator, TruthValue, SemanticVector, NodeType,
+                           ConceptRegion)
         
         for _ in range(new_cnt):
             id_, lbl_len = struct.unpack_from('<I H', payload, offset)

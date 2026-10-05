@@ -685,6 +685,41 @@ class CrystalLattice:
         MEMBERSHIP_THRESHOLD = 0.5
 
     # ================================================================
+    # 🆕 ФАЗА 3 (Шаг 3.4): Концепт как ОБЛАСТЬ — вывод через принадлежность
+    # ================================================================
+    def infer_is_a_from_regions(self) -> List[str]:
+        """
+        Для каждого ConceptRegion: узлы с membership >= порога, но БЕЗ явного
+        IS_A-ребра к классу, получают выведенную связь IS_A (вес 20) и
+        становятся участниками региона (прототип пересчитывается).
+        Так «камень» не попадёт в ФРУКТ (membership≈0), а свежий «слива» —
+        попадёт, даже если про него никогда не говорили.
+        """
+        notes: List[str] = []
+        if not self.concept_regions:
+            return notes
+        for cid in list(self.concept_regions.keys()):
+            region = self.concept_regions.get(cid)
+            if region is None or cid not in self.resonators:
+                continue
+            c_label = self.resonators[cid].label
+            for r in list(self.resonators.values()):
+                if r.id == cid or r.id in region.member_ids:
+                    continue
+                if r.label.startswith(('tok:', 'op:', 'root:', 'mod:', 'cluster:',
+                                       'mdl:', 'skill:', 'EPOCH:', 'SELF')):
+                    continue
+                if any(unpack_edge(p)[1] == EDGE_IS_A for p in r.connections.values()):
+                    continue  # уже классифицирован явно
+                m = region.membership(r.semantic)
+                if m >= self.MEMBERSHIP_THRESHOLD:
+                    self.connect_ids(r.id, cid, weight=20, edge_type=EDGE_IS_A)
+                    region.member_ids.append(r.id)
+                    region.update_prototype(self)
+                    notes.append(f"🍎 Вывод: '{r.label}' ∈ '{c_label}' (membership={m:.2f})")
+        return notes
+
+    # ================================================================
     # 🆕 ФАЗА 2, Шаг 2.3: Операторные узлы (постоянные, всегда активны)
     # ================================================================
     def ensure_operators(self):
@@ -869,6 +904,78 @@ class CrystalLattice:
     # 🆕 ФАЗА 1, Шаг 1.4: Очистка эфемерных токенов
     TOKEN_TTL = 50  # токены живут не дольше N тактов
 
+    def _prune_concept_regions(self):
+        """🆕 ФАЗА 3 (Шаг 3.3): поддержать регионы в согласии с графом.
+        - выбросить удалённых/схлопнутых участников;
+        - пересобрать состав из актуальных IS_A-рёбер (defragment мог
+          перенести связи на root:-узел);
+        - удалить регион, если класс исчез или участников осталось < 2."""
+        if not self.concept_regions:
+            return
+        for cid in list(self.concept_regions.keys()):
+            region = self.concept_regions[cid]
+            if cid not in self.resonators:
+                del self.concept_regions[cid]
+                continue
+            is_a_members = [src.id for src in self.resonators.values()
+                            if any(unpack_edge(p)[1] == EDGE_IS_A and tgt == cid
+                                   for tgt, p in src.connections.items())]
+            merged = list(dict.fromkeys(
+                [m for m in region.member_ids if m in self.resonators] + is_a_members))
+            merged = [m for m in merged if m != cid]
+            if len(merged) < 2:
+                del self.concept_regions[cid]
+                continue
+            region.member_ids = merged
+            region.update_prototype(self)
+
+    def _canonicalize_region_members(self):
+        """
+        🆕 ФАЗА 3 (Шаг 3.3): привязать регион к устойчивым узлам.
+        Если участник — raw-дубль существующего root:-узла ('яблоко' vs
+        'root:яблок'), переносим членство и IS_A-ребро на root: до того,
+        как defragment схлопнет raw-узел (иначе регион теряет участников).
+        """
+        if not self.concept_regions:
+            return
+        roots = {r.label[5:]: r for r in self.resonators.values()
+                 if r.label.startswith('root:')}
+        for cid, region in list(self.concept_regions.items()):
+            remap: Dict[int, int] = {}
+            for mid in list(region.member_ids):
+                mr = self.resonators.get(mid)
+                if mr is None or mid == cid:
+                    continue
+                root_r = roots.get(mr.label)
+                if root_r is not None and root_r.id != mid:
+                    remap[mid] = root_r.id
+            if not remap:
+                continue
+            new_members = []
+            for mid in region.member_ids:
+                nid = remap.get(mid, mid)
+                if nid not in new_members and nid != cid:
+                    new_members.append(nid)
+            region.member_ids = new_members
+            # Переносим IS_A-рёбра участника на его root-двойник
+            for old_id, new_id in remap.items():
+                old_r = self.resonators.get(old_id)
+                if old_r is None:
+                    continue
+                for tgt, packed in list(old_r.connections.items()):
+                    w, et = unpack_edge(packed)
+                    if et == EDGE_IS_A and w >= 20:
+                        nr = self.resonators[new_id]
+                        cur_w, cur_et = unpack_edge(nr.connections.get(tgt, 0))
+                        if cur_et != EDGE_IS_A or cur_w < w:
+                            nr.connections[tgt] = pack_edge(max(cur_w, w), EDGE_IS_A)
+                            tr = self.resonators.get(tgt)
+                            if tr is not None:
+                                tr.connections[new_id] = pack_edge(
+                                    max(unpack_edge(tr.connections.get(new_id, 0))[0], w),
+                                    EDGE_IS_A)
+            region.update_prototype(self)
+
     def cleanup_tokens(self):
         """Удалить эфемерные токены старше N тиков."""
         to_remove = [
@@ -887,6 +994,8 @@ class CrystalLattice:
                 other.connections.pop(rid, None)
             del self.resonators[rid]
             self.label_to_id.pop(r.label, None)
+        # 🆕 ФАЗА 3: регионы переживают очистку/слияния без «мёртвых» id
+        self._prune_concept_regions()
         return len(to_remove)
     
     def validate_edge(self, source_id: int, target_id: int, edge_type: int) -> Tuple[bool, str]:
@@ -2436,6 +2545,15 @@ class CrystalLattice:
             dreams.extend(region_notes)
         except Exception as e:  # регионы — надстройка, сон не должен падать
             self.paradox_log.append(f"Такт {self.tick_count}: ⚠️ Регионы: {e}")
+
+        # 🆕 ФАЗА 3, Шаг 3.4: вывод IS_A через нечёткую принадлежность регионам
+        region_inferences = self.infer_is_a_from_regions()
+        dreams.extend(region_inferences)
+
+        # 🆕 ФАЗА 3 (Шаг 3.3): семантические связи переживают схлопывание raw→root.
+        # defragment ниже переносит connections на root:-узел, но регионы хранят
+        # id участников — фиксируем canonical-id до слияний.
+        self._canonicalize_region_members()
 
         raw_nodes = {r.label: r for r in self.resonators.values() if not r.label.startswith(('root:', 'mod:', 'cluster:', 'mdl:', 'skill:'))}
         root_nodes = {r.label.replace('root:', ''): r for r in self.resonators.values() if r.label.startswith('root:')}
