@@ -12,6 +12,18 @@ class CrystalSnapshot:
     HEADER_FORMAT = '<8s Q Q I I I I'
     HEADER_SIZE = struct.calcsize(HEADER_FORMAT)
     BYTES_PER_VECTOR = 1250
+    # 🆕 ФАЗА 0, Шаг 0.5: версия формата записи резонатора
+    #   v1 (старые файлы): <I H {lbl_len}s 1250s B I Q          — без семантического вектора
+    #   v2 (новые файлы) : <I H {lbl_len}s 1250s H {sem_len}s B I Q — после HDC идут байты SemanticVector
+    RES_RECORD_VERSION_V2 = 2
+
+    @staticmethod
+    def _pack_resonator_record(id_: int, lbl_b: bytes, hdc: bytes, sem_bytes: bytes, state: int, energy: int, last_tick: int) -> bytes:
+        """Запись полного рекорда резонатора (v2: HDC + SemanticVector)."""
+        return struct.pack(f'<I H {len(lbl_b)}s 1250s H {len(sem_bytes)}s B I Q',
+                           id_, len(lbl_b), lbl_b, hdc,
+                           len(sem_bytes), sem_bytes,  # ← НОВОЕ (Шаг 0.5)
+                           state, energy, last_tick)
     
     @staticmethod
     def rle_compress(data: bytes) -> bytes:
@@ -100,8 +112,9 @@ class CrystalSnapshot:
         for r in lattice.resonators.values():
             lbl = r.label.encode('utf-8')
             hdc = r.hdc_vector.to_bytes(CrystalSnapshot.BYTES_PER_VECTOR, 'little')
-            buffer.extend(struct.pack(f'<I H {len(lbl)}s 1250s B I Q',
-                                      r.id, len(lbl), lbl, hdc, int(r.state), r.energy, r.last_tick))
+            sem_bytes = r.semantic.to_bytes()  # 🆕 Шаг 0.5: SemanticVector после HDC
+            buffer.extend(CrystalSnapshot._pack_resonator_record(
+                r.id, lbl, hdc, sem_bytes, int(r.state), r.energy, r.last_tick))
         
         for s, t, w in connections: buffer.extend(struct.pack('<I I I', s, t, w))
         for s, t in defeaters: buffer.extend(struct.pack('<I I', s, t))
@@ -142,8 +155,9 @@ class CrystalSnapshot:
             r = lattice.resonators[nid]
             lbl = r.label.encode('utf-8')
             hdc = r.hdc_vector.to_bytes(CrystalSnapshot.BYTES_PER_VECTOR, 'little')
-            buffer.extend(struct.pack(f'<I H {len(lbl)}s 1250s B I Q',
-                                      r.id, len(lbl), lbl, hdc, int(r.state), r.energy, r.last_tick))
+            sem_bytes = r.semantic.to_bytes()  # 🆕 Шаг 0.5: SemanticVector после HDC
+            buffer.extend(CrystalSnapshot._pack_resonator_record(
+                r.id, lbl, hdc, sem_bytes, int(r.state), r.energy, r.last_tick))
             for t, w in r.connections.items(): buffer.extend(struct.pack('<I I', t, w))
             buffer.extend(struct.pack('<I', 0xFFFFFFFF))
             buffer.extend(struct.pack('<H', len(r.context_sources)))
@@ -211,16 +225,35 @@ class CrystalSnapshot:
         offset = CrystalSnapshot.HEADER_SIZE
         max_id = 0
         
-        from engine import Resonator, TruthValue
+        from engine import Resonator, TruthValue, SemanticVector
         
         for _ in range(res_count):
             id_, lbl_len = struct.unpack_from('<I H', buffer, offset)
-            fmt = f'<I H {lbl_len}s 1250s B I Q'
-            id_, _, lbl_b, hdc_b, st, en, tk = struct.unpack_from(fmt, buffer, offset)
-            offset += struct.calcsize(fmt)
+            # 🆕 Шаг 0.5: автоопределение версии рекорда (v2 — с SemanticVector, v1 — legacy)
+            probe_off = offset + 6 + lbl_len + CrystalSnapshot.BYTES_PER_VECTOR
+            sem_len, st_probe = struct.unpack_from('<H B', buffer, probe_off)
+            tail_ok = (buffer[probe_off + 3:probe_off + 7] == b'\x00\x00\x00\x00' and
+                       2 <= sem_len <= 4096)
+            if tail_ok:
+                try:
+                    _sv_probe, sem_end = SemanticVector.from_bytes(buffer, probe_off + 2)
+                    tail_ok = (sem_end == probe_off + 2 + sem_len and len(_sv_probe.axes) > 0)
+                except Exception:
+                    tail_ok = False
+            if tail_ok:
+                fmt = f'<I H {lbl_len}s 1250s H {sem_len}s B I Q'
+                id_, _, lbl_b, hdc_b, _sem_b, st, en, tk = struct.unpack_from(fmt, buffer, offset)
+                offset += struct.calcsize(fmt)
+                sem, _ = SemanticVector.from_bytes(buffer, probe_off + 2)
+            else:
+                fmt = f'<I H {lbl_len}s 1250s B I Q'
+                id_, _, lbl_b, hdc_b, st, en, tk = struct.unpack_from(fmt, buffer, offset)
+                offset += struct.calcsize(fmt)
+                sem = SemanticVector()
             
             lbl = lbl_b.decode('utf-8')
             r = Resonator(id=id_, label=lbl, hdc_vector=int.from_bytes(hdc_b, 'little'), energy=en, last_tick=tk)
+            r.semantic = sem
             r.state = TruthValue(st)
             lattice.resonators[id_] = r
             lattice.label_to_id[lbl] = id_
@@ -286,16 +319,35 @@ class CrystalSnapshot:
                 if lbl in lattice.label_to_id: del lattice.label_to_id[lbl]
         
         # 2. Новые (полная распаковка)
-        from engine import Resonator, TruthValue
+        from engine import Resonator, TruthValue, SemanticVector
         
         for _ in range(new_cnt):
             id_, lbl_len = struct.unpack_from('<I H', payload, offset)
-            fmt = f'<I H {lbl_len}s 1250s B I Q'
-            id_, _, lbl_b, hdc_b, st, en, tk = struct.unpack_from(fmt, payload, offset)
-            offset += struct.calcsize(fmt)
+            # 🆕 Шаг 0.5: автоопределение версии рекорда (v2 — с SemanticVector, v1 — legacy)
+            probe_off = offset + 6 + lbl_len + CrystalSnapshot.BYTES_PER_VECTOR
+            sem_len, st_probe = struct.unpack_from('<H B', payload, probe_off)
+            tail_ok = (payload[probe_off + 3:probe_off + 7] == b'\x00\x00\x00\x00' and
+                       2 <= sem_len <= 4096)
+            if tail_ok:
+                try:
+                    _sv_probe, sem_end = SemanticVector.from_bytes(payload, probe_off + 2)
+                    tail_ok = (sem_end == probe_off + 2 + sem_len and len(_sv_probe.axes) > 0)
+                except Exception:
+                    tail_ok = False
+            if tail_ok:
+                fmt = f'<I H {lbl_len}s 1250s H {sem_len}s B I Q'
+                id_, _, lbl_b, hdc_b, _sem_b, st, en, tk = struct.unpack_from(fmt, payload, offset)
+                offset += struct.calcsize(fmt)
+                sem, _ = SemanticVector.from_bytes(payload, probe_off + 2)
+            else:
+                fmt = f'<I H {lbl_len}s 1250s B I Q'
+                id_, _, lbl_b, hdc_b, st, en, tk = struct.unpack_from(fmt, payload, offset)
+                offset += struct.calcsize(fmt)
+                sem = SemanticVector()
             
             lbl = lbl_b.decode('utf-8')
             r = Resonator(id=id_, label=lbl, hdc_vector=int.from_bytes(hdc_b, 'little'), energy=en, last_tick=tk)
+            r.semantic = sem
             r.state = TruthValue(st)
             lattice.resonators[id_] = r
             lattice.label_to_id[lbl] = id_

@@ -434,7 +434,8 @@ class CognitiveBlackboard:
 class Resonator:
     id: int
     label: str
-    hdc_vector: int
+    hdc_vector: int            # ← оставить как есть (структурный код)
+    semantic: SemanticVector = field(default_factory=SemanticVector)  # 🆕 Шаг 0.2: второй носитель смысла
     state: TruthValue = TruthValue.VOID
     energy: int = 0
     connections: Dict[int, int] = field(default_factory=dict)
@@ -880,6 +881,35 @@ class CrystalLattice:
             f"разведены через инверсию оси P (Топологический парадокс)."
         )
     
+    # ============================================================
+    # 🆕 ФАЗА 0, Шаг 0.3: Многомерное семантическое сравнение
+    # ============================================================
+    def multi_similarity(self, id1: int, id2: int) -> Dict[str, float]:
+        """
+        Полная картина близости: HDC + каждая семантическая ось отдельно.
+        Возвращает dict: {'hdc': 0.73, 'taxonomic': 0.91, 'physical': 0.42, ...}
+        """
+        r1 = self.resonators.get(id1)
+        r2 = self.resonators.get(id2)
+        if not r1 or not r2:
+            return {}
+        result = {'hdc': self.encoder.similarity(r1.hdc_vector, r2.hdc_vector)}
+        result.update(r1.semantic.similarity_by_axis(r2.semantic))
+        return result
+
+    def weighted_similarity(self, id1: int, id2: int) -> float:
+        """Итоговая близость: 40% HDC + 60% семантические оси."""
+        profiles = self.multi_similarity(id1, id2)
+        if not profiles:
+            return 0.0
+        hdc_part = profiles.pop('hdc', 0.0) * 0.4
+        sem_part = sum(
+            v * next((a.weight for a in self.resonators[id1].semantic.axes if a.name == k), 0.5)
+            for k, v in profiles.items()
+        )
+        total_weight = sum(a.weight for a in self.resonators[id1].semantic.axes) or 1.0
+        return hdc_part + (sem_part / total_weight) * 0.6
+
     def _scan_for_antonyms_in_sleep(self, similarity_threshold: float = 0.92, min_common_neighbors: int = 5) -> int:
         """
         💤 Фаза сна: Поиск топологических парадоксов.
@@ -895,7 +925,7 @@ class CrystalLattice:
             for j in range(i + 1, len(candidates)):
                 r_a = candidates[i]
                 r_b = candidates[j]
-                sim = self.encoder.similarity(r_a.hdc_vector, r_b.hdc_vector)
+                sim = self.weighted_similarity(r_a.id, r_b.id)
                 if sim < similarity_threshold:
                     continue
                 packed_edge = r_a.connections.get(r_b.id, 0)
@@ -1621,7 +1651,7 @@ class CrystalLattice:
                 if r.connections and r.state != TruthValue.FALSE
             ][:search_limit]
             for rid, r in candidates:
-                sim = self.encoder.similarity(vac_hdc, r.hdc_vector)
+                sim = self.weighted_similarity(vacuum_id, rid)
                 if sim > best_sim:
                     best_sim = sim
                     best_anchor_id = rid
@@ -1674,7 +1704,7 @@ class CrystalLattice:
                 if prefer_syn and edge_type == EDGE_SYNTAGM:
                     effective_weight = int(weight * 1.5)
                 if edge_type == EDGE_SYNTAGM:
-                    sim_to_vac = self.encoder.similarity(vac_hdc, neighbor.hdc_vector)
+                    sim_to_vac = self.weighted_similarity(vacuum_id, neighbor.id)
                     decayed_threshold = anchor_min + (depth * 0.03)
                     if sim_to_vac < decayed_threshold:
                         continue
@@ -1682,7 +1712,7 @@ class CrystalLattice:
                 context_penalty = 0
                 if cur_ctx and neighbor_ctx and (cur_ctx != neighbor_ctx):
                     context_penalty = -200
-                semantic_sim = self.encoder.similarity(vac_hdc, neighbor.hdc_vector)
+                semantic_sim = self.weighted_similarity(vacuum_id, neighbor.id)
                 if edge_type == EDGE_SYNTAGM:
                     score = int(semantic_sim * 180) + (effective_weight * 2)
                 else:
@@ -1844,7 +1874,7 @@ class CrystalLattice:
                     f"candidate '{display_label(l1)}' vs '{display_label(l2)}' "
                     f"direct_except={direct_except} direct_strength={direct_strength} "
                     f"structural_strength={structural_strength} root_like={root_like} "
-                    f"hdc_sim={self.encoder.similarity(u1_r.hdc_vector, u2_r.hdc_vector):.3f}"
+                    f"hdc_sim={self.weighted_similarity(u1_r.id, u2_r.id):.3f}"
                 )
                 # Требование: ТОЛЬКО прямая EXCEPT-связь или очень сильное структурное доказательство
                 if not direct_except:
@@ -1973,7 +2003,7 @@ class CrystalLattice:
                     if other_id in service_ids or other_id in hubs or other_id in {r1.id, r2.id}:
                         continue
                     other_res = self.resonators[other_id]
-                    sim = self.encoder.similarity(resonator.hdc_vector, other_res.hdc_vector)
+                    sim = self.weighted_similarity(resonator.id, other_res.id)
                     if sim > best_sim:
                         best_sim = sim
                         best_other_id = other_id
@@ -1989,7 +2019,7 @@ class CrystalLattice:
                     continue
                 if u1_id in hubs or u2_id in hubs:
                     continue
-                hdc_sim = self.encoder.similarity(u1_r.hdc_vector, u2_r.hdc_vector)
+                hdc_sim = self.weighted_similarity(u1_r.id, u2_r.id)
                 neighbor_jaccard = self._jaccard_similarity(set(u1_r.connections.keys()), set(u2_r.connections.keys()))
                 if hdc_sim > 0.75 and neighbor_jaccard > 0.25:
                     synonym_traits.append(display_label(u1_r.label))
@@ -2346,7 +2376,7 @@ class CrystalLattice:
                 common_base = base1 & base2
                 if len(common_base) >= 5:  # было >= 3
                     r1, r2 = self.resonators[id1], self.resonators[id2]
-                    sim = self.encoder.similarity(r1.hdc_vector, r2.hdc_vector)
+                    sim = self.weighted_similarity(r1.id, r2.id)
                     if sim < 0.20:  # только реально далёкие векторы (было < 0.30)
                         if id2 not in r1.connections or unpack_edge(r1.connections[id2])[1] != EDGE_EXCEPT:
                             self.connect(r1.label, r2.label, weight=self.calibration.except_antonym_weight, edge_type=EDGE_EXCEPT)
