@@ -23,6 +23,7 @@ class CausalStats:
     is_a_links: int = 0
     negations: int = 0
     questions: int = 0
+    bind_links: int = 0      # 🆕 Фаза 2: применено операторное объединение 'и'
 
 
 class SuffixTrie:
@@ -284,6 +285,9 @@ class LanguageMembrane:
         self._pending_cause = False
         self._pending_is_a = False
         self._pending_goal = False
+        # 🆕 Фаза 2 (двухпроходные операторы): левый член пары 'A и B' / 'A или B'
+        self._pending_bind: str = ''
+        self._pending_branch: str = ''
         self._goal_target_label: Optional[str] = None
         self.last_query_intent: Optional[str] = None  # 🆕 Приоритет 2.2
         self._load_learned_rules()
@@ -521,36 +525,15 @@ class LanguageMembrane:
             self._pending_negate = True
 
         elif op_type == 'bind':
-            # Объединить последние два концепта: bundled HDC (суперпозиция, идея #56)
-            if len(ctx_ids) >= 2:
-                a = ctx_ids[-2]
-                b = ctx_ids[-1]
-                bundled = self.lattice.encoder.bundle([
-                    self.lattice.resonators[a].hdc_vector,
-                    self.lattice.resonators[b].hdc_vector
-                ])
-                # Временная суперпозиция в рабочей памяти Кристалла
-                self.lattice.working_memory.append(bundled)
-                # Операторный узел 'bind' активируется фактом применения (шаг 2.3)
-                op_r = self._op_node('bind')
-                if op_r is not None:
-                    op_r.inject_energy(20, tick, source_ids=[a, b])
-                # SYN-слой (идея #8): языковая связь BIND между токенами
-                # последних вхождений этих концептов в тексте
-                ta = self._last_token_by_label.get(context_concepts[-2])
-                tb = self._last_token_by_label.get(context_concepts[-1])
-                if ta is not None and tb is not None and ta != tb:
-                    self.lattice.syn_graph[(ta, tb)] = pack_edge(
-                        self.calibration.syntagm_weight_adj, EDGE_SYNTAGM)
+            # 🆕 Двухпроходная логика (Фаза 2, критерий готовности):
+            # в однопроходном цикле 'и' видит только ЛЕВЫЙ концепт (правый ещё
+            # не материализован). Запоминаем левый и закрываем пару в
+            # _finalize_operator_state после основного цикла.
+            self._pending_bind = context_concepts[-1] if context_concepts else ''
 
         elif op_type == 'branch':
-            # 'или' — развилка: аналогично bind, но как альтернатива (ANALOG-связь)
-            if len(ctx_ids) >= 2:
-                la = self.lattice.resonators[ctx_ids[-2]].label
-                lb = self.lattice.resonators[ctx_ids[-1]].label
-                self.lattice.connect(la, lb,
-                                     weight=self.calibration.syntagm_weight_direct,
-                                     edge_type=EDGE_ANALOG)
+            # 'или' — развилка: отложенная ANALOG-связь пары (A или B)
+            self._pending_branch = context_concepts[-1] if context_concepts else ''
 
         elif op_type == 'contrast':
             # Конфликт как знание (идея #34): EDGE_EXCEPT с весом 80
@@ -619,10 +602,91 @@ class LanguageMembrane:
 
     def _finalize_operator_state(self, valid_concepts: list, stats: CausalStats):
         """
-        🆕 Шаг 2.2: «доиграть» отложенные операторы после основного цикла.
-        - 'для X' (purpose): EDGE_GOAL(цель ← субъект)
+        🆕 Шаг 2.2 (двухпроходная логика): «доиграть» отложенные операторы
+        после основного цикла, когда оба члена пары уже материализованы.
+        - 'A и B'   (bind)      → суперпозиция в working_memory + SYN-ребро BIND
+        - 'A или B' (branch)    → EDGE_ANALOG(A, B)
+        - 'для X'   (purpose)   → EDGE_GOAL(цель ← субъект)
         - операторные узлы получают энергию за каждое применение (шаг 2.3)
         """
+        tick = self.lattice.tick_count
+
+        def resolve(lbl):
+            return (self.lattice.label_to_id.get(lbl)
+                    or self.lattice.label_to_id.get(f"root:{lbl}"))
+
+        # --- bind: 'A и B' — оба концепта теперь известны ---
+        # Правый член пары мог НЕ материализоваться в основном цикле (первое
+        # вхождение слова, occurrence_count < 2) — тогда достраиваем его здесь.
+        pending_bind = getattr(self, '_pending_bind', '')
+        if pending_bind and len(valid_concepts) >= 1:
+            right_lbl = next((c for c in reversed(valid_concepts)
+                              if c != pending_bind), None)
+            if right_lbl is None:
+                right_lbl = getattr(self, '_bind_right_candidate', None)
+                if right_lbl:
+                    r_new = self.lattice.get_or_create(right_lbl)
+                    r_new.inject_energy(self.calibration.concept_inject_energy, tick)
+                    valid_concepts.append(right_lbl)
+            if right_lbl:
+                left_lbl = pending_bind
+                a, b = resolve(left_lbl), resolve(right_lbl)
+                if a is not None and b is not None and a != b:
+                    # Объединение последних двух концептов: bundled HDC
+                    # (временная суперпозиция, идея #56 из A-класса)
+                    bundled = self.lattice.encoder.bundle([
+                        self.lattice.resonators[a].hdc_vector,
+                        self.lattice.resonators[b].hdc_vector
+                    ])
+                    self.lattice.working_memory.append(bundled)
+                    # Операторный узел 'bind' активируется фактом применения
+                    op_r = self._op_node('bind')
+                    if op_r is not None:
+                        op_r.inject_energy(20, tick, source_ids=[a, b])
+                    # SYN-слой (идея #8): языковая связь BIND между токенами
+                    # последних вхождений этих концептов в тексте.
+                    # Ключи _last_token_by_label — raw-метки из предпрохода;
+                    # обобщённый поиск: токен, чья лемматизированная
+                    # поверхностная форма совпадает с леммой концепта.
+                    def tok_for(lbl, rid):
+                        t = self._last_token_by_label.get(lbl)
+                        if t is not None:
+                            return t
+                        target = self._lemmatize(str(lbl).replace('root:', ''))
+                        for k, v in self._last_token_by_label.items():
+                            vr = resolve(k) or resolve(f"root:{k}")
+                            if vr == rid:
+                                return v
+                            r = self.lattice.resonators.get(v)
+                            form = getattr(r, 'lexical_form', None) if r else None
+                            if form and self._lemmatize(form) == target:
+                                return v
+                        return None
+
+                    ta = tok_for(left_lbl, a)
+                    tb = tok_for(right_lbl, b)
+                    if ta is not None and tb is not None and ta != tb:
+                        self.lattice.syn_graph[(ta, tb)] = pack_edge(
+                            self.calibration.syntagm_weight_adj, EDGE_SYNTAGM)
+                    stats.bind_links += 1
+        self._pending_bind = ''
+
+        # --- branch: 'A или B' — развилка как ANALOG-связь ---
+        pending_branch = getattr(self, '_pending_branch', '')
+        if pending_branch and len(valid_concepts) >= 2:
+            right_idx = next((i for i in range(len(valid_concepts) - 1, -1, -1)
+                              if valid_concepts[i] != pending_branch), None)
+            if right_idx is not None:
+                la = resolve(pending_branch)
+                lb = resolve(valid_concepts[right_idx])
+                if la is not None and lb is not None and la != lb:
+                    self.lattice.connect(
+                        self.lattice.resonators[la].label,
+                        self.lattice.resonators[lb].label,
+                        weight=self.calibration.syntagm_weight_direct,
+                        edge_type=EDGE_ANALOG)
+        self._pending_branch = ''
+
         if getattr(self, '_pending_goal', False):
             goal_lbl = getattr(self, '_goal_target_label', None)
             if goal_lbl and len(valid_concepts) >= 2:
@@ -708,6 +772,8 @@ class LanguageMembrane:
 
     def inject_text(self, text: str) -> CausalStats:
         words = self.tokenize(text)
+        # 🆕 Фаза 2: кандидаты парных операторов — только в рамках предложения
+        self._bind_right_candidate = None
         stats = CausalStats()
         resolved_labels = []
         valid_concepts = []
@@ -778,6 +844,13 @@ class LanguageMembrane:
             label = self._resolve_label(w)
             resolved_labels.append(label)
             occurrence_count = self.word_occurrence_count.get(w, 0)
+
+            # 🆕 Фаза 2: висит отложенный bind/branch ('и'/'или' уже пройдено) —
+            # следующий концепт принудительно материализуется как правый член пары.
+            if (getattr(self, '_pending_bind', '') or
+                    getattr(self, '_pending_branch', '')):
+                force_materialize = True
+
             should_materialize = (
                 force_materialize or          # ← ДОБАВЛЕНО
                 occurrence_count >= 2 or
@@ -792,6 +865,13 @@ class LanguageMembrane:
                     r.state = TruthValue.TRUE
                 r.inject_energy(self.calibration.concept_inject_energy, self.lattice.tick_count)
                 valid_concepts.append(label)
+
+                # 🆕 Фаза 2: если впереди висит отложенный bind/branch ('и'/'или'
+                # ужеSeen, левый член запомнен), этот концепт — правый член пары.
+                # Запоминаем кандидата (материализация ниже произойдёт в любом
+                # случае через get_or_create в _finalize при необходимости).
+                if getattr(self, '_pending_bind', '') or getattr(self, '_pending_branch', ''):
+                    self._bind_right_candidate = label
 
                 # 🆕 Приоритет 2.1: Если было "не" — инвертируем концепт
                 if negation_pending:
