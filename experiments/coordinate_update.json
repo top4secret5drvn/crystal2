@@ -1,0 +1,31 @@
+{
+  "before": [
+    -0.20068696429238517,
+    -0.07300482498498786,
+    0.5734209648298725
+  ],
+  "after": [
+    -0.31037437958083597,
+    0.08514377222506013,
+    0.1502086571663119
+  ],
+  "coordinate_changed": true,
+  "comparison": {
+    "similarity": 0.7409324213445964,
+    "world": "objects",
+    "status": "hypothesis",
+    "entailed_relation": null
+  },
+  "hypotheses": [
+    {
+      "label": "апельсин",
+      "score": 0.7409324213445964,
+      "status": "hypothesis"
+    },
+    {
+      "label": "абрикос",
+      "score": 0.7407083077003912,
+      "status": "hypothesis"
+    }
+  ]
+}
