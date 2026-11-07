@@ -22,6 +22,9 @@ class CommandSession:
     def __init__(self, population=None, membrane=None):
         self.population = population if population is not None else CrystalPopulation()
         self.membrane = membrane if membrane is not None else LanguageMembrane(self.population.active)
+        self.last_user_query = None
+        self.last_query_lattice = None
+        self.last_response = None
         self.last_state_cache = None
         self.last_compare_all_antagonisms = []
         self.last_compare_antagonisms = []
@@ -348,6 +351,8 @@ class CommandSession:
                         print(f'   ⚪ Явных антагонизмов не найдено.')
                     print(f'   {population.active.calibration.get_feedback_hint()}')
                 elif action == 'спроси':
+                    self.last_user_query=args.strip()
+                    self.last_query_lattice=population.active
                     if not args:
                         print('⚠️  Использование: спроси <вопрос>')
                         return
@@ -418,6 +423,12 @@ class CommandSession:
                     population.active.inject_path_energy(path, energy=population.active.calibration.query_inject_energy)
                     print(f'   {population.active.calibration.get_feedback_hint()}')
                 elif action == 'ответь':
+                    if population.active.last_query_label:
+                        self.last_response=membrane.respond((self.last_user_query if self.last_query_lattice is population.active else None) or population.active.last_query_label,'auto')
+                        print(self.last_response['text'])
+                        print(f"Режим: {self.last_response['mode']} | статус: {self.last_response['status']} | уверенность: {self.last_response['confidence']} | причина: {self.last_response['reason']}")
+                        population.active.last_query_path=[]
+                        return
                     print('🗣️ [ГЕНЕРАЦИЯ] Извлечение пути волны...')
                     if getattr(population.active, 'last_query_path', None):
                         path_labels = []

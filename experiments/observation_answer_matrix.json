@@ -1,0 +1,277 @@
+{
+  "baseline_head": "929f721",
+  "before": {
+    "rows": [
+      {
+        "sentence": "Яблоко — это фрукт.",
+        "expected_target": "фрукт",
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": false,
+        "verified": false
+      },
+      {
+        "sentence": "Яблоко является плодом яблони.",
+        "expected_target": "плод яблони",
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": false,
+        "verified": false
+      },
+      {
+        "sentence": "Апельсин — цитрусовый плод.",
+        "expected_target": "цитрусовый плод",
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": false,
+        "verified": false
+      },
+      {
+        "sentence": "Сервер — это вычислительный узел.",
+        "expected_target": "вычислительный узел",
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": false,
+        "verified": false
+      },
+      {
+        "sentence": "Рубин является минералом.",
+        "expected_target": "минерал",
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": false,
+        "verified": false
+      },
+      {
+        "sentence": "Фотон является квантом излучения.",
+        "expected_target": "квант излучения",
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": false,
+        "verified": false
+      },
+      {
+        "sentence": "Книга — печатное издание.",
+        "expected_target": "печатное издание",
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": false,
+        "verified": false
+      },
+      {
+        "sentence": "Процессор — функциональный блок.",
+        "expected_target": "функциональный блок",
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": false,
+        "verified": false
+      },
+      {
+        "sentence": "Вода — холодная.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Яблоко происходит от яблони.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Пакет принадлежит пользователю.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Ключ растёт на дереве.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Яблоко не является минералом.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Возможно яблоко это минерал.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Объект это предмет это система.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Солнце нагревает камень.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      }
+    ],
+    "supported_correct": 0,
+    "supported_count": 8,
+    "unsupported_safe": 8,
+    "unsupported_count": 8,
+    "false_verified": 0
+  },
+  "after": {
+    "rows": [
+      {
+        "sentence": "Яблоко — это фрукт.",
+        "expected_target": "фрукт",
+        "mode": "Attributed",
+        "actual_target": "фрукт",
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Яблоко является плодом яблони.",
+        "expected_target": "плод яблони",
+        "mode": "Attributed",
+        "actual_target": "плод яблони",
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Апельсин — цитрусовый плод.",
+        "expected_target": "цитрусовый плод",
+        "mode": "Attributed",
+        "actual_target": "цитрусовый плод",
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Сервер — это вычислительный узел.",
+        "expected_target": "вычислительный узел",
+        "mode": "Attributed",
+        "actual_target": "вычислительный узел",
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Рубин является минералом.",
+        "expected_target": "минерал",
+        "mode": "Attributed",
+        "actual_target": "минерал",
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Фотон является квантом излучения.",
+        "expected_target": "квант излучения",
+        "mode": "Attributed",
+        "actual_target": "квант излучения",
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Книга — печатное издание.",
+        "expected_target": "печатное издание",
+        "mode": "Attributed",
+        "actual_target": "печатное издание",
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Процессор — функциональный блок.",
+        "expected_target": "функциональный блок",
+        "mode": "Attributed",
+        "actual_target": "функциональный блок",
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Вода — холодная.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Яблоко происходит от яблони.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Пакет принадлежит пользователю.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Ключ растёт на дереве.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Яблоко не является минералом.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Возможно яблоко это минерал.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Объект это предмет это система.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      },
+      {
+        "sentence": "Солнце нагревает камень.",
+        "expected_target": null,
+        "mode": "Unknown",
+        "actual_target": null,
+        "correct": true,
+        "verified": false
+      }
+    ],
+    "supported_correct": 8,
+    "supported_count": 8,
+    "unsupported_safe": 8,
+    "unsupported_count": 8,
+    "false_verified": 0
+  }
+}

@@ -149,6 +149,7 @@ async function startLive(kind,data){
     if(event.attempt)lastJobTrace[kind]=event.attempt;
     if(event.result?.after)lastJobTrace[kind]=event.result.after;
     if(event.graph){lastJobFrame[kind]=event.graph;if(kind==='study')$('study-hypotheses').textContent=pretty({node_hypotheses:event.graph.node_hypotheses,causal_hypotheses:event.graph.causal_hypotheses});const trace=event.attempt||lastJobTrace[kind]||{};drawJob(kind,event.graph,trace.path||[],trace.relation||[]);$(kind+'-status').textContent+=` · такт ${event.graph.tick} · ${event.graph.total_nodes} узлов`;}
+    if(event.extraction_report)$('study-summary').textContent=pretty(event.extraction_report);
     if(event.material)$('study-source').textContent=pretty(event.material)+'\nСведения источника не являются доказательством истинности.';
     const card=document.createElement('details');card.className='step'+(event.stage==='candidate'&&!event.eligible?' rejected':'');
     if(event.stage==='candidate'){card.dataset.round=event.round;card.dataset.parameters=JSON.stringify(event.parameters);card.dataset.eligible=event.eligible;}
@@ -166,7 +167,9 @@ async function startLive(kind,data){
     card.append(technical);
     $(kind+'-events').append(card);
     if(event.attempt&&event.graph)card.addEventListener('toggle',()=>{if(card.open)drawJob(kind,lastJobFrame[kind]||event.graph,event.attempt.path,event.attempt.relation);});
-    if(event.analysis&&(!event.analysis.reliable||event.analysis.controls===0)){$('imitation-help').hidden=false;$('simple-limitation').hidden=false;$('simple-limitation').textContent=event.analysis.limitation||'Нет независимых контрольных примеров из других подтверждённых знаний. Изменение не будет принято без проверок.';}
+    if(event.analysis?.evidence_mode==='user_observed'){$('simple-limitation').hidden=false;$('simple-limitation').textContent='Явный контур user_observed: проверяется соответствие свидетельству, не Verified и не истинность нового факта.';}
+    if(event.analysis&&(!event.analysis.reliable||event.analysis.controls===0)){$('imitation-help').hidden=false;$('simple-limitation').hidden=false;$('simple-limitation').textContent=event.analysis.limitation||'Нет контрольных примеров по другим подтверждённым отношениям или явно добавленным свидетельствам. Изменение не будет принято без проверок.';}
+    if(event.outcome)$('imitation-outcome').textContent=pretty(event.outcome);
     if(event.result){const r=event.result;for(const candidate of $(kind+'-events').querySelectorAll('[data-parameters]')){if(Number(candidate.dataset.round)!==event.round)continue;const selected=r.accepted&&Object.entries(JSON.parse(candidate.dataset.parameters)).every(([k,v])=>r.after.parameters[k]===v);const t=candidate.querySelector('summary');t.textContent=t.textContent.replace(' · прошёл контроли, ещё не применён','')+(selected?' · выбран во временной копии':candidate.dataset.eligible==='true'?' · не выбран':'');}
 $(kind+'-summary').textContent='Исходный ответ: '+r.before.text+'\nЭталон: '+r.references.join(' / ')+'\nОтвет после раунда: '+(r.after?.text||r.before.text)+'\n'+(r.accepted?'Изменение принято после контрольных проверок.':'Изменение не принято: '+({missing_validation_or_evidence:'недостаточно подтверждённых знаний, надёжной разметки или независимых контролей',no_supported_improvement:'кандидаты не дали улучшения без регрессий',already_consolidated:'ответ уже соответствует заданному образцу; новая мутация не нужна',budget:'исчерпан вычислительный бюджет'}[r.reason]||r.reason))+'\nИзменённые параметры: '+pretty(r.changed||{});$('training-report').textContent=pretty(r);if(lastJobFrame[kind]&&lastJobTrace[kind])drawJob(kind,lastJobFrame[kind],lastJobTrace[kind].path,lastJobTrace[kind].relation);if(!r.accepted)$('imitation-help').hidden=false;}
     if(['completed','cancelled','failed'].includes(event.stage)){
@@ -187,4 +190,16 @@ bind('simple-stop',()=>stopLive('imitation'));
 bind('simple-rollback',async()=>{activeOnly();await api('training/rollback',{});await refresh();$('imitation-status').textContent='Последняя принятая мутация отменена.';});
 bind('offer-study',async()=>{$('study-topic').value=$('simple-question').value.replace(/^что такое\s+/i,'').replace(/[?!.]+$/,'');document.querySelector('[data-tab="study"]').click();});
 bind('retry-imitation',async()=>{document.querySelector('[data-tab="imitation"]').click();});
-bind('add-observation',async()=>{activeOnly();const result=await api('imitation/observation',{question:$('simple-question').value,reference:$('simple-reference').value});$('imitation-status').textContent=pretty(result)+' · добавлено наблюдение, не подтверждённый факт';await refresh();});
+bind('add-observation',async()=>{activeOnly();const result=await api('imitation/observation',{question:$('simple-question').value,reference:$('simple-reference').value});$('imitation-status').textContent='Свидетельство сохранено как '+result.status+'. Применимо к вопросу: '+result.applicable+'. Параметры не менялись. Контролей: '+result.controls;
+$('imitation-outcome').textContent=pretty({new_evidence:result.new_evidence,model_parameters_changed:result.model_parameters_changed,calibration_ready:result.calibration_ready,answer:result.answer});await refresh();});
+
+$('answer-form').onsubmit=async event=>{
+  event.preventDefault();const button=event.target.querySelector('button');button.disabled=true;
+  try{
+    activeOnly();const query=$('answer-question').value,mode=$('answer-mode').value;
+    const result=mode==='associative'?await api('answer',{query}):await api('answer?'+new URLSearchParams({query,mode}));
+    $('answer-text').textContent=result.text;
+    $('answer-evidence').textContent=pretty({mode:result.mode,status:result.status,confidence:result.confidence,reason:result.reason,relations:result.relations,sources:result.sources});
+    $('extraction-report').textContent=pretty(await api('observations?'+new URLSearchParams({query:query.replace(/^что такое\s+/i,'').replace(/[?!.]+$/,'')})));
+  }catch(error){fail(error);}finally{button.disabled=false;}
+};

@@ -22,11 +22,13 @@ class TrainingExample:
     correction_confidence: float = 0.0
     error_label: str = ''
     split: str = 'train'
+    evidence_mode: str = 'verified'
 
     def __post_init__(self):
         for name in ('references','concept_ids'):
             object.__setattr__(self,name,tuple(getattr(self,name)))
         object.__setattr__(self,'relations',tuple(tuple(r) for r in self.relations))
+        if self.evidence_mode not in ('verified','user_observed'):raise ValueError('Invalid evidence mode')
         if not self.id or self.split not in ('train','validation','test'):
             raise ValueError('Unique ID and explicit split required')
         if not math.isfinite(self.correction_confidence) or not 0<=self.correction_confidence<=1:
@@ -40,9 +42,10 @@ class Parameters:
     isa_priority: float = 0.0
     part_priority: float = 0.0
     cause_priority: float = 0.0
+    is_a_construction: int = 0
 
     def __post_init__(self):
-        if self.is_a_form not in (0,1) or any(not math.isfinite(x) or not -2<=x<=2 for x in
+        if self.is_a_form not in (0,1) or self.is_a_construction not in (0,1) or any(not math.isfinite(x) or not -2<=x<=2 for x in
             (self.request_weight,self.isa_priority,self.part_priority,self.cause_priority)):
             raise ValueError('Parameter out of bounded range')
 
@@ -55,6 +58,7 @@ class Config:
     max_evaluations: int = 300
     guard_previous: bool = True
     min_confidence: float = .8
+    allow_user_observed: bool = False
 
     def __post_init__(self):
         if (not isinstance(self.max_candidates,int) or not 0<=self.max_candidates<=64 or
@@ -72,6 +76,7 @@ class Attempt:
     alternatives: list = field(default_factory=list)
     parameters: dict = field(default_factory=dict)
     provenance: list = field(default_factory=list)
+    evidence_status: str = 'unknown'
 
 
 def normalize(text):
@@ -86,6 +91,7 @@ def instrumental(noun):
 
 
 def answer(lattice, example, parameters=Parameters()):
+    from structured_observations import context_applies
     from engine import EDGE_NAMES, unpack_edge
     if example.world and (lattice.semantic_space is None or example.world not in lattice.semantic_space.worlds):
         return Attempt('Неизвестный смысловой мир.',parameters=asdict(parameters))
@@ -102,15 +108,16 @@ def answer(lattice, example, parameters=Parameters()):
             weight,kind=unpack_edge(packed);relation=EDGE_NAMES[kind]
             reason=lattice.edge_meta.get((rid,target,kind))
             if (relation not in priorities or target not in lattice.resonators or reason is None or
-                reason.kind=='hypothesis' or reason.metadata.get('status')!='confirmed' or
-                reason.context not in ('global',example.context)):
+                reason.kind=='hypothesis' or not (reason.metadata.get('status')=='confirmed' or
+                (example.evidence_mode=='user_observed' and reason.metadata.get('status')=='user_observed')) or
+                not (reason.context in ('global',example.context) or (example.evidence_mode=='user_observed' and reason.metadata.get('status')=='user_observed' and context_applies(lattice,reason,example.context,True)))):
                 continue
             if example.world:
                 bindings=lattice.semantic_bindings
                 if any(len(bindings.get(label,[]))!=1 or example.world not in lattice.semantic_space.senses[bindings[label][0]].worlds
                        for label in (r.label,lattice.resonators[target].label)):
                     continue
-            confidence=reason.confidence
+            confidence=min(reason.confidence,.6) if reason.metadata.get('status')=='user_observed' else reason.confidence
             if not math.isfinite(confidence) or not 0<confidence<=1:continue
             target_label=lattice.resonators[target].label
             score=weight/100+priorities[relation]+parameters.request_weight*(relation==requested)
@@ -125,10 +132,14 @@ def answer(lattice, example, parameters=Parameters()):
         return trace
     _,relation,path,confidence,provenance=candidates[0]
     subject,kind,target=relation
-    if kind=='IS_A': text=f'{subject.capitalize()} является {instrumental(target) if parameters.is_a_form else target}.'
+    from structured_observations import surface_label
+    subject_text=surface_label(lattice,subject);target_text=surface_label(lattice,target)
+    if kind=='IS_A' and parameters.is_a_construction:
+        text=f'{subject_text.capitalize()} — это {target_text}.'
+    elif kind=='IS_A': text=f'{subject_text.capitalize()} является {instrumental(target_text) if parameters.is_a_form else target_text}.'
     elif kind=='PART_OF': text=f'{subject.capitalize()} входит в состав {target}.'
     else:text=f'{subject.capitalize()} вызывает {target}.'
-    return Attempt(text,relation,path,confidence,trace.alternatives,asdict(parameters),[provenance])
+    return Attempt(text,relation,path,confidence,trace.alternatives,asdict(parameters),[provenance],provenance['metadata'].get('status','unknown'))
 
 
 def evaluate(attempt, example):
@@ -190,12 +201,14 @@ class ImitationLearner:
         if config.max_candidates<0 or config.max_evaluations<0:raise ValueError('Invalid budget')
         before=answer(self.lattice,example,self.parameters);diagnosis=diagnose(before,example)
         record=dict(id=example.id,query=example.query,correction_confidence=example.correction_confidence,
-                    annotated_relations=list(example.relations),concept_ids=list(example.concept_ids),source=example.correction_source,scope={'context':example.context,'world':example.world},
+                    annotated_relations=list(example.relations),concept_ids=list(example.concept_ids),source=example.correction_source,scope={'context':example.context,'world':example.world,'evidence_mode':example.evidence_mode},
                     before=asdict(before),references=list(example.references),diagnosis=diagnosis,human_error_label=example.error_label,
                     accepted=False,attempts=[],evaluations=0,reason='not_enabled')
         if on_event:on_event(dict(stage='initial_attempt',attempt=asdict(before),diagnosis=diagnosis,comparison=evaluate(before,example)))
         if should_stop():raise TrainingCancelled('Training cancelled')
         if not config.enabled: return record
+        if (example.evidence_mode=='user_observed' or any(e.evidence_mode=='user_observed' for e in self.validation)) and not config.allow_user_observed:
+            record['reason']='user_observed_policy_not_enabled';self.history.append(record);return record
         if any(e.id==example.id for e in self.skills) and evaluate(before,example)['semantic']==1 and evaluate(before,example)['form']!=0:
             record['reason']='already_consolidated';return record
         if (not self.validation or any(not e.relations or e.correction_confidence<config.min_confidence for e in self.validation) or
@@ -217,7 +230,7 @@ class ImitationLearner:
         record['baseline_metrics']=baseline_metrics
         # Proposals depend on train diagnosis and fixed bounded steps, never on control answers.
         candidates=[]
-        if diagnosis['kind']=='A':candidates=[replace(self.parameters,is_a_form=1)]
+        if diagnosis['kind']=='A':candidates=[replace(self.parameters,is_a_form=1),replace(self.parameters,is_a_construction=1)]
         else:
             for name in ('request_weight','isa_priority','part_priority','cause_priority'):
                 for step in (-.25,.25):

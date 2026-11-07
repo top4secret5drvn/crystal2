@@ -57,24 +57,39 @@ def ingest_observation(membrane,lattice,text,source,source_type='text',question=
              reason.kind!='hypothesis' and reason.metadata.get('status')=='confirmed' and
              lattice.resonators[key[0]].connections.get_type(key[1],key[2]) is not None}
     before={(r.id,t,unpack_edge(p)[1]) for r in lattice.resonators.values() for t,p in r.connections.typed_items()}
+    previous_observations=len(lattice.relation_observations)
     stats=membrane.inject_text(text)
+    observation_status='user_observed' if source_type=='user_correction' else 'observed'
+    for observation in lattice.relation_observations[previous_observations:]:
+        if observation.metadata.get('status')!='confirmed':
+            observation.metadata['source_document']=source
+            if source_type=='user_correction':
+                observation.metadata['status']='user_observed'
+                if observation.metadata.get('parse_status')=='structured_observation':observation.confidence=.6
     for r in lattice.resonators.values():
         for t,p in r.connections.typed_items():
             key=(r.id,t,unpack_edge(p)[1])
-            if key in before:continue
+            if key in before:
+                current=lattice.edge_meta.get(key)
+                if current is not None and current is not previous_meta.get(key) and current.metadata.get('status')!='confirmed':
+                    current.metadata['source_document']=source
+                    if source_type=='user_correction':current.metadata['status']='user_observed'
+                continue
             reason=lattice.edge_meta.get(key)
             if reason is None:
                 reason=CrystalReason('input',source_label=source,source_type=source_type,confidence=.4,
                     context=lattice.active_context,timestamp=lattice.tick_count,metadata={'status':'observed'})
                 lattice.edge_meta[key]=reason
-            if reason.metadata.get('status')!='confirmed':reason.metadata['source_document']=source
+            if reason.metadata.get('status')!='confirmed':
+                reason.metadata['source_document']=source
+                if source_type=='user_correction':reason.metadata['status']='user_observed'
     # A new textual observation must not erase an older verified source/weight.
     # Preserve its extracted alternative as evidence, not as a replacement fact.
     for key,(reason,packed) in trusted.items():
         current=lattice.edge_meta.get(key)
         if current is not None and current is not previous_meta[key] and current.metadata.get('status')!='confirmed':
             lattice.relation_observations.append(CrystalReason('input',source_label=source,source_type=source_type,confidence=.4,
-                context=lattice.active_context,timestamp=lattice.tick_count,metadata={'status':'observed',
+                context=lattice.active_context,timestamp=lattice.tick_count,metadata={'status':observation_status,
                 'relation':EDGE_NAMES[key[2]],'subject':lattice.resonators[key[0]].label,
                 'target':lattice.resonators[key[1]].label,'text':text}))
         lattice.edge_meta[key]=reason
@@ -86,7 +101,7 @@ def ingest_observation(membrane,lattice,text,source,source_type='text',question=
         if reason.context==lattice.active_context:reason.metadata.setdefault('source_document',source)
     lattice.relation_observations.append(CrystalReason('input',source_label=source,source_type=source_type,
         confidence=.4,context=lattice.active_context,timestamp=lattice.tick_count,
-        metadata={'status':'observed','text':text,'question':question}))
+        metadata={'status':observation_status,'text':text,'question':question}))
     return stats
 
 
@@ -104,7 +119,14 @@ def research_steps(membrane,lattice,topic,ticks=15,*,fetcher=fetch_wikipedia,sho
     if len(material['text'])>MAX_TEXT:raise ValueError('Material exceeds 12000 characters')
     source=material['source'];source_type=material.get('source_type','text')
     yield dict(stage='material',material=material,epistemic_status='external_information_not_proof')
-    lattice.set_epoch(f'{source_type}:{topic}')
+    semantic_context=lattice.active_context
+    previous=lattice.contexts.get(semantic_context)
+    if previous and previous.context_type=='source_observation':semantic_context=previous.parent or 'global'
+    source_epoch=f'{source_type}:{topic}'
+    if semantic_context!='global':source_epoch+=' @ '+semantic_context
+    lattice.set_epoch(source_epoch)
+    source_context=lattice.contexts[lattice.active_context]
+    source_context.context_type='source_observation';source_context.parent=semantic_context
     sentences=list(membrane.iter_sentences(material['text']))
     if len(sentences)>50:raise ValueError('Research budget: at most 50 sentences')
     for index,sentence in enumerate(sentences):
@@ -117,6 +139,6 @@ def research_steps(membrane,lattice,topic,ticks=15,*,fetcher=fetch_wikipedia,sho
     if snapshot_path:
         checkpoint();CrystalSnapshot.save(lattice,str(snapshot_path))
         yield dict(stage='snapshot',name=Path(snapshot_path).name)
-    checkpoint();yield dict(stage='research_complete',tick=lattice.tick_count,hypotheses=len(lattice.hypotheses),
+    checkpoint();yield dict(stage='research_complete',extraction_report=membrane.observation_report(),tick=lattice.tick_count,hypotheses=len(lattice.hypotheses),
         observations=len(lattice.relation_observations),causal_hypotheses=len(lattice.causal_hypotheses),confirmed_relations=sum(
         r.metadata.get('status')=='confirmed' for key,r in lattice.edge_meta.items() if len(key)==3))

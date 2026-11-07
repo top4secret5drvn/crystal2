@@ -1,5 +1,9 @@
 # Crystal Lab: «Изучи» и интерактивное подражание
 
+Обновление пути наблюдения/ответа и явного user_observed-режима:
+[OBSERVATION_TO_ANSWER.md](OBSERVATION_TO_ANSWER.md). Ниже сохранены методика
+и численные результаты первоначальных сценариев на базе `93a2ba2`.
+
 Аудит исходного main `93a2ba2`: `main.autonomous_research` уже выполнял
 Wikipedia → membrane → 15 ticks → defragment/anneal → snapshot, но чтение ответа
 было неограниченным, промежуточные шаги не выдавались, а сеть/ядро выполнялись

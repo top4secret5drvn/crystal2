@@ -305,7 +305,34 @@ def create_app(workspace):
                 raise ValueError('Analytical command budget: at most 500 nodes / 4000 relations')
             result=lab.session.execute(text)
             if result.error:raise ValueError(result.output[-8000:])
-        return jsonify(output=result.output[-30000:],history=list(lab.history)[-1])
+        return jsonify(output=result.output[-30000:],history=list(lab.history)[-1],answer=lab.session.last_response if action=='ответь' else None)
+
+    @app.get('/api/observations')
+    def observations_report():
+        query=request.args.get('query')
+        if query is not None and len(query)>2000:raise ValueError('Question limit: 2000 characters')
+        with lab.lock:
+            if int(request.args.get('instance',lab.population.active_index))!=lab.population.active_index:raise ValueError('Observation report uses the active instance')
+            return jsonify(lab.session.membrane.observation_report(query))
+
+    @app.get('/api/answer')
+    def ordinary_answer():
+        query=request.args.get('query','');mode=request.args.get('mode','auto')
+        if not 0<len(query)<=2000:raise ValueError('Question limit: 2000 characters')
+        if mode=='associative':raise ValueError('Associative mode requires explicit POST')
+        with lab.lock:
+            if int(request.args.get('instance',lab.population.active_index))!=lab.population.active_index:raise ValueError('Questions use the active instance; activate the selected one first')
+            return jsonify(lab.session.membrane.respond(query,mode))
+
+    @app.post('/api/answer')
+    def associative_answer():
+        data=body();query=data.get('query','')
+        if not isinstance(query,str) or not 0<len(query)<=2000:raise ValueError('Question limit: 2000 characters')
+        with lab.mutation('associative_answer'):
+            g=lab.population.active
+            if len(g.resonators)>500 or sum(1 for r in g.resonators.values() for _ in r.connections.typed_items())>4000:raise ValueError('Associative answer budget: 500 nodes / 4000 relations')
+            result=lab.session.membrane.respond(query,'associative')
+        return jsonify(result)
 
     @app.get('/api/snapshots')
     def snapshots():
@@ -430,9 +457,19 @@ def create_app(workspace):
         for key in ('question','reference'):
             if not isinstance(data.get(key),str) or not 0<len(data[key])<=2000:raise ValueError('Text limit: 2000 characters')
         from research import ingest_observation
+        from structured_observations import parse_definition
+        from simple_imitation import prepare
+        parsed=parse_definition(data['reference'])
+        if not parsed.get('ok'):raise ValueError('Структурированное свидетельство не добавлено: '+parsed['reason']+' / '+str(parsed.get('relation','')))
         with lab.mutation('add_unconfirmed_teaching_observation'):
-            g=lab.population.active
+            g=lab.population.active;before=len(g.relation_observations)
             ingest_observation(lab.session.membrane,g,data['reference'],'interactive demonstration','user_correction',data['question'])
-        return jsonify(status='observed',confirmed=False)
+            example,controls,analysis=prepare(lab.session,data['question'],data['reference'],lab.examples)
+            response=lab.session.membrane.respond(data['question'])
+            new_records=g.relation_observations[before:]
+            evidence_count=sum(r.metadata.get('parse_status')=='structured_observation' for r in new_records)
+        return jsonify(status='user_observed',confirmed=False,structured=parsed,applicable=analysis['reliable'],
+            new_evidence=evidence_count,new_observation_records=len(new_records),model_parameters_changed=False,calibration_ready=analysis['reliable'] and not analysis['missing_knowledge'] and bool(controls),
+            controls=len(controls),answer=response)
 
     return app

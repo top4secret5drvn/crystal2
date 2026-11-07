@@ -473,6 +473,7 @@ class CrystalLattice:
         self.relation_observations = []
         self.hypothesis_history = {}
         self.semantic_space = None
+        self.observation_aliases = {}
         self.imitation_state = None
         self.geometry_mode = 'off'
         self.semantic_world = None
@@ -2269,13 +2270,15 @@ class CrystalLattice:
         raw_nodes = {r.label: r for r in self.resonators.values() if not r.label.startswith(('root:', 'mod:', 'cluster:', 'mdl:', 'skill:'))}
         root_nodes = {r.label.replace('root:', ''): r for r in self.resonators.values() if r.label.startswith('root:')}
         to_delete_ids = []
+        observed_labels={label for labels in self.observation_aliases.values() for label in labels}
         for raw_label, raw_r in raw_nodes.items():
             matched_root_label = None
             if raw_label in root_nodes:
                 matched_root_label = raw_label
             if matched_root_label:
                 root_r = root_nodes[matched_root_label]
-                if raw_r.id != root_r.id and not any(raw_r.id in members for members in self.abstraction_components.values()):
+                if (raw_r.id != root_r.id and not any(raw_r.id in members for members in self.abstraction_components.values())
+                    and raw_r.label not in observed_labels):
                     for tgt_id, packed in list(raw_r.connections.typed_items()):
                         if tgt_id != root_r.id and tgt_id in self.resonators:
                             w, et = unpack_edge(packed)
@@ -2296,7 +2299,8 @@ class CrystalLattice:
                 del self.resonators[rid]
                 self.label_to_id.pop(label, None)
                 pruned_count += 1
-        dead_ids = [r.id for r in self.resonators.values() if r.energy == 0 and len(r.connections) == 0 and len(r.defeats) == 0 and not r.context_sources and r.label != 'SELF']
+        incoming_ids={target for r in self.resonators.values() for target in r.connections}
+        dead_ids = [r.id for r in self.resonators.values() if r.id not in incoming_ids and r.energy == 0 and len(r.connections) == 0 and len(r.defeats) == 0 and not r.context_sources and r.label != 'SELF']
         for rid in dead_ids:
             label = self.resonators[rid].label
             del self.resonators[rid]

@@ -1,0 +1,1249 @@
+{
+  "baseline_head": "929f721",
+  "seed": 17,
+  "before": [
+    {
+      "legacy": null,
+      "steps": [
+        {
+          "step": "initial",
+          "nodes": 1,
+          "observations": 0,
+          "typed_relations": {},
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "ввод яблоко это фрукт",
+          "nodes": 3,
+          "observations": 0,
+          "typed_relations": {
+            "SYN": 2,
+            "IS_A": 1
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "спроси яблоко",
+          "nodes": 3,
+          "observations": 0,
+          "typed_relations": {
+            "SYN": 2,
+            "IS_A": 1
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "ответь",
+          "nodes": 3,
+          "observations": 0,
+          "typed_relations": {
+            "SYN": 2,
+            "IS_A": 1
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "изучи яблоко (offline fixture)",
+          "nodes": 13,
+          "observations": 3,
+          "typed_relations": {
+            "SYN": 36,
+            "IS_A": 2
+          },
+          "hypotheses": 4,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "спроси яблоко after study",
+          "nodes": 13,
+          "observations": 3,
+          "typed_relations": {
+            "SYN": 36,
+            "IS_A": 2
+          },
+          "hypotheses": 4,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "ответь after study",
+          "nodes": 13,
+          "observations": 3,
+          "typed_relations": {
+            "SYN": 36,
+            "IS_A": 2
+          },
+          "hypotheses": 4,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "imitation before explicit evidence",
+          "nodes": 13,
+          "observations": 3,
+          "typed_relations": {
+            "SYN": 36,
+            "IS_A": 2
+          },
+          "hypotheses": 4,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "explicit user witness: Яблоко — это плод яблони.",
+          "nodes": 13,
+          "observations": 4,
+          "typed_relations": {
+            "SYN": 40,
+            "IS_A": 4
+          },
+          "hypotheses": 4,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "explicit user witness: Апельсин — это цитрусовый плод.",
+          "nodes": 13,
+          "observations": 5,
+          "typed_relations": {
+            "SYN": 40,
+            "IS_A": 6
+          },
+          "hypotheses": 4,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "calibration after explicit evidence",
+          "nodes": 13,
+          "observations": 5,
+          "typed_relations": {
+            "SYN": 40,
+            "IS_A": 6
+          },
+          "hypotheses": 4,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        }
+      ],
+      "imitation": {
+        "reliable": false,
+        "accepted": false,
+        "reason": "missing_validation_or_evidence"
+      },
+      "after_witness": {
+        "accepted": false,
+        "reason": "missing_validation_or_evidence",
+        "changed": {},
+        "baseline_metrics": null,
+        "candidate_metrics": []
+      }
+    },
+    {
+      "legacy": "bugfix_test.cry",
+      "steps": [
+        {
+          "step": "initial",
+          "nodes": 9,
+          "observations": 0,
+          "typed_relations": {
+            "IS_A": 6,
+            "SYN": 12,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "ввод яблоко это фрукт",
+          "nodes": 9,
+          "observations": 0,
+          "typed_relations": {
+            "IS_A": 6,
+            "SYN": 14,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "спроси яблоко",
+          "nodes": 9,
+          "observations": 0,
+          "typed_relations": {
+            "IS_A": 6,
+            "SYN": 14,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "ответь",
+          "nodes": 9,
+          "observations": 0,
+          "typed_relations": {
+            "IS_A": 6,
+            "SYN": 14,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "изучи яблоко (offline fixture)",
+          "nodes": 20,
+          "observations": 3,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 52,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "спроси яблоко after study",
+          "nodes": 20,
+          "observations": 3,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 52,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "ответь after study",
+          "nodes": 20,
+          "observations": 3,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 52,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "imitation before explicit evidence",
+          "nodes": 20,
+          "observations": 3,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 52,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "explicit user witness: Яблоко — это плод яблони.",
+          "nodes": 20,
+          "observations": 4,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 56,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "explicit user witness: Апельсин — это цитрусовый плод.",
+          "nodes": 20,
+          "observations": 5,
+          "typed_relations": {
+            "IS_A": 11,
+            "SYN": 56,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "calibration after explicit evidence",
+          "nodes": 20,
+          "observations": 5,
+          "typed_relations": {
+            "IS_A": 11,
+            "SYN": 56,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        }
+      ],
+      "imitation": {
+        "reliable": false,
+        "accepted": false,
+        "reason": "missing_validation_or_evidence"
+      },
+      "after_witness": {
+        "accepted": false,
+        "reason": "missing_validation_or_evidence",
+        "changed": {},
+        "baseline_metrics": null,
+        "candidate_metrics": []
+      }
+    },
+    {
+      "legacy": "bugfix2.cry",
+      "steps": [
+        {
+          "step": "initial",
+          "nodes": 9,
+          "observations": 0,
+          "typed_relations": {
+            "IS_A": 6,
+            "SYN": 12,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "ввод яблоко это фрукт",
+          "nodes": 9,
+          "observations": 0,
+          "typed_relations": {
+            "IS_A": 6,
+            "SYN": 14,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "спроси яблоко",
+          "nodes": 9,
+          "observations": 0,
+          "typed_relations": {
+            "IS_A": 6,
+            "SYN": 14,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "ответь",
+          "nodes": 9,
+          "observations": 0,
+          "typed_relations": {
+            "IS_A": 6,
+            "SYN": 14,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "изучи яблоко (offline fixture)",
+          "nodes": 20,
+          "observations": 3,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 52,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "спроси яблоко after study",
+          "nodes": 20,
+          "observations": 3,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 52,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "ответь after study",
+          "nodes": 20,
+          "observations": 3,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 52,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "imitation before explicit evidence",
+          "nodes": 20,
+          "observations": 3,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 52,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "explicit user witness: Яблоко — это плод яблони.",
+          "nodes": 20,
+          "observations": 4,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 56,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "explicit user witness: Апельсин — это цитрусовый плод.",
+          "nodes": 20,
+          "observations": 5,
+          "typed_relations": {
+            "IS_A": 11,
+            "SYN": 56,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        },
+        {
+          "step": "calibration after explicit evidence",
+          "nodes": 20,
+          "observations": 5,
+          "typed_relations": {
+            "IS_A": 11,
+            "SYN": 56,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований для фактического ответа."
+        }
+      ],
+      "imitation": {
+        "reliable": false,
+        "accepted": false,
+        "reason": "missing_validation_or_evidence"
+      },
+      "after_witness": {
+        "accepted": false,
+        "reason": "missing_validation_or_evidence",
+        "changed": {},
+        "baseline_metrics": null,
+        "candidate_metrics": []
+      }
+    }
+  ],
+  "after": [
+    {
+      "legacy": null,
+      "steps": [
+        {
+          "step": "initial",
+          "nodes": 1,
+          "observations": 0,
+          "typed_relations": {},
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований. Понятие неизвестно."
+        },
+        {
+          "step": "ввод яблоко это фрукт",
+          "nodes": 4,
+          "observations": 1,
+          "typed_relations": {
+            "SYN": 2,
+            "IS_A": 1
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «direct text input»: Яблоко — это фрукт."
+        },
+        {
+          "step": "спроси яблоко",
+          "nodes": 4,
+          "observations": 1,
+          "typed_relations": {
+            "SYN": 2,
+            "IS_A": 1
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «direct text input»: Яблоко — это фрукт."
+        },
+        {
+          "step": "ответь",
+          "nodes": 4,
+          "observations": 1,
+          "typed_relations": {
+            "SYN": 2,
+            "IS_A": 1
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «direct text input»: Яблоко — это фрукт."
+        },
+        {
+          "step": "изучи яблоко (offline fixture)",
+          "nodes": 17,
+          "observations": 7,
+          "typed_relations": {
+            "SYN": 43,
+            "IS_A": 3
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «offline:Wikipedia-contract-fixture»: Яблоко — это фрукт."
+        },
+        {
+          "step": "спроси яблоко after study",
+          "nodes": 17,
+          "observations": 7,
+          "typed_relations": {
+            "SYN": 43,
+            "IS_A": 3
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «offline:Wikipedia-contract-fixture»: Яблоко — это фрукт."
+        },
+        {
+          "step": "ответь after study",
+          "nodes": 17,
+          "observations": 7,
+          "typed_relations": {
+            "SYN": 43,
+            "IS_A": 3
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «offline:Wikipedia-contract-fixture»: Яблоко — это фрукт."
+        },
+        {
+          "step": "imitation before explicit evidence",
+          "nodes": 17,
+          "observations": 7,
+          "typed_relations": {
+            "SYN": 43,
+            "IS_A": 3
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «offline:Wikipedia-contract-fixture»: Яблоко — это фрукт."
+        },
+        {
+          "step": "explicit user witness: Яблоко — это плод яблони.",
+          "nodes": 17,
+          "observations": 9,
+          "typed_relations": {
+            "SYN": 47,
+            "IS_A": 3
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «explicit user demonstration»: Яблоко — это плод яблони."
+        },
+        {
+          "step": "explicit user witness: Апельсин — это цитрусовый плод.",
+          "nodes": 17,
+          "observations": 11,
+          "typed_relations": {
+            "SYN": 47,
+            "IS_A": 3
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «explicit user demonstration»: Яблоко — это плод яблони."
+        },
+        {
+          "step": "calibration after explicit evidence",
+          "nodes": 17,
+          "observations": 11,
+          "typed_relations": {
+            "SYN": 47,
+            "IS_A": 3
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «explicit user demonstration»: Яблоко — это плод яблони."
+        }
+      ],
+      "imitation": {
+        "reliable": true,
+        "accepted": false,
+        "reason": "missing_validation_or_evidence"
+      },
+      "after_witness": {
+        "accepted": true,
+        "reason": "train_gain_without_control_regression",
+        "changed": {
+          "is_a_construction": [
+            0,
+            1
+          ]
+        },
+        "baseline_metrics": [
+          {
+            "semantic": 1.0,
+            "relation_type": 1.0,
+            "concepts": 1.0,
+            "form": 0.0,
+            "confidence_quality": 0.6,
+            "score": 0.88
+          },
+          {
+            "semantic": 1.0,
+            "relation_type": 1.0,
+            "concepts": 1.0,
+            "form": 0.0,
+            "confidence_quality": 0.6,
+            "score": 0.88
+          }
+        ],
+        "candidate_metrics": [
+          [
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 0.0,
+              "confidence_quality": 0.6,
+              "score": 0.88
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 0.0,
+              "confidence_quality": 0.6,
+              "score": 0.88
+            }
+          ],
+          [
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.6,
+              "score": 0.98
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.6,
+              "score": 0.98
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "legacy": "bugfix_test.cry",
+      "steps": [
+        {
+          "step": "initial",
+          "nodes": 9,
+          "observations": 0,
+          "typed_relations": {
+            "IS_A": 6,
+            "SYN": 12,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований. Понятие неизвестно."
+        },
+        {
+          "step": "ввод яблоко это фрукт",
+          "nodes": 10,
+          "observations": 1,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 14,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «direct text input»: Яблоко — это фрукт."
+        },
+        {
+          "step": "спроси яблоко",
+          "nodes": 10,
+          "observations": 1,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 14,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «direct text input»: Яблоко — это фрукт."
+        },
+        {
+          "step": "ответь",
+          "nodes": 10,
+          "observations": 1,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 14,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «direct text input»: Яблоко — это фрукт."
+        },
+        {
+          "step": "изучи яблоко (offline fixture)",
+          "nodes": 23,
+          "observations": 7,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 55,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «offline:Wikipedia-contract-fixture»: Яблоко — это фрукт."
+        },
+        {
+          "step": "спроси яблоко after study",
+          "nodes": 23,
+          "observations": 7,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 55,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «offline:Wikipedia-contract-fixture»: Яблоко — это фрукт."
+        },
+        {
+          "step": "ответь after study",
+          "nodes": 23,
+          "observations": 7,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 55,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «offline:Wikipedia-contract-fixture»: Яблоко — это фрукт."
+        },
+        {
+          "step": "imitation before explicit evidence",
+          "nodes": 23,
+          "observations": 7,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 55,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «offline:Wikipedia-contract-fixture»: Яблоко — это фрукт."
+        },
+        {
+          "step": "explicit user witness: Яблоко — это плод яблони.",
+          "nodes": 23,
+          "observations": 9,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 59,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «explicit user demonstration»: Яблоко — это плод яблони."
+        },
+        {
+          "step": "explicit user witness: Апельсин — это цитрусовый плод.",
+          "nodes": 23,
+          "observations": 11,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 59,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «explicit user demonstration»: Яблоко — это плод яблони."
+        },
+        {
+          "step": "calibration after explicit evidence",
+          "nodes": 23,
+          "observations": 11,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 59,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «explicit user demonstration»: Яблоко — это плод яблони."
+        }
+      ],
+      "imitation": {
+        "reliable": true,
+        "accepted": false,
+        "reason": "missing_validation_or_evidence"
+      },
+      "after_witness": {
+        "accepted": true,
+        "reason": "train_gain_without_control_regression",
+        "changed": {
+          "is_a_construction": [
+            0,
+            1
+          ]
+        },
+        "baseline_metrics": [
+          {
+            "semantic": 1.0,
+            "relation_type": 1.0,
+            "concepts": 1.0,
+            "form": 0.0,
+            "confidence_quality": 0.6,
+            "score": 0.88
+          },
+          {
+            "semantic": 1.0,
+            "relation_type": 1.0,
+            "concepts": 1.0,
+            "form": 0.0,
+            "confidence_quality": 0.6,
+            "score": 0.88
+          }
+        ],
+        "candidate_metrics": [
+          [
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 0.0,
+              "confidence_quality": 0.6,
+              "score": 0.88
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 0.0,
+              "confidence_quality": 0.6,
+              "score": 0.88
+            }
+          ],
+          [
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.6,
+              "score": 0.98
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.6,
+              "score": 0.98
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "legacy": "bugfix2.cry",
+      "steps": [
+        {
+          "step": "initial",
+          "nodes": 9,
+          "observations": 0,
+          "typed_relations": {
+            "IS_A": 6,
+            "SYN": 12,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 0,
+          "mode": "Unknown",
+          "text": "Недостаточно подтвержденных оснований. Понятие неизвестно."
+        },
+        {
+          "step": "ввод яблоко это фрукт",
+          "nodes": 10,
+          "observations": 1,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 14,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «direct text input»: Яблоко — это фрукт."
+        },
+        {
+          "step": "спроси яблоко",
+          "nodes": 10,
+          "observations": 1,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 14,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «direct text input»: Яблоко — это фрукт."
+        },
+        {
+          "step": "ответь",
+          "nodes": 10,
+          "observations": 1,
+          "typed_relations": {
+            "IS_A": 7,
+            "SYN": 14,
+            "COND": 4
+          },
+          "hypotheses": 0,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «direct text input»: Яблоко — это фрукт."
+        },
+        {
+          "step": "изучи яблоко (offline fixture)",
+          "nodes": 23,
+          "observations": 7,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 55,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «offline:Wikipedia-contract-fixture»: Яблоко — это фрукт."
+        },
+        {
+          "step": "спроси яблоко after study",
+          "nodes": 23,
+          "observations": 7,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 55,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «offline:Wikipedia-contract-fixture»: Яблоко — это фрукт."
+        },
+        {
+          "step": "ответь after study",
+          "nodes": 23,
+          "observations": 7,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 55,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «offline:Wikipedia-contract-fixture»: Яблоко — это фрукт."
+        },
+        {
+          "step": "imitation before explicit evidence",
+          "nodes": 23,
+          "observations": 7,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 55,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «offline:Wikipedia-contract-fixture»: Яблоко — это фрукт."
+        },
+        {
+          "step": "explicit user witness: Яблоко — это плод яблони.",
+          "nodes": 23,
+          "observations": 9,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 59,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «explicit user demonstration»: Яблоко — это плод яблони."
+        },
+        {
+          "step": "explicit user witness: Апельсин — это цитрусовый плод.",
+          "nodes": 23,
+          "observations": 11,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 59,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «explicit user demonstration»: Яблоко — это плод яблони."
+        },
+        {
+          "step": "calibration after explicit evidence",
+          "nodes": 23,
+          "observations": 11,
+          "typed_relations": {
+            "IS_A": 9,
+            "SYN": 59,
+            "COND": 4
+          },
+          "hypotheses": 5,
+          "confirmed": 0,
+          "admissible_answers": 1,
+          "mode": "Attributed",
+          "text": "По наблюдению «explicit user demonstration»: Яблоко — это плод яблони."
+        }
+      ],
+      "imitation": {
+        "reliable": true,
+        "accepted": false,
+        "reason": "missing_validation_or_evidence"
+      },
+      "after_witness": {
+        "accepted": true,
+        "reason": "train_gain_without_control_regression",
+        "changed": {
+          "is_a_construction": [
+            0,
+            1
+          ]
+        },
+        "baseline_metrics": [
+          {
+            "semantic": 1.0,
+            "relation_type": 1.0,
+            "concepts": 1.0,
+            "form": 0.0,
+            "confidence_quality": 0.6,
+            "score": 0.88
+          },
+          {
+            "semantic": 1.0,
+            "relation_type": 1.0,
+            "concepts": 1.0,
+            "form": 0.0,
+            "confidence_quality": 0.6,
+            "score": 0.88
+          }
+        ],
+        "candidate_metrics": [
+          [
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 0.0,
+              "confidence_quality": 0.6,
+              "score": 0.88
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 0.0,
+              "confidence_quality": 0.6,
+              "score": 0.88
+            }
+          ],
+          [
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.6,
+              "score": 0.98
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.6,
+              "score": 0.98
+            }
+          ]
+        ]
+      }
+    }
+  ]
+}
