@@ -12,6 +12,8 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Tuple, Optional, Any
 from collections import defaultdict
 import itertools
+import math
+import hashlib
 
 # Локальные dataclass-структуры используются как lightweight-протоколы.
 # Основной интерпретатор работает с объектами по атрибутам, поэтому это
@@ -86,6 +88,8 @@ class BeliefRevisionEngine:
         
     def set_source_reliability(self, source: str, reliability: float):
         self.source_reliability[source] = max(0.0, min(1.0, reliability))
+        for key in self.beliefs:
+            self._resolve_conflicts(key)
         
     def get_effective_weight(self, belief: Belief) -> float:
         """Эффективный вес = уверенность факта * надежность источника."""
@@ -114,49 +118,39 @@ class BeliefRevisionEngine:
         self.beliefs[key].append(new_belief)
         self._resolve_conflicts(key)
         
+    def retract_source(self, source: str):
+        """Withdraw evidence without erasing its provenance; reconsider alternatives."""
+        for key, beliefs in self.beliefs.items():
+            for belief in beliefs:
+                if belief.source == source:
+                    belief.status = "retracted"
+            self._resolve_conflicts(key)
+
     def _resolve_conflicts(self, key: str):
-        """AGM/TMS стиль разрешения противоречий внутри одного контекста."""
-        beliefs = self.beliefs[key]
-        contexts = {}
-        for b in beliefs:
-            if b.context not in contexts: contexts[b.context] = []
-            contexts[b.context].append(b)
-            
-        for ctx, ctx_beliefs in contexts.items():
-            active_beliefs = [b for b in ctx_beliefs if b.status == "active"]
-            if len(active_beliefs) <= 1: continue
-                
-            values = set(b.value for b in active_beliefs if b.value != 0)
-            if len(values) > 1:
-                active_beliefs.sort(key=lambda b: (self.get_effective_weight(b), b.timestamp), reverse=True)
-                winner = active_beliefs[0]
-                
-                for b in active_beliefs[1:]:
-                    if b.value != winner.value:
-                        b.status = "defeated"
-                        
+        contexts = defaultdict(list)
+        for b in self.beliefs[key]:
+            if b.status != "retracted":
+                contexts[b.context].append(b)
+        for beliefs in contexts.values():
+            known = [b for b in beliefs if b.value != 0]
+            pool = known or beliefs
+            top = max(self.get_effective_weight(b) for b in pool)
+            winners = {b.value for b in pool if abs(self.get_effective_weight(b)-top) < 1e-12}
+            for b in beliefs:
+                b.status = "active" if b in pool and b.value in winners else "defeated"
+
     def query(self, key: str, context: str = None) -> Optional[Tuple[int, Reason]]:
-        if key not in self.beliefs: return None
-            
+        if key not in self.beliefs:
+            return None
         ctx = context or self.active_context
-        beliefs = self.beliefs[key]
-        
-        ctx_beliefs = [b for b in beliefs if b.context == ctx and b.status == "active"]
-        if ctx_beliefs:
-            best = max(ctx_beliefs, key=lambda b: (self.get_effective_weight(b), b.timestamp))
+        for candidate in ([ctx, "global"] if ctx != "global" else [ctx]):
+            pool = [b for b in self.beliefs[key] if b.context == candidate and b.status == "active"]
+            if not pool:
+                continue
+            if len({b.value for b in pool if b.value != 0}) > 1:
+                return (0, Reason("противоречие", key, parents=[b.reason for b in pool]))
+            best = max(pool, key=self.get_effective_weight)
             return (best.value, best.reason)
-            
-        if ctx != "global":
-            global_beliefs = [b for b in beliefs if b.context == "global" and b.status == "active"]
-            if global_beliefs:
-                best = max(global_beliefs, key=lambda b: (self.get_effective_weight(b), b.timestamp))
-                return (best.value, best.reason)
-                
-        all_ctx = [b for b in beliefs if b.context == ctx]
-        if all_ctx and all(b.status == "defeated" for b in all_ctx):
-            conflict_reason = Reason("противоречие", f"неразрешимый_конфликт_{key}")
-            return (0, conflict_reason)
-            
         return None
 
 
@@ -176,20 +170,27 @@ class ConceptFormationEngine:
         """
         print("\n=== АНАЛИЗ КОНЦЕПТУАЛЬНОЙ СТРУКТУРЫ ===")
         
+        self.discovered_concepts.clear()
         objects = defaultdict(list)
         
         # Проверяем, есть ли revision_engine (новая архитектура) или только facts (старая)
+        self._labels = {}
         if hasattr(self.kb, 'revision_engine') and self.kb.revision_engine.beliefs:
-            for key, belief_list in self.kb.revision_engine.beliefs.items():
-                for belief in belief_list:
-                    if belief.status != "active" or belief.value != 1: continue
-                    self._extract_predicate(key, objects)
+            facts = {key: self.kb.revision_engine.query(key)
+                     for key in self.kb.revision_engine.beliefs}
         else:
-            # Фоллбэк на старую архитектуру
-            for key, (val, reason) in self.kb.facts.items():
-                if val != 1: continue
+            facts = self.kb.facts
+        for key, result in facts.items():
+            if result is None:
+                continue
+            val, reason = result
+            m = re.fullmatch(r"(\w+)\(([^(),]+)\)", key)
+            if not m or val == 0:
+                continue
+            pred, obj = m.groups()
+            self._labels[(obj, pred)] = val
+            if val == 1:
                 self._extract_predicate(key, objects)
-        
         print(f"Найдено {len(objects)} уникальных объектов")
         
         patterns = self._find_frequent_patterns(objects, min_support)
@@ -258,14 +259,23 @@ class ConceptFormationEngine:
         confidence = consequent_count / len(objects_with_pattern)
         if confidence < min_confidence: return
         
-        original_bits = support * len(pattern) + consequent_count
-        compressed_bits = len(pattern) + 1 + consequent_count
+        # Conditional binary MDL: antecedents are side information in BOTH
+        # encodings. Baseline: one target bit per labeled matching object.
+        # Model: k+1 predicate symbols, exception count, exception positions.
+        labeled = [o for o in objects_with_pattern if (o, consequent_pred) in self._labels]
+        n = len(labeled)
+        errors = sum(self._labels[(o, consequent_pred)] != 1 for o in labeled)
+        vocab = max(2, len({p for _, p in self._labels}))
+        original_bits = n
+        model_bits = (len(pattern)+1)*math.log2(vocab) + math.log2(n+1)
+        residual_bits = math.log2(math.comb(n, errors)) if n else 0
+        compressed_bits = model_bits + residual_bits
         compression_gain = original_bits - compressed_bits
-        
+
         if compression_gain <= 0: return
         
         pattern_str = " + ".join(pattern)
-        proposal = f"правило обобщение_{hash(pattern) % 1000}(X) :- {', '.join(f'{p}(X) = да' for p in pattern)} -> {consequent_pred}(X) = да"
+        proposal = f"правило обобщение_{int(hashlib.sha256(repr(pattern).encode()).hexdigest()[:8], 16)}(X) :- {', '.join(f'{p}(X) = да' for p in pattern)} -> {consequent_pred}(X) = да"
         
         self.discovered_concepts.append({
             'pattern': pattern,
@@ -273,6 +283,8 @@ class ConceptFormationEngine:
             'confidence': confidence,
             'consequent': consequent_pred,
             'compression_gain': compression_gain,
+            'model_bits': model_bits, 'residual_bits': residual_bits,
+            'status': 'hypothesis',
             'proposal': proposal,
             'objects': objects_with_pattern
         })
@@ -296,8 +308,11 @@ class ConceptFormationEngine:
             ]
             reason = Reason("правило", "mdl_concept", confidence=concept['confidence'])
             reason.metadata['auto_generated'] = True
+            reason.metadata['epistemic_status'] = 'hypothesis'
             reason.metadata['support'] = concept['support']
             
             new_rule = Rule(rule_name, args, conditions, reason)
-            self.kb.rules.append(new_rule)
+            signature = lambda r: (r.name, tuple((c.pred, c.args, c.expected_value) for c in r.conditions))
+            if not any(signature(r) == signature(new_rule) for r in self.kb.rules):
+                self.kb.rules.append(new_rule)
             print(f"  ✓ Правило '{rule_name}' добавлено в базу знаний")
