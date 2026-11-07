@@ -99,3 +99,17 @@ Legacy-файлы не содержат свидетельств: их нево�
 - [Измерения переноса, забывания и ограничения](IMITATION_EXPERIMENTS.md)
 - Benchmark: `python3 tests/imitation_benchmark.py`
 - Подготовка интерактивного примера: `python3 examples/imitation_session.py /tmp/new-demo`
+
+## Crystal Lab — локальная веб-лаборатория
+
+```sh
+python -m pip install -r requirements.txt
+python -m crystal_lab --workspace lab-data
+```
+
+Flask слушает только `127.0.0.1:5050`; debug выключен. Локальные Cytoscape.js и
+Three.js включены в репозиторий. Граф, геометрия, популяции, общий CLI-диспетчер,
+имитационная калибровка с откатом, копии снапшотов и реальные diff памяти.
+
+[Windows-инструкция, API, ограничения и скриншоты](CRYSTAL_LAB.md).
+Демонстрационные данные явно синтетические: `python examples/lab_demo.py lab-data`.

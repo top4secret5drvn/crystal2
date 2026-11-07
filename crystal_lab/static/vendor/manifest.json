@@ -1,0 +1,12 @@
+{
+  "cytoscape": {
+    "version": "3.30.4",
+    "integrity": "sha512-OxtlZwQl1WbwMmLiyPSEBuzeTIQnwZhJYYWFzZ2PhEHVFwpeaqNIkUzSiso00D98qk60l8Gwon2RP304d3BJ1A==",
+    "source": "https://registry.npmjs.org/cytoscape/-/cytoscape-3.30.4.tgz"
+  },
+  "three": {
+    "version": "0.160.1",
+    "integrity": "sha512-Bgl2wPJypDOZ1stAxwfWAcJ0WQf7QzlptsxkjYiURPz+n5k4RBDLsq+6f9Y75TYxn6aHLcWz+JNmwTOXWrQTBQ==",
+    "source": "https://registry.npmjs.org/three/-/three-0.160.1.tgz"
+  }
+}

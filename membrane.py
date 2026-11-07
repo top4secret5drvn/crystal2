@@ -238,7 +238,7 @@ class LanguageMembrane:
         'compare': frozenset(['сравни', 'отличие', 'разница', 'отличи']),
     }
 
-    def __init__(self, lattice):
+    def __init__(self, lattice, data_dir=None):
         self.lattice = lattice
         self.calibration = lattice.calibration
         self.trie = SuffixTrie()
@@ -248,7 +248,7 @@ class LanguageMembrane:
         self.contextual_neighbors: Dict[str, Dict[str, float]] = {}
         self.word_occurrence_count: Dict[str, int] = {}
         self.trigram_neighbors: Dict[Tuple[str, str], Dict[str, float]] = {}
-        self.learned_rules_path = os.path.join(os.getcwd(), 'learned_language_rules.json')
+        self.learned_rules_path = os.path.join(data_dir if data_dir is not None else os.getcwd(), 'learned_language_rules.json')
         self._label_cache: Dict[str, str] = {}
         self.stemmer = RussianStemmer()
         self.last_query_intent: Optional[str] = None  # 🆕 Приоритет 2.2

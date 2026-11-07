@@ -2588,6 +2588,8 @@ class CrystalPopulation:
         self.crystals: List[CrystalLattice] = []
         self.active_index: int = 0
         self.mitosis_threshold: int = 500
+        self.transfer_events = []
+        self._transfer_sequence = 0
     
     @property
     def active(self) -> CrystalLattice:
@@ -2784,6 +2786,11 @@ class CrystalPopulation:
                     active.connect(src_r.label, tgt_r.label, weight=max(10, w // 2), edge_type=et)
                     injected_edges += 1
         print(f"      💡 Извлечено воспоминание: {injected_nodes} узлов, {injected_edges} связей впрыснуто в сознание.")
+        self._transfer_sequence += 1
+        self.transfer_events.append(dict(sequence=self._transfer_sequence,
+            source=self.crystals.index(best_dormant_crystal),target=self.active_index,
+            anchor=best_node.label,nodes=injected_nodes,relations=injected_edges,tick=active.tick_count))
+        self.transfer_events = self.transfer_events[-100:]
         return True
     
     def get_status(self) -> str:
