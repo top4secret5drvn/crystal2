@@ -22,7 +22,7 @@ from membrane import LanguageMembrane
 from persistence import CrystalSnapshot
 from imitation_learning import TrainingExample, ImitationLearner, Config, answer
 
-SAFE_COMMANDS = {'ввод','ложь','отрицание','думай','сон','отжиг','состояние','спроси',
+SAFE_COMMANDS = {'попробуй','повтори','верно','неверно','частично','неизвестно','эталон','обучение','ввод','ложь','отрицание','думай','сон','отжиг','состояние','спроси',
                  'ответь','объясни','аналогии','связи','сравни','гипотезы','подтверди',
                  'опровергни','контексты','качество','популяция','фреймы'}
 
@@ -301,7 +301,7 @@ def create_app(workspace):
             count=len(lab.population.active.resonators)
             edges=sum(len(list(r.connections.typed_items())) for r in lab.population.active.resonators.values())
             if edges>40000:raise ValueError('Command budget: at most 40000 typed edges')
-            if action in ('сон','отжиг','сравни','качество','спроси') and (count>500 or edges>4000):
+            if action in ('сон','отжиг','сравни','качество','спроси','попробуй','повтори','эталон','неверно','частично') and (count>500 or edges>4000):
                 raise ValueError('Analytical command budget: at most 500 nodes / 4000 relations')
             result=lab.session.execute(text)
             if result.error:raise ValueError(result.output[-8000:])
@@ -319,7 +319,7 @@ def create_app(workspace):
     def ordinary_answer():
         query=request.args.get('query','');mode=request.args.get('mode','auto')
         if not 0<len(query)<=2000:raise ValueError('Question limit: 2000 characters')
-        if mode=='associative':raise ValueError('Associative mode requires explicit POST')
+        if mode in ('associative','experimental'):raise ValueError('Stateful experimental modes require explicit commands/POST')
         with lab.lock:
             if int(request.args.get('instance',lab.population.active_index))!=lab.population.active_index:raise ValueError('Questions use the active instance; activate the selected one first')
             return jsonify(lab.session.membrane.respond(query,mode))

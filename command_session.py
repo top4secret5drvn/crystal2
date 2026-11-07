@@ -65,6 +65,19 @@ class CommandSession:
                         print(f'   Доступные: !бессвязно !мимо !кратко !длинно !сухо !бред !ok')
                         return
                 args = parts[1] if len(parts) > 1 else ''
+                if action in ('попробуй','повтори','верно','неверно','частично','неизвестно','эталон','обучение'):
+                    from imitation_learning import ExperimentalLearningLoop
+                    loop=ExperimentalLearningLoop(membrane)
+                    if action=='обучение':
+                        result={'rolled_back':loop.rollback()} if args=='откат' else loop.status()
+                    elif action in ('попробуй','повтори'):
+                        query=self.last_user_query if self.last_query_lattice is population.active else None
+                        if not query:raise ValueError('Сначала спроси <вопрос>')
+                        result=loop.attempt(query);self.last_response=result
+                    else:
+                        kind={'верно':'correct','неверно':'incorrect','частично':'partially_correct','неизвестно':'unknown','эталон':'reference_answer'}[action]
+                        result=loop.feedback(kind,args)
+                    print(json.dumps(result,ensure_ascii=False,indent=2));return
                 if action == 'выход':
                     print('💎 Кристалл засыпает...')
                     return False

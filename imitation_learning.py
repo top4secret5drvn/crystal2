@@ -344,4 +344,195 @@ def calibrate_interpretation(lattice,example,rule_id,max_candidates=24):
     else:result['reason']='no_supported_improvement'
     return result
 
+class ExperimentalLearningLoop:
+    """Opt-in model overlay. Feedback never edits observations or confirms facts."""
+    def __init__(self,membrane):
+        self.membrane=membrane;self.g=membrane.lattice
+        from semantic_rules import state
+        self.store=state(self.g).setdefault('trial_learning',dict(schema=1,model={'edges':[], 'roles':[], 'role_weight':0.0},
+            attempts=[],feedback=[],previous=[],trained=[],phase='experimental',evaluations=[]))
+
+    def _query(self,query):
+        from structured_observations import candidate_labels
+        from svo_observations import normalized,lemma
+        words=normalized(query).split()
+        if len(words)!=3 or words[0] not in ('что','кто'):raise ValueError('Experimental query: кто/что <predicate> <concept>')
+        predicate='IS_A' if words[1]=='такое' else lemma(words[1],'verb')
+        labels=candidate_labels(self.membrane,words[2])
+        if len(labels)>1:raise ValueError('Ambiguous query concept')
+        return (labels[0] if labels else words[2]),predicate,words[0]=='кто'
+
+    def _classes(self,label):
+        from engine import EDGE_IS_A
+        rid=self.g.label_to_id.get(label)
+        if rid is None:return set()
+        return {self.g.resonators[t].label for t,p in self.g.resonators[rid].connections.typed_items()
+                if p&0xF0000000==EDGE_IS_A and t in self.g.resonators}
+
+    def _generate(self,query,model):
+        from engine import unpack_edge,EDGE_NAMES
+        anchor,predicate,inverse=self._query(query);rid=self.g.label_to_id.get(anchor)
+        pool=[];paths={}
+        if len(self.g.resonators)>500:raise ValueError('Trial budget: 500 nodes')
+        if rid is not None:
+            # Abductive exploration runs on a copy, never changing runtime evidence.
+            clone=copy.deepcopy(self.g)
+            path=clone.tick_backward(rid,max_depth=3)
+            for pid in path:
+                if pid in self.g.resonators:paths[self.g.resonators[pid].label]=list(path)
+        for r in self.g.resonators.values():
+            if r.label in (anchor,query) or r.label.startswith(('что ','кто ')) or r.label.startswith(('root:','mod:','cluster:','mdl:','skill:','EPOCH:')) or r.label=='SELF':continue
+            pool.append(r.label)
+        # Retain concepts represented only by the original stemmer as well.
+        if not pool:
+            pool=[r.label for r in self.g.resonators.values() if r.label!=anchor and r.label!='SELF' and r.label.startswith('root:')]
+        pool=sorted(pool)[:64]
+        overlay=[e['subject'] if inverse else e['object'] for e in model['edges'] if e.get('context','global') in self.g.resolve_context() and e['predicate']==predicate and (e['object'] if inverse else e['subject'])==anchor]
+        pool=list(dict.fromkeys(overlay+pool))[:64];results=[]
+        class_cache={label:self._classes(label) for label in pool+[anchor]}
+        for label in pool:
+            subject,obj=(label,anchor) if inverse else (anchor,label)
+            target=self.g.label_to_id.get(label);adjacency=0;edges=[];provenance=[]
+            if rid is not None and target is not None:
+                r=self.g.resonators[rid]
+                for t,packed in r.connections.typed_items():
+                    if t!=target:continue
+                    weight,kind=unpack_edge(packed);adjacency=max(adjacency,weight/100)
+                    edges.append([rid,t,EDGE_NAMES[kind]])
+                    reason=self.g.edge_meta.get((rid,t,kind))
+                    if reason:provenance.append(reason.source_label or reason.source_type)
+                similarity=self.g.encoder.similarity(r.hdc_vector,self.g.resonators[target].hdc_vector)
+                activity=min(1,self.g.resonators[target].energy/100)
+            else:similarity=activity=0
+            score=.5*adjacency+.1*similarity+.05*activity+.05*(label in paths)
+            local_confidence=.15
+            for role in model['roles']:
+                if role.get('context','global') in self.g.resolve_context() and role['predicate']==predicate and role['subject_class'] in class_cache.get(subject,set()) and role['object_class'] in class_cache.get(obj,set()):score+=model['role_weight']*role['weight']
+            for edge in model['edges']:
+                if edge.get('context','global') in self.g.resolve_context() and (subject,predicate,obj)==(edge['subject'],edge['predicate'],edge['object']):score+=edge['weight'];provenance+=edge['sources'];local_confidence=min(.25,max(.05,edge['confidence']))
+            results.append(dict(subject=subject,predicate=predicate,object=obj,nodes=[n for n in (rid,target) if n is not None],edges=edges,
+                paths=paths.get(label,[]),sources=list(dict.fromkeys(provenance)),score=round(score,6),uncertainty=1-local_confidence,
+                status='hypothesis',history=[],origin='model_and_graph' if overlay else 'heuristic_graph_exploration'))
+        return sorted(results,key=lambda h:(-h['score'],h['subject'],h['object']))[:4]
+
+    def attempt(self,query):
+        if len(query)>2000:raise ValueError('Query budget')
+        if sum(a['query']==query for a in self.store['attempts'])>=8:raise ValueError('Attempt budget exhausted for this question')
+        if len(self.store['attempts'])>=128:raise ValueError('Session trial budget: 128 attempts')
+        candidates=self._generate(query,self.store['model']);number=len(self.store['attempts'])+1
+        import hashlib
+        for h in candidates:h['id']=hashlib.sha256(json.dumps([number,h['subject'],h['predicate'],h['object']]).encode()).hexdigest()[:24]
+        selected=candidates[0] if candidates else None
+        record=dict(id=number,query=query,context=self.g.active_context,candidates=candidates,selected=selected,mode='Hypothesis' if selected else 'Unknown',
+            status='hypothesis' if selected else 'unknown',confidence=1-selected['uncertainty'] if selected else 0,relations=[selected] if selected else [],
+            sources=selected['sources'] if selected else [],text=('Предположение, не знание: '+self.membrane._get_surface_form(selected['subject'])+' '+selected['predicate']+' '+self.membrane._get_surface_form(selected['object'])) if selected else 'Нет кандидатов в памяти',feedback=[])
+        self.store['attempts'].append(copy.deepcopy(record));return record
+
+    def _reference(self,text):
+        from structured_observations import parse_definition,candidate_labels
+        from svo_observations import normalized,lemma
+        parsed=parse_definition(text)
+        if parsed.get('ok'):triple=[parsed['subject'],parsed['relation'],parsed['target']]
+        else:
+            words=normalized(text).split()
+            if len(words)!=3 or any(not w.isalpha() for w in words) or any(w in ('не','возможно','если') for w in words):raise ValueError('Reference requires explicit atomic subject predicate object')
+            triple=[words[0],lemma(words[1],'verb'),words[2]]
+        for i in (0,2):
+            labels=candidate_labels(self.membrane,triple[i])
+            if len(labels)>1:raise ValueError('Ambiguous reference')
+            if labels:triple[i]=labels[0]
+        return triple
+
+    def feedback(self,kind,reference=''):
+        if kind not in ('correct','incorrect','partially_correct','unknown','reference_answer'):raise ValueError('Invalid feedback')
+        if not self.store['attempts']:raise ValueError('Attempt required first')
+        a=self.store['attempts'][-1]
+        if kind in a['feedback']:raise ValueError('Repeated feedback for this attempt')
+        if a['context']!=self.g.active_context:raise ValueError('Attempt context changed')
+        task_key=a['context']+'\0'+json.dumps(self._query(a['query']),ensure_ascii=False)
+        selected=a['selected'];triple=self._reference(reference) if kind=='reference_answer' else None
+        if triple:
+            anchor,predicate,inverse=self._query(a['query'])
+            if triple[1]!=predicate or triple[2 if inverse else 0]!=anchor:raise ValueError('Reference does not apply to question')
+        before=copy.deepcopy(self.store['model']);candidate=copy.deepcopy(before);mutations=[]
+        if kind in ('incorrect','partially_correct') and selected:
+            edge=next((e for e in candidate['edges'] if (e['subject'],e['predicate'],e['object'])==(selected['subject'],selected['predicate'],selected['object']) and e.get('context','global')==self.g.active_context),None)
+            if edge is None:
+                edge=dict(subject=selected['subject'],predicate=selected['predicate'],object=selected['object'],weight=0,confidence=.15,status='hypothesis',context=self.g.active_context,sources=[]);candidate['edges'].append(edge)
+            edge['weight']=max(-2,edge['weight']-(.5 if kind=='incorrect' else .25));edge['confidence']=max(.05,edge['confidence']-.05)
+            mutations.append(dict(operation='weaken_hypothetical_edge',edge=copy.deepcopy(edge)))
+        if triple:
+            edge=next((e for e in candidate['edges'] if [e['subject'],e['predicate'],e['object']]==triple and e.get('context','global')==self.g.active_context),None)
+            if edge is None:
+                edge=dict(subject=triple[0],predicate=triple[1],object=triple[2],weight=0,confidence=.15,status='hypothesis',context=self.g.active_context,sources=['user feedback task '+str(a['id'])]);candidate['edges'].append(edge)
+            edge['weight']=min(2,edge['weight']+.75)
+            mutations.append(dict(operation='create_or_strengthen_hypothetical_edge',edge=copy.deepcopy(edge)))
+            for sc in sorted(self._classes(triple[0]))[:1]:
+                for oc in sorted(self._classes(triple[2]))[:1]:
+                    role=dict(context=self.g.active_context,predicate=triple[1],subject_class=sc,object_class=oc,weight=1)
+                    if role not in candidate['roles']:candidate['roles'].append(role)
+                    candidate['role_weight']=min(1,candidate['role_weight']+.75)
+                    mutations.append(dict(operation='adapt_role_path_weight',role=role,value=candidate['role_weight']))
+        if len(candidate['edges'])>64 or len(candidate['roles'])>32:raise ValueError('Model budget exhausted')
+        # Guard every previously corrected question. No test reference creates candidates.
+        controls=[f for f in self.store['feedback'] if f.get('gold') and f.get('context')==a['context'] and f['query']!=a['query']]
+        if not mutations:controls=[]
+        if len(controls)>16:raise ValueError('Trial evaluation budget: 16 prior control tasks')
+        def quality(model,query,gold):
+            hs=self._generate(query,model)
+            return float(bool(hs) and [hs[0]['subject'],hs[0]['predicate'],hs[0]['object']]==gold)
+        old=[quality(before,a['query'],triple)] if triple else [0.0]
+        new=[quality(candidate,a['query'],triple)] if triple else [max(0.0,selected['score']-next((h['score'] for h in self._generate(a['query'],candidate) if (h['subject'],h['predicate'],h['object'])==(selected['subject'],selected['predicate'],selected['object'])), selected['score']-.5)) if selected and mutations else 0.0]
+        old += [quality(before,c['query'],c['gold']) for c in controls]
+        new += [quality(candidate,c['query'],c['gold']) for c in controls]
+        accept=bool(mutations) and calibration_gain(old,new)
+        diagnosis=[key for key,actual,expected in zip(('subject','predicate','object'),[selected['subject'],selected['predicate'],selected['object']] if selected else ['','',''],triple or ['','','']) if actual!=expected] if triple else [kind]
+        if triple and not selected:diagnosis=['missing_relation']
+        elif triple and selected and [selected['object'],selected['predicate'],selected['subject']]==triple:diagnosis=['direction']
+        result=dict(kind=kind,attempt=a['id'],query=a['query'],context=a['context'],reference_text=reference,source='interactive_feedback',tick=self.g.tick_count,gold=triple or ([selected['subject'],selected['predicate'],selected['object']] if kind=='correct' and selected else None),diagnosis=diagnosis or ['already_matches'],
+            accepted=accept,mutations=mutations,phase=self.store['phase'],before=old,after=new,
+            reason='provisional_feedback_adaptation' if accept else 'regression_or_no_measurable_gain',training_metric='reference_accuracy' if triple else 'rejected_candidate_score_reduction',independent_controls=len(controls))
+        if accept:
+            self.store['previous'].append(dict(model=before,phase=self.store['phase'],trained=list(self.store['trained'])))
+            self.store['model']=candidate;self.store['phase']='provisional'
+            if triple and task_key not in self.store['trained']:self.store['trained'].append(task_key)
+            result['phase']='provisional'
+        previously_taught=any(f.get('gold')==[selected['subject'],selected['predicate'],selected['object']] for f in self.store['feedback']) if selected else False
+        if kind=='correct' and selected and not previously_taught and task_key not in self.store['trained'] and self.store['trained']:
+            self.store['evaluations'].append(dict(query=a['query'],context=a['context'],task_key=task_key,attempt=a['id'],correct=True))
+            result['reason']='heldout_feedback_check'
+            if len({e['task_key'] for e in self.store['evaluations'] if e['correct']})>=2:
+                self.store['phase']='task_validated';result['phase']='task_validated'
+        if kind in ('incorrect','partially_correct'):
+            for evaluation in self.store['evaluations']:
+                if evaluation['task_key']==task_key:evaluation['correct']=False
+            self.store['phase']='provisional';result['phase']='provisional'
+        a['feedback'].append(kind)
+        if selected:
+            for h in a['candidates']:
+                if h['id']==selected['id']:h['history'].append(dict(feedback=kind,accepted=accept))
+        self.store['feedback'].append(copy.deepcopy(result));return result
+
+    def rollback(self):
+        if not self.store['previous']:return False
+        previous=self.store['previous'].pop();self.store.update(previous)
+        self.store['feedback'].append(dict(kind='rollback',phase=self.store['phase']))
+        return True
+
+    def status(self):
+        report=copy.deepcopy(self.store)
+        assessed=[f for f in self.store['feedback'] if f.get('kind') in ('correct','incorrect')]
+        first_ids={}
+        for a in self.store['attempts']:first_ids.setdefault((a['context'],a['query']),a['id'])
+        first=[f for f in assessed if f['attempt'] in first_ids.values()]
+        confidence_by_attempt={a['id']:a['confidence'] for a in self.store['attempts']}
+        report['metrics']=dict(attempts=len(self.store['attempts']),first_answer_accuracy=sum(f['kind']=='correct' for f in first)/len(first) if first else None,
+            accepted_mutations=sum(bool(f.get('accepted')) for f in self.store['feedback']),
+            accepted_mutation_operations=sum(len(f.get('mutations',[])) for f in self.store['feedback'] if f.get('accepted')),
+            rejected_mutations=sum(bool(f.get('mutations')) and not f.get('accepted') for f in self.store['feedback']),
+            heldout_accuracy=sum(e['correct'] for e in self.store['evaluations'])/len(self.store['evaluations']) if self.store['evaluations'] else None,
+            feedback_brier=sum((confidence_by_attempt[f['attempt']]-float(f['kind']=='correct'))**2 for f in assessed)/len(assessed) if assessed else None)
+        return report
+
+
 if __name__=='__main__':cli()
