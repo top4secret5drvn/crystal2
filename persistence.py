@@ -56,6 +56,7 @@ class CrystalSnapshot:
         data['nodes'] = {rid: {name: getattr(r, name) for name in
                          ('belief_status', 'belief_confidence', 'belief_reason', 'belief_context', 'context_mask', 'defeats')}
                          for rid, r in lattice.resonators.items()}
+        data['semantic_rules_state'] = lattice.semantic_rules_state
         data['observation_aliases'] = lattice.observation_aliases
         data['imitation_state'] = lattice.imitation_state
         data['typed_schema'] = 1
@@ -74,6 +75,7 @@ class CrystalSnapshot:
             # Never retain hypotheses belonging to the previous graph.
             for name in ('hypotheses','causal_hypotheses','hypothesis_history','belief_history','edge_meta'):
                 setattr(lattice, name, {})
+            lattice.semantic_rules_state = None
             lattice.observation_aliases = {}
             lattice.imitation_state = None
             lattice.semantic_space = None
@@ -88,6 +90,7 @@ class CrystalSnapshot:
         data = CrystalSnapshot._decode_meta(json.loads(trailer[12:].decode('utf-8')))
         for name in CrystalSnapshot.META_FIELDS:
             setattr(lattice, name, data[name])
+        lattice.semantic_rules_state = data.get('semantic_rules_state')
         lattice.observation_aliases = data.get('observation_aliases', {})
         lattice.imitation_state = data.get('imitation_state')
         if data.get('typed_schema', 1) != 1:

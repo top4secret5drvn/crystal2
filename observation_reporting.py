@@ -25,5 +25,10 @@ def report(membrane,query=None):
         if len(unparsed)<100:unparsed.append(dict(sentence=sentence,reason=status,unsupported_relation=reason.metadata.get('unsupported_relation'),
             source=reason.metadata.get('source_document') or reason.source_label,status=reason.metadata.get('status')))
     hypotheses=[dict(source=a,target=b,context=c,status=h['status'],source_document=h['reason'].metadata.get('source_document'),direction_unknown=h['reason'].metadata.get('direction_unknown',False)) for (a,b,c),h in g.causal_hypotheses.items() if not query or (label is not None and a==g.label_to_id[label])][:100]
-    return dict(relations=relations,unparsed=unparsed,hypotheses=hypotheses,limit=100,observations=len(g.relation_observations),
+    semantic=getattr(g,'semantic_rules_state',None) or {}
+    frames=semantic.get('frames',[])
+    from semantic_rules import questions
+    sentences={p[0] for p in semantic.get('seen_sentences',[])} or {f['sentence'] for f in frames}
+    extracted={f['sentence'] for f in frames if f['status']=='observed' and not f['negated']}
+    return dict(semantic_frames=frames[-100:],active_questions=questions(g) if semantic else [],coverage=len(extracted)/max(1,len(sentences)),relations=relations,unparsed=unparsed,hypotheses=hypotheses,limit=100,observations=len(g.relation_observations),
                 definitions=sum(r['relation']=='IS_A' for r in relations),confirmed=sum(r['status']=='confirmed' for r in relations))

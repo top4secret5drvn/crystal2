@@ -454,11 +454,10 @@ class LanguageMembrane:
         for sentence in self.iter_sentences(text):
             if not sentence.strip():
                 continue
-            from structured_observations import parse_definition,store
-            parsed=parse_definition(sentence);parsed['sentence']=sentence
+            from semantic_rules import ingest
             current = self._inject_sentence(sentence,extract_definitions=False)
-            if store(self,parsed) is not None:
-                if parsed['relation']=='IS_A':current.is_a_links+=1
+            frames=ingest(self,sentence)
+            current.is_a_links+=sum(f['relation']=='IS_A' and f['status']=='observed' for f in frames)
             for name in stats.__dataclass_fields__:
                 setattr(stats, name, getattr(stats, name) + getattr(current, name))
         return stats

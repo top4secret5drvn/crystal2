@@ -37,6 +37,7 @@ async function refresh(){
   }
   if(currentTab==='geometry')await geometry();
   if(currentTab==='imitation')await training();
+  if(currentTab==='semantic')await semanticQuestions();
 }
 async function loadGraph(neighbor=null){
   const params=new URLSearchParams({q:$('search').value,type:$('edge-type').value,scope:$('scope').value,services:$('services').checked,limit:150});
@@ -94,7 +95,7 @@ async function geometry(){
   renderer.domElement.onpointermove=e=>{if(!dragging)return;group.rotation.y+=(e.clientX-lastX)/150;group.rotation.x+=(e.clientY-lastY)/150;lastX=e.clientX;lastY=e.clientY;draw();};
   renderer.domElement.onwheel=e=>{e.preventDefault();camera.position.z=Math.max(.1,Math.min(100,camera.position.z*(e.deltaY>0?1.1:.9)));draw();};
 }
-for(const button of document.querySelectorAll('.tab'))button.onclick=async()=>{currentTab=button.dataset.tab;for(const v of document.querySelectorAll('.view'))v.hidden=v.id!==currentTab;for(const b of document.querySelectorAll('.tab'))b.classList.toggle('active',b===button);$('title').textContent={memory:'Карта памяти',geometry:'Семантические пространства',population:'Популяция кристаллов',imitation:'Обучение через подражание',study:'Автономное изучение',history:'История изменений'}[currentTab];try{await refresh();}catch(e){fail(e);}};
+for(const button of document.querySelectorAll('.tab'))button.onclick=async()=>{currentTab=button.dataset.tab;for(const v of document.querySelectorAll('.view'))v.hidden=v.id!==currentTab;for(const b of document.querySelectorAll('.tab'))b.classList.toggle('active',b===button);$('title').textContent={memory:'Карта памяти',geometry:'Семантические пространства',population:'Популяция кристаллов',imitation:'Обучение через подражание',study:'Автономное изучение',history:'История изменений',semantic:'Вопросы Кристалла'}[currentTab];try{await refresh();}catch(e){fail(e);}};
 bind('refresh',refresh);bind('graph-load',()=>loadGraph());bind('graph-reset',async()=>{$('search').value='';$('edge-type').value='';$('scope').value='all';await loadGraph();});bind('neighbors',async()=>{$('search').value='';await loadGraph(selectedNode);});
 $('instance').onchange=()=>refresh().catch(fail);
 bind('activate',async()=>{await api('instances/select',{id:Number($('instance').value)});await refresh();});
@@ -203,3 +204,23 @@ $('answer-form').onsubmit=async event=>{
     $('extraction-report').textContent=pretty(await api('observations?'+new URLSearchParams({query:query.replace(/^что такое\s+/i,'').replace(/[?!.]+$/,'')})));
   }catch(error){fail(error);}finally{button.disabled=false;}
 };
+
+async function semanticQuestions(){
+ const data=await api('semantic-learning');$('semantic-state').textContent=pretty(data.state);$('semantic-questions').replaceChildren();
+ for(const q of data.questions){
+  const card=document.createElement('div');card.className='card';const title=document.createElement('p');title.textContent=q.sentence+' · '+q.reason;card.append(title);
+  const send=async(response,c={})=>{activeOnly();$('semantic-result').textContent=pretty(await api('semantic-learning/correct',{id:q.id,response,...c}));await semanticQuestions();};
+  for(const c of q.candidates){const b=document.createElement('button');b.textContent=`${c.subject} ${c.relation} ${c.object}`;b.onclick=()=>send('incorrect',c).catch(fail);card.append(b);}
+  for(const [label,response] of [['Верно','correct'],['Не знаю','unknown'],['Пропустить','skip']]){const b=document.createElement('button');b.textContent=label;b.onclick=()=>send(response).catch(fail);card.append(b);}
+  const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Исправить интерпретацию';details.append(summary);
+  const subject=document.createElement('input'),object=document.createElement('input'),relation=document.createElement('select');subject.placeholder='Субъект';object.placeholder='Объект';
+  for(const r of ['SYN','IS_A','PART_OF','CAUSE','EFFECT','COND','EXCEPT','ANALOG','GOAL'])relation.add(new Option(r,r));
+  const save=document.createElement('button');save.textContent='Проверить исправление';save.onclick=()=>send('incorrect',{subject:subject.value,object:object.value,relation:relation.value}).catch(fail);
+  details.append(subject,relation,object,save);card.append(details);$('semantic-questions').append(card);
+ }
+ if(!data.questions.length)$('semantic-questions').textContent='Новых вопросов по наблюдаемым фреймам нет.';
+}
+bind('semantic-refresh',semanticQuestions);
+bind('semantic-rollback',async()=>{activeOnly();$('semantic-result').textContent=pretty(await api('semantic-learning/rollback',{}));await semanticQuestions();});
+bind('semantic-export',async()=>{const data=await api('semantic-learning');const link=document.createElement('a');link.href=URL.createObjectURL(new Blob([pretty({schema:1,rules:data.state.rules})],{type:'application/json'}));link.download='crystal-rules.json';link.click();URL.revokeObjectURL(link.href);});
+$('semantic-import').onchange=async event=>{try{activeOnly();const file=event.target.files[0];if(!file||file.size>65536)throw new Error('Лимит правил: 64 KiB');await api('semantic-learning/import',JSON.parse(await file.text()));await semanticQuestions();}catch(e){fail(e);}};

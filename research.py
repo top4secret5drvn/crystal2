@@ -51,6 +51,15 @@ def fetch_wikipedia(topic,should_stop=lambda:False):
 
 
 def ingest_observation(membrane,lattice,text,source,source_type='text',question=''):
+    from semantic_rules import state
+    semantic=state(lattice)
+    key=[source,text,lattice.active_context]
+    if key in semantic['documents']:
+        from membrane import CausalStats
+        return CausalStats()
+    semantic['documents'].append(key)
+    semantic['documents']=semantic['documents'][-1000:]
+    frame_start=len(semantic['frames'])
     previous_meta=dict(lattice.edge_meta)
     trusted={key:(copy.deepcopy(reason),lattice.resonators[key[0]].connections.get_type(key[1],key[2]))
              for key,reason in previous_meta.items() if len(key)==3 and key[0] in lattice.resonators and
@@ -59,6 +68,7 @@ def ingest_observation(membrane,lattice,text,source,source_type='text',question=
     before={(r.id,t,unpack_edge(p)[1]) for r in lattice.resonators.values() for t,p in r.connections.typed_items()}
     previous_observations=len(lattice.relation_observations)
     stats=membrane.inject_text(text)
+    for frame in semantic['frames'][frame_start:]:frame['source']=source
     observation_status='user_observed' if source_type=='user_correction' else 'observed'
     for observation in lattice.relation_observations[previous_observations:]:
         if observation.metadata.get('status')!='confirmed':
