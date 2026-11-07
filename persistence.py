@@ -56,6 +56,7 @@ class CrystalSnapshot:
         data['nodes'] = {rid: {name: getattr(r, name) for name in
                          ('belief_status', 'belief_confidence', 'belief_reason', 'belief_context', 'context_mask', 'defeats')}
                          for rid, r in lattice.resonators.items()}
+        data['imitation_state'] = lattice.imitation_state
         data['typed_schema'] = 1
         data['typed_adjacency'] = {rid:list(r.connections.typed_items()) for rid,r in lattice.resonators.items()}
         data['identity'] = {rid:(r.identity_hdc, r.contextual_hdc) for rid,r in lattice.resonators.items()}
@@ -72,6 +73,7 @@ class CrystalSnapshot:
             # Never retain hypotheses belonging to the previous graph.
             for name in ('hypotheses','causal_hypotheses','hypothesis_history','belief_history','edge_meta'):
                 setattr(lattice, name, {})
+            lattice.imitation_state = None
             lattice.semantic_space = None
             lattice.geometry_mode, lattice.semantic_world, lattice.semantic_bindings = 'off', None, {}
             lattice.abstraction_components, lattice._sleep_signature = {}, None
@@ -84,6 +86,7 @@ class CrystalSnapshot:
         data = CrystalSnapshot._decode_meta(json.loads(trailer[12:].decode('utf-8')))
         for name in CrystalSnapshot.META_FIELDS:
             setattr(lattice, name, data[name])
+        lattice.imitation_state = data.get('imitation_state')
         if data.get('typed_schema', 1) != 1:
             raise ValueError('Unsupported typed adjacency schema')
         if 'typed_adjacency' in data:

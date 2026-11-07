@@ -473,6 +473,7 @@ class CrystalLattice:
         self.relation_observations = []
         self.hypothesis_history = {}
         self.semantic_space = None
+        self.imitation_state = None
         self.geometry_mode = 'off'
         self.semantic_world = None
         self.semantic_bindings = {}

@@ -698,6 +698,12 @@ class LanguageMembrane:
     # ================================================================
     def generate_text(self, seed_concepts: List[str], max_length: int = 15, beam_width: int = 2,
                       mode: str = 'factual') -> str:
+        if mode == 'imitation':
+            if self.lattice.imitation_state is None:
+                raise ValueError('Imitation mode is disabled until explicitly calibrated')
+            from imitation_learning import TrainingExample, Parameters, answer
+            example=TrainingExample('interactive',' '.join(seed_concepts),(),context=self.lattice.active_context)
+            return answer(self.lattice,example,Parameters(**self.lattice.imitation_state['parameters'])).text
         if mode == 'associative':
             return '[Ассоциативный эксперимент] ' + self._generate_associative(seed_concepts, max_length, beam_width)
         if mode != 'factual':
