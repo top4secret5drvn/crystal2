@@ -125,14 +125,15 @@ def correct(g,frame_id,response,subject='',relation='',object='',source='local u
     if f is None:raise ValueError('Unknown observed frame')
     if frame_id in s['questions']:raise ValueError('Question already answered')
     if response not in ('correct','incorrect','unknown','skip'):raise ValueError('Invalid response')
+    if response=='correct':subject,relation,object=f['subject'],f['relation'],f['object']
+    if response not in ('unknown','skip') and (relation not in REGISTRY or not subject.strip() or not object.strip()):raise ValueError('Explicit interpretation required')
+    if len(s['controls'])>32:raise ValueError('Calibration budget: 32 controls')
     record=dict(frame_id=frame_id,response=response,source=source)
     s['questions'][frame_id]=response
     # All candidates from one observation are the same question.
     for other in s['frames']:
         if other['sentence']==f['sentence'] and other['context']==f['context']:s['questions'][other['id']]=response
     if response in ('unknown','skip'):s['corrections'].append(record);return dict(accepted=False,reason=response)
-    if response=='correct':subject,relation,object=f['subject'],f['relation'],f['object']
-    if relation not in REGISTRY or not subject.strip() or not object.strip():raise ValueError('Explicit interpretation required')
     example=dict(sentence=f['sentence'],gold=[subject.casefold().strip(),relation,object.casefold().strip()],source=source,context=f['context'])
     from imitation_learning import calibrate_interpretation
     result=calibrate_interpretation(g,example,f['rule_id'])

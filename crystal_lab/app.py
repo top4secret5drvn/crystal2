@@ -477,6 +477,7 @@ def create_app(workspace):
         from semantic_rules import state,questions
         with lab.lock:
             g=lab.population.active
+            if int(request.args.get('instance',lab.population.active_index))!=lab.population.active_index:raise ValueError('Semantic learning uses the active instance')
             view=copy.deepcopy(g)
             return jsonify(state=state(view),questions=questions(view))
 
