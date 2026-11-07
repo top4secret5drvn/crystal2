@@ -56,3 +56,25 @@ class SVOCycle(unittest.TestCase):
   for source in ('local:a','local:b','local:b'):ingest_observation(self.m,self.g,'мастер читает книгу',source)
   r=self.m.respond('что читает мастер?');self.assertEqual(set(r['sources']),{'local:a','local:b'});self.assertEqual(r['confidence'],.6)
   self.assertEqual(len([f for f in self.g.semantic_rules_state['frames'] if f['relation']=='SVO']),2)
+
+ def test_ineligible_frame_status_cannot_support_answer(self):
+  self.m.inject_text('мастер читает книгу')
+  frame=self.g.semantic_rules_state['frames'][0]
+  for status in ('retracted','rejected','hypothesis','conflict'):
+   frame['status']=status
+   self.assertEqual(self.m.respond('что читает мастер?')['mode'],'Unknown',status)
+
+ def test_unrelated_ambiguous_sense_does_not_block_answer(self):
+  self.m.inject_text('мастер читает книгу')
+  self.m.inject_text('ключ читает карту')
+  self.g.semantic_bindings['ключ']=['sense:a','sense:b']
+  self.assertEqual(self.m.respond('что читает мастер?')['mode'],'Attributed')
+  self.assertEqual(self.m.respond('что читает ключ?')['reason'],'ambiguous_sense')
+
+ def test_ambiguous_lemma_is_not_silently_selected(self):
+  from unittest.mock import patch
+  from svo_observations import GRAMMAR,parse
+  nouns=dict(GRAMMAR['noun_forms']);nouns['другой смысл']=['землю']
+  with patch.dict(GRAMMAR,{'noun_forms':nouns}):
+   frames,error=parse('солнце нагревает землю')
+   self.assertEqual(frames,[]);self.assertEqual(error,'ambiguous_lemma')
