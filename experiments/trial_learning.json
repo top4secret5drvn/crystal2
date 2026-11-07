@@ -1,0 +1,4853 @@
+[
+  {
+    "seed": 17,
+    "first": {
+      "id": 1,
+      "query": "что поглощает мирак?",
+      "context": "global",
+      "candidates": [
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "ошибка",
+          "nodes": [
+            1,
+            3
+          ],
+          "edges": [
+            [
+              1,
+              3,
+              "SYN"
+            ]
+          ],
+          "paths": [
+            1,
+            3
+          ],
+          "sources": [],
+          "score": 0.60008,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "c1be29dd2e521d5475e2747c"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "классА",
+          "nodes": [
+            1,
+            2
+          ],
+          "edges": [
+            [
+              1,
+              2,
+              "IS_A"
+            ]
+          ],
+          "paths": [],
+          "sources": [
+            "fixture classes"
+          ],
+          "score": 0.40015,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "3b18199ae9b6de0c02a7be64"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "споры",
+          "nodes": [
+            1,
+            8
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [],
+          "score": 0.05071,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "1c233e0cdfe3e4bf3dfa491f"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "луны",
+          "nodes": [
+            1,
+            6
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [],
+          "score": 0.05018,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "07f3dc813ddace03fef92d73"
+        }
+      ],
+      "selected": {
+        "subject": "мирак",
+        "predicate": "поглощает",
+        "object": "ошибка",
+        "nodes": [
+          1,
+          3
+        ],
+        "edges": [
+          [
+            1,
+            3,
+            "SYN"
+          ]
+        ],
+        "paths": [
+          1,
+          3
+        ],
+        "sources": [],
+        "score": 0.60008,
+        "uncertainty": 0.85,
+        "status": "hypothesis",
+        "history": [],
+        "origin": "heuristic_graph_exploration",
+        "id": "c1be29dd2e521d5475e2747c"
+      },
+      "mode": "Hypothesis",
+      "status": "hypothesis",
+      "confidence": 0.15000000000000002,
+      "relations": [
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "ошибка",
+          "nodes": [
+            1,
+            3
+          ],
+          "edges": [
+            [
+              1,
+              3,
+              "SYN"
+            ]
+          ],
+          "paths": [
+            1,
+            3
+          ],
+          "sources": [],
+          "score": 0.60008,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "c1be29dd2e521d5475e2747c"
+        }
+      ],
+      "sources": [],
+      "text": "Предположение, не знание: мирак поглощает ошибка",
+      "feedback": []
+    },
+    "negative": {
+      "kind": "incorrect",
+      "attempt": 1,
+      "query": "что поглощает мирак?",
+      "context": "global",
+      "reference_text": "",
+      "source": "interactive_feedback",
+      "tick": 0,
+      "gold": null,
+      "diagnosis": [
+        "incorrect"
+      ],
+      "accepted": true,
+      "mutations": [
+        {
+          "operation": "weaken_hypothetical_edge",
+          "edge": {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "ошибка",
+            "weight": -0.5,
+            "confidence": 0.09999999999999999,
+            "status": "hypothesis",
+            "context": "global",
+            "sources": []
+          }
+        }
+      ],
+      "phase": "provisional",
+      "before": [
+        0.0
+      ],
+      "after": [
+        0.49999999999999994
+      ],
+      "reason": "provisional_feedback_adaptation",
+      "training_metric": "rejected_candidate_score_reduction",
+      "independent_controls": 0
+    },
+    "correction": {
+      "kind": "reference_answer",
+      "attempt": 1,
+      "query": "что поглощает мирак?",
+      "context": "global",
+      "reference_text": "мирак поглощает луны",
+      "source": "interactive_feedback",
+      "tick": 0,
+      "gold": [
+        "мирак",
+        "поглощает",
+        "луны"
+      ],
+      "diagnosis": [
+        "object"
+      ],
+      "accepted": true,
+      "mutations": [
+        {
+          "operation": "create_or_strengthen_hypothetical_edge",
+          "edge": {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "луны",
+            "weight": 0.75,
+            "confidence": 0.15,
+            "status": "hypothesis",
+            "context": "global",
+            "sources": [
+              "user feedback task 1"
+            ]
+          }
+        },
+        {
+          "operation": "adapt_role_path_weight",
+          "role": {
+            "context": "global",
+            "predicate": "поглощает",
+            "subject_class": "классА",
+            "object_class": "классБ",
+            "weight": 1
+          },
+          "value": 0.75
+        }
+      ],
+      "phase": "provisional",
+      "before": [
+        0.0
+      ],
+      "after": [
+        1.0
+      ],
+      "reason": "provisional_feedback_adaptation",
+      "training_metric": "reference_accuracy",
+      "independent_controls": 0
+    },
+    "retry": {
+      "id": 2,
+      "query": "что поглощает мирак?",
+      "context": "global",
+      "candidates": [
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "луны",
+          "nodes": [
+            1,
+            6
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [
+            "user feedback task 1"
+          ],
+          "score": 1.55018,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "ecb81450e622fea9031f94e5"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "споры",
+          "nodes": [
+            1,
+            8
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [],
+          "score": 0.80071,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "be7e707c055cbd204c8e8747"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "камни",
+          "nodes": [
+            1,
+            9
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [],
+          "score": 0.80014,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "852a625ac026bc440d4b0a23"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "классА",
+          "nodes": [
+            1,
+            2
+          ],
+          "edges": [
+            [
+              1,
+              2,
+              "IS_A"
+            ]
+          ],
+          "paths": [],
+          "sources": [
+            "fixture classes"
+          ],
+          "score": 0.40015,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "9104bc36aad30bdca9992fd0"
+        }
+      ],
+      "selected": {
+        "subject": "мирак",
+        "predicate": "поглощает",
+        "object": "луны",
+        "nodes": [
+          1,
+          6
+        ],
+        "edges": [],
+        "paths": [],
+        "sources": [
+          "user feedback task 1"
+        ],
+        "score": 1.55018,
+        "uncertainty": 0.85,
+        "status": "hypothesis",
+        "history": [],
+        "origin": "model_and_graph",
+        "id": "ecb81450e622fea9031f94e5"
+      },
+      "mode": "Hypothesis",
+      "status": "hypothesis",
+      "confidence": 0.15000000000000002,
+      "relations": [
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "луны",
+          "nodes": [
+            1,
+            6
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [
+            "user feedback task 1"
+          ],
+          "score": 1.55018,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "ecb81450e622fea9031f94e5"
+        }
+      ],
+      "sources": [
+        "user feedback task 1"
+      ],
+      "text": "Предположение, не знание: мирак поглощает луны",
+      "feedback": []
+    },
+    "heldout": [
+      {
+        "subject": "новал",
+        "expected": "споры",
+        "attempt": {
+          "id": 3,
+          "query": "что поглощает новал?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                4,
+                8
+              ],
+              "edges": [
+                [
+                  4,
+                  8,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84924,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "5decbf308ea42d2261868053"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                4,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.80025,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "ef5fb6d178664f6b30d060cf"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                4,
+                9
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79963,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "3a463052422ec5625b2edb92"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                4,
+                3
+              ],
+              "edges": [
+                [
+                  4,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.54991,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "f89e233be77e6d622c2bcc20"
+            }
+          ],
+          "selected": {
+            "subject": "новал",
+            "predicate": "поглощает",
+            "object": "споры",
+            "nodes": [
+              4,
+              8
+            ],
+            "edges": [
+              [
+                4,
+                8,
+                "SYN"
+              ]
+            ],
+            "paths": [],
+            "sources": [],
+            "score": 0.84924,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [],
+            "origin": "heuristic_graph_exploration",
+            "id": "5decbf308ea42d2261868053"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                4,
+                8
+              ],
+              "edges": [
+                [
+                  4,
+                  8,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84924,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "5decbf308ea42d2261868053"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: новал поглощает споры",
+          "feedback": []
+        },
+        "correct": true
+      },
+      {
+        "subject": "третак",
+        "expected": "камни",
+        "attempt": {
+          "id": 4,
+          "query": "что поглощает третак?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                5,
+                9
+              ],
+              "edges": [
+                [
+                  5,
+                  9,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "1acf261d8b64bdc2738b079f"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                5,
+                8
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79979,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "a52f72d3e0cbd19284c43f93"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                5,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "0c9f9218c224c4dfc885acc9"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                5,
+                3
+              ],
+              "edges": [
+                [
+                  5,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.54968,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "5139e7c35c4d8f90c3521df0"
+            }
+          ],
+          "selected": {
+            "subject": "третак",
+            "predicate": "поглощает",
+            "object": "камни",
+            "nodes": [
+              5,
+              9
+            ],
+            "edges": [
+              [
+                5,
+                9,
+                "SYN"
+              ]
+            ],
+            "paths": [],
+            "sources": [],
+            "score": 0.84972,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [],
+            "origin": "heuristic_graph_exploration",
+            "id": "1acf261d8b64bdc2738b079f"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                5,
+                9
+              ],
+              "edges": [
+                [
+                  5,
+                  9,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "1acf261d8b64bdc2738b079f"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: третак поглощает камни",
+          "feedback": []
+        },
+        "correct": true
+      }
+    ],
+    "baseline_accuracy": 0.0,
+    "heldout_accuracy": 1.0,
+    "status": {
+      "schema": 1,
+      "model": {
+        "edges": [
+          {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "ошибка",
+            "weight": -0.5,
+            "confidence": 0.09999999999999999,
+            "status": "hypothesis",
+            "context": "global",
+            "sources": []
+          },
+          {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "луны",
+            "weight": 0.75,
+            "confidence": 0.15,
+            "status": "hypothesis",
+            "context": "global",
+            "sources": [
+              "user feedback task 1"
+            ]
+          }
+        ],
+        "roles": [
+          {
+            "context": "global",
+            "predicate": "поглощает",
+            "subject_class": "классА",
+            "object_class": "классБ",
+            "weight": 1
+          }
+        ],
+        "role_weight": 0.75
+      },
+      "attempts": [
+        {
+          "id": 1,
+          "query": "что поглощает мирак?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                1,
+                3
+              ],
+              "edges": [
+                [
+                  1,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [
+                1,
+                3
+              ],
+              "sources": [],
+              "score": 0.60008,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "incorrect",
+                  "accepted": true
+                },
+                {
+                  "feedback": "reference_answer",
+                  "accepted": true
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "c1be29dd2e521d5475e2747c"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "классА",
+              "nodes": [
+                1,
+                2
+              ],
+              "edges": [
+                [
+                  1,
+                  2,
+                  "IS_A"
+                ]
+              ],
+              "paths": [],
+              "sources": [
+                "fixture classes"
+              ],
+              "score": 0.40015,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "3b18199ae9b6de0c02a7be64"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                1,
+                8
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.05071,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "1c233e0cdfe3e4bf3dfa491f"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                1,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.05018,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "07f3dc813ddace03fef92d73"
+            }
+          ],
+          "selected": {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "ошибка",
+            "nodes": [
+              1,
+              3
+            ],
+            "edges": [
+              [
+                1,
+                3,
+                "SYN"
+              ]
+            ],
+            "paths": [
+              1,
+              3
+            ],
+            "sources": [],
+            "score": 0.60008,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [
+              {
+                "feedback": "incorrect",
+                "accepted": true
+              },
+              {
+                "feedback": "reference_answer",
+                "accepted": true
+              }
+            ],
+            "origin": "heuristic_graph_exploration",
+            "id": "c1be29dd2e521d5475e2747c"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                1,
+                3
+              ],
+              "edges": [
+                [
+                  1,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [
+                1,
+                3
+              ],
+              "sources": [],
+              "score": 0.60008,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "incorrect",
+                  "accepted": true
+                },
+                {
+                  "feedback": "reference_answer",
+                  "accepted": true
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "c1be29dd2e521d5475e2747c"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: мирак поглощает ошибка",
+          "feedback": [
+            "incorrect",
+            "reference_answer"
+          ]
+        },
+        {
+          "id": 2,
+          "query": "что поглощает мирак?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                1,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [
+                "user feedback task 1"
+              ],
+              "score": 1.55018,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "ecb81450e622fea9031f94e5"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                1,
+                8
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.80071,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "be7e707c055cbd204c8e8747"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                1,
+                9
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.80014,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "852a625ac026bc440d4b0a23"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "классА",
+              "nodes": [
+                1,
+                2
+              ],
+              "edges": [
+                [
+                  1,
+                  2,
+                  "IS_A"
+                ]
+              ],
+              "paths": [],
+              "sources": [
+                "fixture classes"
+              ],
+              "score": 0.40015,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "9104bc36aad30bdca9992fd0"
+            }
+          ],
+          "selected": {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "луны",
+            "nodes": [
+              1,
+              6
+            ],
+            "edges": [],
+            "paths": [],
+            "sources": [
+              "user feedback task 1"
+            ],
+            "score": 1.55018,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [],
+            "origin": "model_and_graph",
+            "id": "ecb81450e622fea9031f94e5"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                1,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [
+                "user feedback task 1"
+              ],
+              "score": 1.55018,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "ecb81450e622fea9031f94e5"
+            }
+          ],
+          "sources": [
+            "user feedback task 1"
+          ],
+          "text": "Предположение, не знание: мирак поглощает луны",
+          "feedback": []
+        },
+        {
+          "id": 3,
+          "query": "что поглощает новал?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                4,
+                8
+              ],
+              "edges": [
+                [
+                  4,
+                  8,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84924,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "correct",
+                  "accepted": false
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "5decbf308ea42d2261868053"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                4,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.80025,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "ef5fb6d178664f6b30d060cf"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                4,
+                9
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79963,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "3a463052422ec5625b2edb92"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                4,
+                3
+              ],
+              "edges": [
+                [
+                  4,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.54991,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "f89e233be77e6d622c2bcc20"
+            }
+          ],
+          "selected": {
+            "subject": "новал",
+            "predicate": "поглощает",
+            "object": "споры",
+            "nodes": [
+              4,
+              8
+            ],
+            "edges": [
+              [
+                4,
+                8,
+                "SYN"
+              ]
+            ],
+            "paths": [],
+            "sources": [],
+            "score": 0.84924,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [
+              {
+                "feedback": "correct",
+                "accepted": false
+              }
+            ],
+            "origin": "heuristic_graph_exploration",
+            "id": "5decbf308ea42d2261868053"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                4,
+                8
+              ],
+              "edges": [
+                [
+                  4,
+                  8,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84924,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "correct",
+                  "accepted": false
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "5decbf308ea42d2261868053"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: новал поглощает споры",
+          "feedback": [
+            "correct"
+          ]
+        },
+        {
+          "id": 4,
+          "query": "что поглощает третак?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                5,
+                9
+              ],
+              "edges": [
+                [
+                  5,
+                  9,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "correct",
+                  "accepted": false
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "1acf261d8b64bdc2738b079f"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                5,
+                8
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79979,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "a52f72d3e0cbd19284c43f93"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                5,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "0c9f9218c224c4dfc885acc9"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                5,
+                3
+              ],
+              "edges": [
+                [
+                  5,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.54968,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "5139e7c35c4d8f90c3521df0"
+            }
+          ],
+          "selected": {
+            "subject": "третак",
+            "predicate": "поглощает",
+            "object": "камни",
+            "nodes": [
+              5,
+              9
+            ],
+            "edges": [
+              [
+                5,
+                9,
+                "SYN"
+              ]
+            ],
+            "paths": [],
+            "sources": [],
+            "score": 0.84972,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [
+              {
+                "feedback": "correct",
+                "accepted": false
+              }
+            ],
+            "origin": "heuristic_graph_exploration",
+            "id": "1acf261d8b64bdc2738b079f"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                5,
+                9
+              ],
+              "edges": [
+                [
+                  5,
+                  9,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "correct",
+                  "accepted": false
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "1acf261d8b64bdc2738b079f"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: третак поглощает камни",
+          "feedback": [
+            "correct"
+          ]
+        }
+      ],
+      "feedback": [
+        {
+          "kind": "incorrect",
+          "attempt": 1,
+          "query": "что поглощает мирак?",
+          "context": "global",
+          "reference_text": "",
+          "source": "interactive_feedback",
+          "tick": 0,
+          "gold": null,
+          "diagnosis": [
+            "incorrect"
+          ],
+          "accepted": true,
+          "mutations": [
+            {
+              "operation": "weaken_hypothetical_edge",
+              "edge": {
+                "subject": "мирак",
+                "predicate": "поглощает",
+                "object": "ошибка",
+                "weight": -0.5,
+                "confidence": 0.09999999999999999,
+                "status": "hypothesis",
+                "context": "global",
+                "sources": []
+              }
+            }
+          ],
+          "phase": "provisional",
+          "before": [
+            0.0
+          ],
+          "after": [
+            0.49999999999999994
+          ],
+          "reason": "provisional_feedback_adaptation",
+          "training_metric": "rejected_candidate_score_reduction",
+          "independent_controls": 0
+        },
+        {
+          "kind": "reference_answer",
+          "attempt": 1,
+          "query": "что поглощает мирак?",
+          "context": "global",
+          "reference_text": "мирак поглощает луны",
+          "source": "interactive_feedback",
+          "tick": 0,
+          "gold": [
+            "мирак",
+            "поглощает",
+            "луны"
+          ],
+          "diagnosis": [
+            "object"
+          ],
+          "accepted": true,
+          "mutations": [
+            {
+              "operation": "create_or_strengthen_hypothetical_edge",
+              "edge": {
+                "subject": "мирак",
+                "predicate": "поглощает",
+                "object": "луны",
+                "weight": 0.75,
+                "confidence": 0.15,
+                "status": "hypothesis",
+                "context": "global",
+                "sources": [
+                  "user feedback task 1"
+                ]
+              }
+            },
+            {
+              "operation": "adapt_role_path_weight",
+              "role": {
+                "context": "global",
+                "predicate": "поглощает",
+                "subject_class": "классА",
+                "object_class": "классБ",
+                "weight": 1
+              },
+              "value": 0.75
+            }
+          ],
+          "phase": "provisional",
+          "before": [
+            0.0
+          ],
+          "after": [
+            1.0
+          ],
+          "reason": "provisional_feedback_adaptation",
+          "training_metric": "reference_accuracy",
+          "independent_controls": 0
+        },
+        {
+          "kind": "correct",
+          "attempt": 3,
+          "query": "что поглощает новал?",
+          "context": "global",
+          "reference_text": "",
+          "source": "interactive_feedback",
+          "tick": 0,
+          "gold": [
+            "новал",
+            "поглощает",
+            "споры"
+          ],
+          "diagnosis": [
+            "correct"
+          ],
+          "accepted": false,
+          "mutations": [],
+          "phase": "provisional",
+          "before": [
+            0.0
+          ],
+          "after": [
+            0.0
+          ],
+          "reason": "heldout_feedback_check",
+          "training_metric": "rejected_candidate_score_reduction",
+          "independent_controls": 0
+        },
+        {
+          "kind": "correct",
+          "attempt": 4,
+          "query": "что поглощает третак?",
+          "context": "global",
+          "reference_text": "",
+          "source": "interactive_feedback",
+          "tick": 0,
+          "gold": [
+            "третак",
+            "поглощает",
+            "камни"
+          ],
+          "diagnosis": [
+            "correct"
+          ],
+          "accepted": false,
+          "mutations": [],
+          "phase": "task_validated",
+          "before": [
+            0.0
+          ],
+          "after": [
+            0.0
+          ],
+          "reason": "heldout_feedback_check",
+          "training_metric": "rejected_candidate_score_reduction",
+          "independent_controls": 0
+        }
+      ],
+      "previous": [
+        {
+          "model": {
+            "edges": [],
+            "roles": [],
+            "role_weight": 0.0
+          },
+          "phase": "experimental",
+          "trained": []
+        },
+        {
+          "model": {
+            "edges": [
+              {
+                "subject": "мирак",
+                "predicate": "поглощает",
+                "object": "ошибка",
+                "weight": -0.5,
+                "confidence": 0.09999999999999999,
+                "status": "hypothesis",
+                "context": "global",
+                "sources": []
+              }
+            ],
+            "roles": [],
+            "role_weight": 0.0
+          },
+          "phase": "provisional",
+          "trained": []
+        }
+      ],
+      "trained": [
+        "global\u0000[\"мирак\", \"поглощает\", false]"
+      ],
+      "phase": "task_validated",
+      "evaluations": [
+        {
+          "query": "что поглощает новал?",
+          "context": "global",
+          "task_key": "global\u0000[\"новал\", \"поглощает\", false]",
+          "attempt": 3,
+          "correct": true
+        },
+        {
+          "query": "что поглощает третак?",
+          "context": "global",
+          "task_key": "global\u0000[\"третак\", \"поглощает\", false]",
+          "attempt": 4,
+          "correct": true
+        }
+      ],
+      "metrics": {
+        "attempts": 4,
+        "first_answer_accuracy": 0.6666666666666666,
+        "accepted_mutations": 2,
+        "accepted_mutation_operations": 3,
+        "rejected_mutations": 0,
+        "heldout_accuracy": 1.0,
+        "feedback_brier": 0.4891666666666666
+      }
+    },
+    "seconds": 0.04463732099975459,
+    "peak_bytes": 334129,
+    "verified_false": 0
+  },
+  {
+    "seed": 29,
+    "first": {
+      "id": 1,
+      "query": "что поглощает мирак?",
+      "context": "global",
+      "candidates": [
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "ошибка",
+          "nodes": [
+            1,
+            3
+          ],
+          "edges": [
+            [
+              1,
+              3,
+              "SYN"
+            ]
+          ],
+          "paths": [
+            1,
+            3
+          ],
+          "sources": [],
+          "score": 0.60008,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "c1be29dd2e521d5475e2747c"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "классА",
+          "nodes": [
+            1,
+            2
+          ],
+          "edges": [
+            [
+              1,
+              2,
+              "IS_A"
+            ]
+          ],
+          "paths": [],
+          "sources": [
+            "fixture classes"
+          ],
+          "score": 0.40015,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "3b18199ae9b6de0c02a7be64"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "споры",
+          "nodes": [
+            1,
+            8
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [],
+          "score": 0.05071,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "1c233e0cdfe3e4bf3dfa491f"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "луны",
+          "nodes": [
+            1,
+            6
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [],
+          "score": 0.05018,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "07f3dc813ddace03fef92d73"
+        }
+      ],
+      "selected": {
+        "subject": "мирак",
+        "predicate": "поглощает",
+        "object": "ошибка",
+        "nodes": [
+          1,
+          3
+        ],
+        "edges": [
+          [
+            1,
+            3,
+            "SYN"
+          ]
+        ],
+        "paths": [
+          1,
+          3
+        ],
+        "sources": [],
+        "score": 0.60008,
+        "uncertainty": 0.85,
+        "status": "hypothesis",
+        "history": [],
+        "origin": "heuristic_graph_exploration",
+        "id": "c1be29dd2e521d5475e2747c"
+      },
+      "mode": "Hypothesis",
+      "status": "hypothesis",
+      "confidence": 0.15000000000000002,
+      "relations": [
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "ошибка",
+          "nodes": [
+            1,
+            3
+          ],
+          "edges": [
+            [
+              1,
+              3,
+              "SYN"
+            ]
+          ],
+          "paths": [
+            1,
+            3
+          ],
+          "sources": [],
+          "score": 0.60008,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "c1be29dd2e521d5475e2747c"
+        }
+      ],
+      "sources": [],
+      "text": "Предположение, не знание: мирак поглощает ошибка",
+      "feedback": []
+    },
+    "negative": {
+      "kind": "incorrect",
+      "attempt": 1,
+      "query": "что поглощает мирак?",
+      "context": "global",
+      "reference_text": "",
+      "source": "interactive_feedback",
+      "tick": 0,
+      "gold": null,
+      "diagnosis": [
+        "incorrect"
+      ],
+      "accepted": true,
+      "mutations": [
+        {
+          "operation": "weaken_hypothetical_edge",
+          "edge": {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "ошибка",
+            "weight": -0.5,
+            "confidence": 0.09999999999999999,
+            "status": "hypothesis",
+            "context": "global",
+            "sources": []
+          }
+        }
+      ],
+      "phase": "provisional",
+      "before": [
+        0.0
+      ],
+      "after": [
+        0.49999999999999994
+      ],
+      "reason": "provisional_feedback_adaptation",
+      "training_metric": "rejected_candidate_score_reduction",
+      "independent_controls": 0
+    },
+    "correction": {
+      "kind": "reference_answer",
+      "attempt": 1,
+      "query": "что поглощает мирак?",
+      "context": "global",
+      "reference_text": "мирак поглощает луны",
+      "source": "interactive_feedback",
+      "tick": 0,
+      "gold": [
+        "мирак",
+        "поглощает",
+        "луны"
+      ],
+      "diagnosis": [
+        "object"
+      ],
+      "accepted": true,
+      "mutations": [
+        {
+          "operation": "create_or_strengthen_hypothetical_edge",
+          "edge": {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "луны",
+            "weight": 0.75,
+            "confidence": 0.15,
+            "status": "hypothesis",
+            "context": "global",
+            "sources": [
+              "user feedback task 1"
+            ]
+          }
+        },
+        {
+          "operation": "adapt_role_path_weight",
+          "role": {
+            "context": "global",
+            "predicate": "поглощает",
+            "subject_class": "классА",
+            "object_class": "классБ",
+            "weight": 1
+          },
+          "value": 0.75
+        }
+      ],
+      "phase": "provisional",
+      "before": [
+        0.0
+      ],
+      "after": [
+        1.0
+      ],
+      "reason": "provisional_feedback_adaptation",
+      "training_metric": "reference_accuracy",
+      "independent_controls": 0
+    },
+    "retry": {
+      "id": 2,
+      "query": "что поглощает мирак?",
+      "context": "global",
+      "candidates": [
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "луны",
+          "nodes": [
+            1,
+            6
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [
+            "user feedback task 1"
+          ],
+          "score": 1.55018,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "ecb81450e622fea9031f94e5"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "споры",
+          "nodes": [
+            1,
+            8
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [],
+          "score": 0.80071,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "be7e707c055cbd204c8e8747"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "камни",
+          "nodes": [
+            1,
+            9
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [],
+          "score": 0.80014,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "852a625ac026bc440d4b0a23"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "классА",
+          "nodes": [
+            1,
+            2
+          ],
+          "edges": [
+            [
+              1,
+              2,
+              "IS_A"
+            ]
+          ],
+          "paths": [],
+          "sources": [
+            "fixture classes"
+          ],
+          "score": 0.40015,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "9104bc36aad30bdca9992fd0"
+        }
+      ],
+      "selected": {
+        "subject": "мирак",
+        "predicate": "поглощает",
+        "object": "луны",
+        "nodes": [
+          1,
+          6
+        ],
+        "edges": [],
+        "paths": [],
+        "sources": [
+          "user feedback task 1"
+        ],
+        "score": 1.55018,
+        "uncertainty": 0.85,
+        "status": "hypothesis",
+        "history": [],
+        "origin": "model_and_graph",
+        "id": "ecb81450e622fea9031f94e5"
+      },
+      "mode": "Hypothesis",
+      "status": "hypothesis",
+      "confidence": 0.15000000000000002,
+      "relations": [
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "луны",
+          "nodes": [
+            1,
+            6
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [
+            "user feedback task 1"
+          ],
+          "score": 1.55018,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "ecb81450e622fea9031f94e5"
+        }
+      ],
+      "sources": [
+        "user feedback task 1"
+      ],
+      "text": "Предположение, не знание: мирак поглощает луны",
+      "feedback": []
+    },
+    "heldout": [
+      {
+        "subject": "новал",
+        "expected": "споры",
+        "attempt": {
+          "id": 3,
+          "query": "что поглощает новал?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                4,
+                8
+              ],
+              "edges": [
+                [
+                  4,
+                  8,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84924,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "5decbf308ea42d2261868053"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                4,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.80025,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "ef5fb6d178664f6b30d060cf"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                4,
+                9
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79963,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "3a463052422ec5625b2edb92"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                4,
+                3
+              ],
+              "edges": [
+                [
+                  4,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.54991,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "f89e233be77e6d622c2bcc20"
+            }
+          ],
+          "selected": {
+            "subject": "новал",
+            "predicate": "поглощает",
+            "object": "споры",
+            "nodes": [
+              4,
+              8
+            ],
+            "edges": [
+              [
+                4,
+                8,
+                "SYN"
+              ]
+            ],
+            "paths": [],
+            "sources": [],
+            "score": 0.84924,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [],
+            "origin": "heuristic_graph_exploration",
+            "id": "5decbf308ea42d2261868053"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                4,
+                8
+              ],
+              "edges": [
+                [
+                  4,
+                  8,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84924,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "5decbf308ea42d2261868053"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: новал поглощает споры",
+          "feedback": []
+        },
+        "correct": true
+      },
+      {
+        "subject": "третак",
+        "expected": "камни",
+        "attempt": {
+          "id": 4,
+          "query": "что поглощает третак?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                5,
+                9
+              ],
+              "edges": [
+                [
+                  5,
+                  9,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "1acf261d8b64bdc2738b079f"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                5,
+                8
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79979,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "a52f72d3e0cbd19284c43f93"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                5,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "0c9f9218c224c4dfc885acc9"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                5,
+                3
+              ],
+              "edges": [
+                [
+                  5,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.54968,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "5139e7c35c4d8f90c3521df0"
+            }
+          ],
+          "selected": {
+            "subject": "третак",
+            "predicate": "поглощает",
+            "object": "камни",
+            "nodes": [
+              5,
+              9
+            ],
+            "edges": [
+              [
+                5,
+                9,
+                "SYN"
+              ]
+            ],
+            "paths": [],
+            "sources": [],
+            "score": 0.84972,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [],
+            "origin": "heuristic_graph_exploration",
+            "id": "1acf261d8b64bdc2738b079f"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                5,
+                9
+              ],
+              "edges": [
+                [
+                  5,
+                  9,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "1acf261d8b64bdc2738b079f"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: третак поглощает камни",
+          "feedback": []
+        },
+        "correct": true
+      }
+    ],
+    "baseline_accuracy": 0.0,
+    "heldout_accuracy": 1.0,
+    "status": {
+      "schema": 1,
+      "model": {
+        "edges": [
+          {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "ошибка",
+            "weight": -0.5,
+            "confidence": 0.09999999999999999,
+            "status": "hypothesis",
+            "context": "global",
+            "sources": []
+          },
+          {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "луны",
+            "weight": 0.75,
+            "confidence": 0.15,
+            "status": "hypothesis",
+            "context": "global",
+            "sources": [
+              "user feedback task 1"
+            ]
+          }
+        ],
+        "roles": [
+          {
+            "context": "global",
+            "predicate": "поглощает",
+            "subject_class": "классА",
+            "object_class": "классБ",
+            "weight": 1
+          }
+        ],
+        "role_weight": 0.75
+      },
+      "attempts": [
+        {
+          "id": 1,
+          "query": "что поглощает мирак?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                1,
+                3
+              ],
+              "edges": [
+                [
+                  1,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [
+                1,
+                3
+              ],
+              "sources": [],
+              "score": 0.60008,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "incorrect",
+                  "accepted": true
+                },
+                {
+                  "feedback": "reference_answer",
+                  "accepted": true
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "c1be29dd2e521d5475e2747c"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "классА",
+              "nodes": [
+                1,
+                2
+              ],
+              "edges": [
+                [
+                  1,
+                  2,
+                  "IS_A"
+                ]
+              ],
+              "paths": [],
+              "sources": [
+                "fixture classes"
+              ],
+              "score": 0.40015,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "3b18199ae9b6de0c02a7be64"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                1,
+                8
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.05071,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "1c233e0cdfe3e4bf3dfa491f"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                1,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.05018,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "07f3dc813ddace03fef92d73"
+            }
+          ],
+          "selected": {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "ошибка",
+            "nodes": [
+              1,
+              3
+            ],
+            "edges": [
+              [
+                1,
+                3,
+                "SYN"
+              ]
+            ],
+            "paths": [
+              1,
+              3
+            ],
+            "sources": [],
+            "score": 0.60008,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [
+              {
+                "feedback": "incorrect",
+                "accepted": true
+              },
+              {
+                "feedback": "reference_answer",
+                "accepted": true
+              }
+            ],
+            "origin": "heuristic_graph_exploration",
+            "id": "c1be29dd2e521d5475e2747c"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                1,
+                3
+              ],
+              "edges": [
+                [
+                  1,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [
+                1,
+                3
+              ],
+              "sources": [],
+              "score": 0.60008,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "incorrect",
+                  "accepted": true
+                },
+                {
+                  "feedback": "reference_answer",
+                  "accepted": true
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "c1be29dd2e521d5475e2747c"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: мирак поглощает ошибка",
+          "feedback": [
+            "incorrect",
+            "reference_answer"
+          ]
+        },
+        {
+          "id": 2,
+          "query": "что поглощает мирак?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                1,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [
+                "user feedback task 1"
+              ],
+              "score": 1.55018,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "ecb81450e622fea9031f94e5"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                1,
+                8
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.80071,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "be7e707c055cbd204c8e8747"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                1,
+                9
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.80014,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "852a625ac026bc440d4b0a23"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "классА",
+              "nodes": [
+                1,
+                2
+              ],
+              "edges": [
+                [
+                  1,
+                  2,
+                  "IS_A"
+                ]
+              ],
+              "paths": [],
+              "sources": [
+                "fixture classes"
+              ],
+              "score": 0.40015,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "9104bc36aad30bdca9992fd0"
+            }
+          ],
+          "selected": {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "луны",
+            "nodes": [
+              1,
+              6
+            ],
+            "edges": [],
+            "paths": [],
+            "sources": [
+              "user feedback task 1"
+            ],
+            "score": 1.55018,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [],
+            "origin": "model_and_graph",
+            "id": "ecb81450e622fea9031f94e5"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                1,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [
+                "user feedback task 1"
+              ],
+              "score": 1.55018,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "ecb81450e622fea9031f94e5"
+            }
+          ],
+          "sources": [
+            "user feedback task 1"
+          ],
+          "text": "Предположение, не знание: мирак поглощает луны",
+          "feedback": []
+        },
+        {
+          "id": 3,
+          "query": "что поглощает новал?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                4,
+                8
+              ],
+              "edges": [
+                [
+                  4,
+                  8,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84924,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "correct",
+                  "accepted": false
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "5decbf308ea42d2261868053"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                4,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.80025,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "ef5fb6d178664f6b30d060cf"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                4,
+                9
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79963,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "3a463052422ec5625b2edb92"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                4,
+                3
+              ],
+              "edges": [
+                [
+                  4,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.54991,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "f89e233be77e6d622c2bcc20"
+            }
+          ],
+          "selected": {
+            "subject": "новал",
+            "predicate": "поглощает",
+            "object": "споры",
+            "nodes": [
+              4,
+              8
+            ],
+            "edges": [
+              [
+                4,
+                8,
+                "SYN"
+              ]
+            ],
+            "paths": [],
+            "sources": [],
+            "score": 0.84924,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [
+              {
+                "feedback": "correct",
+                "accepted": false
+              }
+            ],
+            "origin": "heuristic_graph_exploration",
+            "id": "5decbf308ea42d2261868053"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                4,
+                8
+              ],
+              "edges": [
+                [
+                  4,
+                  8,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84924,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "correct",
+                  "accepted": false
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "5decbf308ea42d2261868053"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: новал поглощает споры",
+          "feedback": [
+            "correct"
+          ]
+        },
+        {
+          "id": 4,
+          "query": "что поглощает третак?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                5,
+                9
+              ],
+              "edges": [
+                [
+                  5,
+                  9,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "correct",
+                  "accepted": false
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "1acf261d8b64bdc2738b079f"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                5,
+                8
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79979,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "a52f72d3e0cbd19284c43f93"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                5,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "0c9f9218c224c4dfc885acc9"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                5,
+                3
+              ],
+              "edges": [
+                [
+                  5,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.54968,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "5139e7c35c4d8f90c3521df0"
+            }
+          ],
+          "selected": {
+            "subject": "третак",
+            "predicate": "поглощает",
+            "object": "камни",
+            "nodes": [
+              5,
+              9
+            ],
+            "edges": [
+              [
+                5,
+                9,
+                "SYN"
+              ]
+            ],
+            "paths": [],
+            "sources": [],
+            "score": 0.84972,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [
+              {
+                "feedback": "correct",
+                "accepted": false
+              }
+            ],
+            "origin": "heuristic_graph_exploration",
+            "id": "1acf261d8b64bdc2738b079f"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                5,
+                9
+              ],
+              "edges": [
+                [
+                  5,
+                  9,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "correct",
+                  "accepted": false
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "1acf261d8b64bdc2738b079f"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: третак поглощает камни",
+          "feedback": [
+            "correct"
+          ]
+        }
+      ],
+      "feedback": [
+        {
+          "kind": "incorrect",
+          "attempt": 1,
+          "query": "что поглощает мирак?",
+          "context": "global",
+          "reference_text": "",
+          "source": "interactive_feedback",
+          "tick": 0,
+          "gold": null,
+          "diagnosis": [
+            "incorrect"
+          ],
+          "accepted": true,
+          "mutations": [
+            {
+              "operation": "weaken_hypothetical_edge",
+              "edge": {
+                "subject": "мирак",
+                "predicate": "поглощает",
+                "object": "ошибка",
+                "weight": -0.5,
+                "confidence": 0.09999999999999999,
+                "status": "hypothesis",
+                "context": "global",
+                "sources": []
+              }
+            }
+          ],
+          "phase": "provisional",
+          "before": [
+            0.0
+          ],
+          "after": [
+            0.49999999999999994
+          ],
+          "reason": "provisional_feedback_adaptation",
+          "training_metric": "rejected_candidate_score_reduction",
+          "independent_controls": 0
+        },
+        {
+          "kind": "reference_answer",
+          "attempt": 1,
+          "query": "что поглощает мирак?",
+          "context": "global",
+          "reference_text": "мирак поглощает луны",
+          "source": "interactive_feedback",
+          "tick": 0,
+          "gold": [
+            "мирак",
+            "поглощает",
+            "луны"
+          ],
+          "diagnosis": [
+            "object"
+          ],
+          "accepted": true,
+          "mutations": [
+            {
+              "operation": "create_or_strengthen_hypothetical_edge",
+              "edge": {
+                "subject": "мирак",
+                "predicate": "поглощает",
+                "object": "луны",
+                "weight": 0.75,
+                "confidence": 0.15,
+                "status": "hypothesis",
+                "context": "global",
+                "sources": [
+                  "user feedback task 1"
+                ]
+              }
+            },
+            {
+              "operation": "adapt_role_path_weight",
+              "role": {
+                "context": "global",
+                "predicate": "поглощает",
+                "subject_class": "классА",
+                "object_class": "классБ",
+                "weight": 1
+              },
+              "value": 0.75
+            }
+          ],
+          "phase": "provisional",
+          "before": [
+            0.0
+          ],
+          "after": [
+            1.0
+          ],
+          "reason": "provisional_feedback_adaptation",
+          "training_metric": "reference_accuracy",
+          "independent_controls": 0
+        },
+        {
+          "kind": "correct",
+          "attempt": 3,
+          "query": "что поглощает новал?",
+          "context": "global",
+          "reference_text": "",
+          "source": "interactive_feedback",
+          "tick": 0,
+          "gold": [
+            "новал",
+            "поглощает",
+            "споры"
+          ],
+          "diagnosis": [
+            "correct"
+          ],
+          "accepted": false,
+          "mutations": [],
+          "phase": "provisional",
+          "before": [
+            0.0
+          ],
+          "after": [
+            0.0
+          ],
+          "reason": "heldout_feedback_check",
+          "training_metric": "rejected_candidate_score_reduction",
+          "independent_controls": 0
+        },
+        {
+          "kind": "correct",
+          "attempt": 4,
+          "query": "что поглощает третак?",
+          "context": "global",
+          "reference_text": "",
+          "source": "interactive_feedback",
+          "tick": 0,
+          "gold": [
+            "третак",
+            "поглощает",
+            "камни"
+          ],
+          "diagnosis": [
+            "correct"
+          ],
+          "accepted": false,
+          "mutations": [],
+          "phase": "task_validated",
+          "before": [
+            0.0
+          ],
+          "after": [
+            0.0
+          ],
+          "reason": "heldout_feedback_check",
+          "training_metric": "rejected_candidate_score_reduction",
+          "independent_controls": 0
+        }
+      ],
+      "previous": [
+        {
+          "model": {
+            "edges": [],
+            "roles": [],
+            "role_weight": 0.0
+          },
+          "phase": "experimental",
+          "trained": []
+        },
+        {
+          "model": {
+            "edges": [
+              {
+                "subject": "мирак",
+                "predicate": "поглощает",
+                "object": "ошибка",
+                "weight": -0.5,
+                "confidence": 0.09999999999999999,
+                "status": "hypothesis",
+                "context": "global",
+                "sources": []
+              }
+            ],
+            "roles": [],
+            "role_weight": 0.0
+          },
+          "phase": "provisional",
+          "trained": []
+        }
+      ],
+      "trained": [
+        "global\u0000[\"мирак\", \"поглощает\", false]"
+      ],
+      "phase": "task_validated",
+      "evaluations": [
+        {
+          "query": "что поглощает новал?",
+          "context": "global",
+          "task_key": "global\u0000[\"новал\", \"поглощает\", false]",
+          "attempt": 3,
+          "correct": true
+        },
+        {
+          "query": "что поглощает третак?",
+          "context": "global",
+          "task_key": "global\u0000[\"третак\", \"поглощает\", false]",
+          "attempt": 4,
+          "correct": true
+        }
+      ],
+      "metrics": {
+        "attempts": 4,
+        "first_answer_accuracy": 0.6666666666666666,
+        "accepted_mutations": 2,
+        "accepted_mutation_operations": 3,
+        "rejected_mutations": 0,
+        "heldout_accuracy": 1.0,
+        "feedback_brier": 0.4891666666666666
+      }
+    },
+    "seconds": 0.03869338399817934,
+    "peak_bytes": 224762,
+    "verified_false": 0
+  },
+  {
+    "seed": 43,
+    "first": {
+      "id": 1,
+      "query": "что поглощает мирак?",
+      "context": "global",
+      "candidates": [
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "ошибка",
+          "nodes": [
+            1,
+            3
+          ],
+          "edges": [
+            [
+              1,
+              3,
+              "SYN"
+            ]
+          ],
+          "paths": [
+            1,
+            3
+          ],
+          "sources": [],
+          "score": 0.60008,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "c1be29dd2e521d5475e2747c"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "классА",
+          "nodes": [
+            1,
+            2
+          ],
+          "edges": [
+            [
+              1,
+              2,
+              "IS_A"
+            ]
+          ],
+          "paths": [],
+          "sources": [
+            "fixture classes"
+          ],
+          "score": 0.40015,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "3b18199ae9b6de0c02a7be64"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "споры",
+          "nodes": [
+            1,
+            8
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [],
+          "score": 0.05071,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "1c233e0cdfe3e4bf3dfa491f"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "луны",
+          "nodes": [
+            1,
+            6
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [],
+          "score": 0.05018,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "07f3dc813ddace03fef92d73"
+        }
+      ],
+      "selected": {
+        "subject": "мирак",
+        "predicate": "поглощает",
+        "object": "ошибка",
+        "nodes": [
+          1,
+          3
+        ],
+        "edges": [
+          [
+            1,
+            3,
+            "SYN"
+          ]
+        ],
+        "paths": [
+          1,
+          3
+        ],
+        "sources": [],
+        "score": 0.60008,
+        "uncertainty": 0.85,
+        "status": "hypothesis",
+        "history": [],
+        "origin": "heuristic_graph_exploration",
+        "id": "c1be29dd2e521d5475e2747c"
+      },
+      "mode": "Hypothesis",
+      "status": "hypothesis",
+      "confidence": 0.15000000000000002,
+      "relations": [
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "ошибка",
+          "nodes": [
+            1,
+            3
+          ],
+          "edges": [
+            [
+              1,
+              3,
+              "SYN"
+            ]
+          ],
+          "paths": [
+            1,
+            3
+          ],
+          "sources": [],
+          "score": 0.60008,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "heuristic_graph_exploration",
+          "id": "c1be29dd2e521d5475e2747c"
+        }
+      ],
+      "sources": [],
+      "text": "Предположение, не знание: мирак поглощает ошибка",
+      "feedback": []
+    },
+    "negative": {
+      "kind": "incorrect",
+      "attempt": 1,
+      "query": "что поглощает мирак?",
+      "context": "global",
+      "reference_text": "",
+      "source": "interactive_feedback",
+      "tick": 0,
+      "gold": null,
+      "diagnosis": [
+        "incorrect"
+      ],
+      "accepted": true,
+      "mutations": [
+        {
+          "operation": "weaken_hypothetical_edge",
+          "edge": {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "ошибка",
+            "weight": -0.5,
+            "confidence": 0.09999999999999999,
+            "status": "hypothesis",
+            "context": "global",
+            "sources": []
+          }
+        }
+      ],
+      "phase": "provisional",
+      "before": [
+        0.0
+      ],
+      "after": [
+        0.49999999999999994
+      ],
+      "reason": "provisional_feedback_adaptation",
+      "training_metric": "rejected_candidate_score_reduction",
+      "independent_controls": 0
+    },
+    "correction": {
+      "kind": "reference_answer",
+      "attempt": 1,
+      "query": "что поглощает мирак?",
+      "context": "global",
+      "reference_text": "мирак поглощает луны",
+      "source": "interactive_feedback",
+      "tick": 0,
+      "gold": [
+        "мирак",
+        "поглощает",
+        "луны"
+      ],
+      "diagnosis": [
+        "object"
+      ],
+      "accepted": true,
+      "mutations": [
+        {
+          "operation": "create_or_strengthen_hypothetical_edge",
+          "edge": {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "луны",
+            "weight": 0.75,
+            "confidence": 0.15,
+            "status": "hypothesis",
+            "context": "global",
+            "sources": [
+              "user feedback task 1"
+            ]
+          }
+        },
+        {
+          "operation": "adapt_role_path_weight",
+          "role": {
+            "context": "global",
+            "predicate": "поглощает",
+            "subject_class": "классА",
+            "object_class": "классБ",
+            "weight": 1
+          },
+          "value": 0.75
+        }
+      ],
+      "phase": "provisional",
+      "before": [
+        0.0
+      ],
+      "after": [
+        1.0
+      ],
+      "reason": "provisional_feedback_adaptation",
+      "training_metric": "reference_accuracy",
+      "independent_controls": 0
+    },
+    "retry": {
+      "id": 2,
+      "query": "что поглощает мирак?",
+      "context": "global",
+      "candidates": [
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "луны",
+          "nodes": [
+            1,
+            6
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [
+            "user feedback task 1"
+          ],
+          "score": 1.55018,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "ecb81450e622fea9031f94e5"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "споры",
+          "nodes": [
+            1,
+            8
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [],
+          "score": 0.80071,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "be7e707c055cbd204c8e8747"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "камни",
+          "nodes": [
+            1,
+            9
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [],
+          "score": 0.80014,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "852a625ac026bc440d4b0a23"
+        },
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "классА",
+          "nodes": [
+            1,
+            2
+          ],
+          "edges": [
+            [
+              1,
+              2,
+              "IS_A"
+            ]
+          ],
+          "paths": [],
+          "sources": [
+            "fixture classes"
+          ],
+          "score": 0.40015,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "9104bc36aad30bdca9992fd0"
+        }
+      ],
+      "selected": {
+        "subject": "мирак",
+        "predicate": "поглощает",
+        "object": "луны",
+        "nodes": [
+          1,
+          6
+        ],
+        "edges": [],
+        "paths": [],
+        "sources": [
+          "user feedback task 1"
+        ],
+        "score": 1.55018,
+        "uncertainty": 0.85,
+        "status": "hypothesis",
+        "history": [],
+        "origin": "model_and_graph",
+        "id": "ecb81450e622fea9031f94e5"
+      },
+      "mode": "Hypothesis",
+      "status": "hypothesis",
+      "confidence": 0.15000000000000002,
+      "relations": [
+        {
+          "subject": "мирак",
+          "predicate": "поглощает",
+          "object": "луны",
+          "nodes": [
+            1,
+            6
+          ],
+          "edges": [],
+          "paths": [],
+          "sources": [
+            "user feedback task 1"
+          ],
+          "score": 1.55018,
+          "uncertainty": 0.85,
+          "status": "hypothesis",
+          "history": [],
+          "origin": "model_and_graph",
+          "id": "ecb81450e622fea9031f94e5"
+        }
+      ],
+      "sources": [
+        "user feedback task 1"
+      ],
+      "text": "Предположение, не знание: мирак поглощает луны",
+      "feedback": []
+    },
+    "heldout": [
+      {
+        "subject": "новал",
+        "expected": "споры",
+        "attempt": {
+          "id": 3,
+          "query": "что поглощает новал?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                4,
+                8
+              ],
+              "edges": [
+                [
+                  4,
+                  8,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84924,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "5decbf308ea42d2261868053"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                4,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.80025,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "ef5fb6d178664f6b30d060cf"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                4,
+                9
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79963,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "3a463052422ec5625b2edb92"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                4,
+                3
+              ],
+              "edges": [
+                [
+                  4,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.54991,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "f89e233be77e6d622c2bcc20"
+            }
+          ],
+          "selected": {
+            "subject": "новал",
+            "predicate": "поглощает",
+            "object": "споры",
+            "nodes": [
+              4,
+              8
+            ],
+            "edges": [
+              [
+                4,
+                8,
+                "SYN"
+              ]
+            ],
+            "paths": [],
+            "sources": [],
+            "score": 0.84924,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [],
+            "origin": "heuristic_graph_exploration",
+            "id": "5decbf308ea42d2261868053"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                4,
+                8
+              ],
+              "edges": [
+                [
+                  4,
+                  8,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84924,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "5decbf308ea42d2261868053"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: новал поглощает споры",
+          "feedback": []
+        },
+        "correct": true
+      },
+      {
+        "subject": "третак",
+        "expected": "камни",
+        "attempt": {
+          "id": 4,
+          "query": "что поглощает третак?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                5,
+                9
+              ],
+              "edges": [
+                [
+                  5,
+                  9,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "1acf261d8b64bdc2738b079f"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                5,
+                8
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79979,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "a52f72d3e0cbd19284c43f93"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                5,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "0c9f9218c224c4dfc885acc9"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                5,
+                3
+              ],
+              "edges": [
+                [
+                  5,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.54968,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "5139e7c35c4d8f90c3521df0"
+            }
+          ],
+          "selected": {
+            "subject": "третак",
+            "predicate": "поглощает",
+            "object": "камни",
+            "nodes": [
+              5,
+              9
+            ],
+            "edges": [
+              [
+                5,
+                9,
+                "SYN"
+              ]
+            ],
+            "paths": [],
+            "sources": [],
+            "score": 0.84972,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [],
+            "origin": "heuristic_graph_exploration",
+            "id": "1acf261d8b64bdc2738b079f"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                5,
+                9
+              ],
+              "edges": [
+                [
+                  5,
+                  9,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "1acf261d8b64bdc2738b079f"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: третак поглощает камни",
+          "feedback": []
+        },
+        "correct": true
+      }
+    ],
+    "baseline_accuracy": 0.0,
+    "heldout_accuracy": 1.0,
+    "status": {
+      "schema": 1,
+      "model": {
+        "edges": [
+          {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "ошибка",
+            "weight": -0.5,
+            "confidence": 0.09999999999999999,
+            "status": "hypothesis",
+            "context": "global",
+            "sources": []
+          },
+          {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "луны",
+            "weight": 0.75,
+            "confidence": 0.15,
+            "status": "hypothesis",
+            "context": "global",
+            "sources": [
+              "user feedback task 1"
+            ]
+          }
+        ],
+        "roles": [
+          {
+            "context": "global",
+            "predicate": "поглощает",
+            "subject_class": "классА",
+            "object_class": "классБ",
+            "weight": 1
+          }
+        ],
+        "role_weight": 0.75
+      },
+      "attempts": [
+        {
+          "id": 1,
+          "query": "что поглощает мирак?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                1,
+                3
+              ],
+              "edges": [
+                [
+                  1,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [
+                1,
+                3
+              ],
+              "sources": [],
+              "score": 0.60008,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "incorrect",
+                  "accepted": true
+                },
+                {
+                  "feedback": "reference_answer",
+                  "accepted": true
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "c1be29dd2e521d5475e2747c"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "классА",
+              "nodes": [
+                1,
+                2
+              ],
+              "edges": [
+                [
+                  1,
+                  2,
+                  "IS_A"
+                ]
+              ],
+              "paths": [],
+              "sources": [
+                "fixture classes"
+              ],
+              "score": 0.40015,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "3b18199ae9b6de0c02a7be64"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                1,
+                8
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.05071,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "1c233e0cdfe3e4bf3dfa491f"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                1,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.05018,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "07f3dc813ddace03fef92d73"
+            }
+          ],
+          "selected": {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "ошибка",
+            "nodes": [
+              1,
+              3
+            ],
+            "edges": [
+              [
+                1,
+                3,
+                "SYN"
+              ]
+            ],
+            "paths": [
+              1,
+              3
+            ],
+            "sources": [],
+            "score": 0.60008,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [
+              {
+                "feedback": "incorrect",
+                "accepted": true
+              },
+              {
+                "feedback": "reference_answer",
+                "accepted": true
+              }
+            ],
+            "origin": "heuristic_graph_exploration",
+            "id": "c1be29dd2e521d5475e2747c"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                1,
+                3
+              ],
+              "edges": [
+                [
+                  1,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [
+                1,
+                3
+              ],
+              "sources": [],
+              "score": 0.60008,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "incorrect",
+                  "accepted": true
+                },
+                {
+                  "feedback": "reference_answer",
+                  "accepted": true
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "c1be29dd2e521d5475e2747c"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: мирак поглощает ошибка",
+          "feedback": [
+            "incorrect",
+            "reference_answer"
+          ]
+        },
+        {
+          "id": 2,
+          "query": "что поглощает мирак?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                1,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [
+                "user feedback task 1"
+              ],
+              "score": 1.55018,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "ecb81450e622fea9031f94e5"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                1,
+                8
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.80071,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "be7e707c055cbd204c8e8747"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                1,
+                9
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.80014,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "852a625ac026bc440d4b0a23"
+            },
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "классА",
+              "nodes": [
+                1,
+                2
+              ],
+              "edges": [
+                [
+                  1,
+                  2,
+                  "IS_A"
+                ]
+              ],
+              "paths": [],
+              "sources": [
+                "fixture classes"
+              ],
+              "score": 0.40015,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "9104bc36aad30bdca9992fd0"
+            }
+          ],
+          "selected": {
+            "subject": "мирак",
+            "predicate": "поглощает",
+            "object": "луны",
+            "nodes": [
+              1,
+              6
+            ],
+            "edges": [],
+            "paths": [],
+            "sources": [
+              "user feedback task 1"
+            ],
+            "score": 1.55018,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [],
+            "origin": "model_and_graph",
+            "id": "ecb81450e622fea9031f94e5"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "мирак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                1,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [
+                "user feedback task 1"
+              ],
+              "score": 1.55018,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "model_and_graph",
+              "id": "ecb81450e622fea9031f94e5"
+            }
+          ],
+          "sources": [
+            "user feedback task 1"
+          ],
+          "text": "Предположение, не знание: мирак поглощает луны",
+          "feedback": []
+        },
+        {
+          "id": 3,
+          "query": "что поглощает новал?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                4,
+                8
+              ],
+              "edges": [
+                [
+                  4,
+                  8,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84924,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "correct",
+                  "accepted": false
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "5decbf308ea42d2261868053"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                4,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.80025,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "ef5fb6d178664f6b30d060cf"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                4,
+                9
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79963,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "3a463052422ec5625b2edb92"
+            },
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                4,
+                3
+              ],
+              "edges": [
+                [
+                  4,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.54991,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "f89e233be77e6d622c2bcc20"
+            }
+          ],
+          "selected": {
+            "subject": "новал",
+            "predicate": "поглощает",
+            "object": "споры",
+            "nodes": [
+              4,
+              8
+            ],
+            "edges": [
+              [
+                4,
+                8,
+                "SYN"
+              ]
+            ],
+            "paths": [],
+            "sources": [],
+            "score": 0.84924,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [
+              {
+                "feedback": "correct",
+                "accepted": false
+              }
+            ],
+            "origin": "heuristic_graph_exploration",
+            "id": "5decbf308ea42d2261868053"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "новал",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                4,
+                8
+              ],
+              "edges": [
+                [
+                  4,
+                  8,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84924,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "correct",
+                  "accepted": false
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "5decbf308ea42d2261868053"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: новал поглощает споры",
+          "feedback": [
+            "correct"
+          ]
+        },
+        {
+          "id": 4,
+          "query": "что поглощает третак?",
+          "context": "global",
+          "candidates": [
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                5,
+                9
+              ],
+              "edges": [
+                [
+                  5,
+                  9,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "correct",
+                  "accepted": false
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "1acf261d8b64bdc2738b079f"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "споры",
+              "nodes": [
+                5,
+                8
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79979,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "a52f72d3e0cbd19284c43f93"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "луны",
+              "nodes": [
+                5,
+                6
+              ],
+              "edges": [],
+              "paths": [],
+              "sources": [],
+              "score": 0.79972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "0c9f9218c224c4dfc885acc9"
+            },
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "ошибка",
+              "nodes": [
+                5,
+                3
+              ],
+              "edges": [
+                [
+                  5,
+                  3,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.54968,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [],
+              "origin": "heuristic_graph_exploration",
+              "id": "5139e7c35c4d8f90c3521df0"
+            }
+          ],
+          "selected": {
+            "subject": "третак",
+            "predicate": "поглощает",
+            "object": "камни",
+            "nodes": [
+              5,
+              9
+            ],
+            "edges": [
+              [
+                5,
+                9,
+                "SYN"
+              ]
+            ],
+            "paths": [],
+            "sources": [],
+            "score": 0.84972,
+            "uncertainty": 0.85,
+            "status": "hypothesis",
+            "history": [
+              {
+                "feedback": "correct",
+                "accepted": false
+              }
+            ],
+            "origin": "heuristic_graph_exploration",
+            "id": "1acf261d8b64bdc2738b079f"
+          },
+          "mode": "Hypothesis",
+          "status": "hypothesis",
+          "confidence": 0.15000000000000002,
+          "relations": [
+            {
+              "subject": "третак",
+              "predicate": "поглощает",
+              "object": "камни",
+              "nodes": [
+                5,
+                9
+              ],
+              "edges": [
+                [
+                  5,
+                  9,
+                  "SYN"
+                ]
+              ],
+              "paths": [],
+              "sources": [],
+              "score": 0.84972,
+              "uncertainty": 0.85,
+              "status": "hypothesis",
+              "history": [
+                {
+                  "feedback": "correct",
+                  "accepted": false
+                }
+              ],
+              "origin": "heuristic_graph_exploration",
+              "id": "1acf261d8b64bdc2738b079f"
+            }
+          ],
+          "sources": [],
+          "text": "Предположение, не знание: третак поглощает камни",
+          "feedback": [
+            "correct"
+          ]
+        }
+      ],
+      "feedback": [
+        {
+          "kind": "incorrect",
+          "attempt": 1,
+          "query": "что поглощает мирак?",
+          "context": "global",
+          "reference_text": "",
+          "source": "interactive_feedback",
+          "tick": 0,
+          "gold": null,
+          "diagnosis": [
+            "incorrect"
+          ],
+          "accepted": true,
+          "mutations": [
+            {
+              "operation": "weaken_hypothetical_edge",
+              "edge": {
+                "subject": "мирак",
+                "predicate": "поглощает",
+                "object": "ошибка",
+                "weight": -0.5,
+                "confidence": 0.09999999999999999,
+                "status": "hypothesis",
+                "context": "global",
+                "sources": []
+              }
+            }
+          ],
+          "phase": "provisional",
+          "before": [
+            0.0
+          ],
+          "after": [
+            0.49999999999999994
+          ],
+          "reason": "provisional_feedback_adaptation",
+          "training_metric": "rejected_candidate_score_reduction",
+          "independent_controls": 0
+        },
+        {
+          "kind": "reference_answer",
+          "attempt": 1,
+          "query": "что поглощает мирак?",
+          "context": "global",
+          "reference_text": "мирак поглощает луны",
+          "source": "interactive_feedback",
+          "tick": 0,
+          "gold": [
+            "мирак",
+            "поглощает",
+            "луны"
+          ],
+          "diagnosis": [
+            "object"
+          ],
+          "accepted": true,
+          "mutations": [
+            {
+              "operation": "create_or_strengthen_hypothetical_edge",
+              "edge": {
+                "subject": "мирак",
+                "predicate": "поглощает",
+                "object": "луны",
+                "weight": 0.75,
+                "confidence": 0.15,
+                "status": "hypothesis",
+                "context": "global",
+                "sources": [
+                  "user feedback task 1"
+                ]
+              }
+            },
+            {
+              "operation": "adapt_role_path_weight",
+              "role": {
+                "context": "global",
+                "predicate": "поглощает",
+                "subject_class": "классА",
+                "object_class": "классБ",
+                "weight": 1
+              },
+              "value": 0.75
+            }
+          ],
+          "phase": "provisional",
+          "before": [
+            0.0
+          ],
+          "after": [
+            1.0
+          ],
+          "reason": "provisional_feedback_adaptation",
+          "training_metric": "reference_accuracy",
+          "independent_controls": 0
+        },
+        {
+          "kind": "correct",
+          "attempt": 3,
+          "query": "что поглощает новал?",
+          "context": "global",
+          "reference_text": "",
+          "source": "interactive_feedback",
+          "tick": 0,
+          "gold": [
+            "новал",
+            "поглощает",
+            "споры"
+          ],
+          "diagnosis": [
+            "correct"
+          ],
+          "accepted": false,
+          "mutations": [],
+          "phase": "provisional",
+          "before": [
+            0.0
+          ],
+          "after": [
+            0.0
+          ],
+          "reason": "heldout_feedback_check",
+          "training_metric": "rejected_candidate_score_reduction",
+          "independent_controls": 0
+        },
+        {
+          "kind": "correct",
+          "attempt": 4,
+          "query": "что поглощает третак?",
+          "context": "global",
+          "reference_text": "",
+          "source": "interactive_feedback",
+          "tick": 0,
+          "gold": [
+            "третак",
+            "поглощает",
+            "камни"
+          ],
+          "diagnosis": [
+            "correct"
+          ],
+          "accepted": false,
+          "mutations": [],
+          "phase": "task_validated",
+          "before": [
+            0.0
+          ],
+          "after": [
+            0.0
+          ],
+          "reason": "heldout_feedback_check",
+          "training_metric": "rejected_candidate_score_reduction",
+          "independent_controls": 0
+        }
+      ],
+      "previous": [
+        {
+          "model": {
+            "edges": [],
+            "roles": [],
+            "role_weight": 0.0
+          },
+          "phase": "experimental",
+          "trained": []
+        },
+        {
+          "model": {
+            "edges": [
+              {
+                "subject": "мирак",
+                "predicate": "поглощает",
+                "object": "ошибка",
+                "weight": -0.5,
+                "confidence": 0.09999999999999999,
+                "status": "hypothesis",
+                "context": "global",
+                "sources": []
+              }
+            ],
+            "roles": [],
+            "role_weight": 0.0
+          },
+          "phase": "provisional",
+          "trained": []
+        }
+      ],
+      "trained": [
+        "global\u0000[\"мирак\", \"поглощает\", false]"
+      ],
+      "phase": "task_validated",
+      "evaluations": [
+        {
+          "query": "что поглощает новал?",
+          "context": "global",
+          "task_key": "global\u0000[\"новал\", \"поглощает\", false]",
+          "attempt": 3,
+          "correct": true
+        },
+        {
+          "query": "что поглощает третак?",
+          "context": "global",
+          "task_key": "global\u0000[\"третак\", \"поглощает\", false]",
+          "attempt": 4,
+          "correct": true
+        }
+      ],
+      "metrics": {
+        "attempts": 4,
+        "first_answer_accuracy": 0.6666666666666666,
+        "accepted_mutations": 2,
+        "accepted_mutation_operations": 3,
+        "rejected_mutations": 0,
+        "heldout_accuracy": 1.0,
+        "feedback_brier": 0.4891666666666666
+      }
+    },
+    "seconds": 0.040898243998526596,
+    "peak_bytes": 223946,
+    "verified_false": 0
+  }
+]

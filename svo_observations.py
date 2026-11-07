@@ -5,6 +5,7 @@ No SVO action is converted to an experimentally verified CAUSE edge.
 """
 import hashlib
 import json
+import math
 from pathlib import Path
 
 GRAMMAR=json.loads(Path(__file__).with_name('svo_grammar.json').read_text(encoding='utf8'))
@@ -12,11 +13,16 @@ GRAMMAR=json.loads(Path(__file__).with_name('svo_grammar.json').read_text(encodi
 def normalized(text):
     return ' '.join(text.casefold().replace('ё','е').strip(' .?!').split())
 
-def lemma(text,kind='noun'):
+def lemma_candidates(text,kind='noun'):
     text=normalized(text)
     vocabulary=GRAMMAR['predicates' if kind=='verb' else 'noun_forms']
-    candidates={base for base,forms in vocabulary.items() if text in {normalized(x) for x in [base]+forms}}
-    return next(iter(candidates)) if len(candidates)==1 else text
+    return {base for base,forms in vocabulary.items() if text in {normalized(x) for x in [base]+forms}}
+
+
+def lemma(text,kind='noun'):
+    candidates=lemma_candidates(text,kind)
+    return next(iter(candidates)) if len(candidates)==1 else normalized(text)
+
 
 def parse(sentence,context='global',world='',source='direct text input'):
     from semantic_rules import SemanticFrame
@@ -33,6 +39,7 @@ def parse(sentence,context='global',world='',source='direct text input'):
     if not 1<=len(left)<=GRAMMAR['max_argument_tokens'] or not 1<=len(right)<=GRAMMAR['max_argument_tokens']:return [],'argument_budget_or_missing_argument'
     if any(c in text for c in ',:;') or any(w in left+right for w in ('и','или','если','не','кто','что','ли','который')):return [],'unsupported_scope_or_question'
     subject=' '.join(left);obj=' '.join(right)
+    if any(len(lemma_candidates(text,kind))>1 for text,kind in ((subject,'noun'),(obj,'noun'),(words[i],'verb'))):return [],'ambiguous_lemma'
     f=asdict(SemanticFrame(sentence,lemma(subject),lemma(obj),lemma(words[i],'verb'),'SVO',negated=negated,
         modality='uncertain' if modal else 'asserted',context=context,world=world,source=source,
         confidence=.6,status='hypothesis' if modal else 'observed',rule_id='svo.finite_literal.v1'))
@@ -47,13 +54,16 @@ def answer(membrane,query,mode):
     from engine import CrystalReason
     from structured_observations import context_applies
     g=membrane.lattice;raw=normalized(query);words=raw.split()
-    verbs=[i for i,w in enumerate(words) if lemma(w,'verb') in GRAMMAR['predicates']]
+    verbs=[i for i,w in enumerate(words) if lemma_candidates(w,'verb')]
     if not verbs:return None
     def unknown(reason):
         return dict(mode='Unknown',text='Неизвестно: '+reason+'.',reason=reason,status='unknown',confidence=0,relations=[],sources=[],requested_mode=mode)
     if len(verbs)!=1:return unknown('ambiguous_question')
-    i=verbs[0];predicate=lemma(words[i],'verb');slot=None;polarity=False
+    i=verbs[0]
+    if len(lemma_candidates(words[i],'verb'))>1:return unknown('ambiguous_lemma')
+    predicate=lemma(words[i],'verb');slot=None;polarity=False
     if i==1 and words[0] in ('кто','что'):
+        if len(lemma_candidates(' '.join(words[2:])))>1:return unknown('ambiguous_lemma')
         anchor=lemma(' '.join(words[2:]));slot='subject' if words[0]=='кто' else 'either'
     else:
         fs,error=parse(query)
@@ -65,13 +75,20 @@ def answer(membrane,query,mode):
         reason=CrystalReason('input',context=f['context'])
         if not context_applies(g,reason,allow_source=True):continue
         if f.get('modality')!='asserted' or f.get('alternatives'):continue
+        matched=[]
+        if slot=='check':
+            if (f['subject'],f['object'])==(q['subject'],q['object']):matched.append('check')
+        else:
+            if anchor==f['object']:matched.append('subject')
+            if slot=='either' and anchor==f['subject']:matched.append('object')
+        if not matched:continue
         for label in (f['subject'],f['object']):
             if len(g.semantic_bindings.get(label,[]))>1:return unknown('ambiguous_sense')
-        if slot=='check':
-            if (f['subject'],f['object'])==(q['subject'],q['object']):frames.append((f,'check'))
-        else:
-            if anchor==f['object']:frames.append((f,'subject'))
-            if slot=='either' and anchor==f['subject']:frames.append((f,'object'))
+        if f.get('status')=='conflict':return unknown('conflict')
+        if f.get('status') not in ('observed','user_observed'):continue
+        confidence=f.get('confidence',0)
+        if not isinstance(confidence,(int,float)) or not math.isfinite(confidence) or not 0<=confidence<=1:continue
+        frames.extend((f,s) for s in matched)
     if not frames:return unknown('missing_relation')
     polarities={}
     for f,s in frames:polarities.setdefault((f['subject'],f['predicate'],f['object']),set()).add(f['negated'])

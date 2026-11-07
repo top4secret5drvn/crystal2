@@ -4,7 +4,7 @@ import re
 from engine import EDGE_NAMES,unpack_edge
 from structured_observations import clean,candidate_labels,surface_label,context_applies
 
-MODES={'auto','verified','attributed','hypothesis','associative','unknown'}
+MODES={'auto','verified','attributed','hypothesis','associative','unknown','experimental'}
 
 
 def subject_query(membrane,query):
@@ -19,6 +19,9 @@ def subject_query(membrane,query):
 
 def respond(membrane,query,mode='auto'):
     if mode not in MODES:raise ValueError('Unknown answer mode')
+    if mode=='experimental':
+        from imitation_learning import ExperimentalLearningLoop
+        return ExperimentalLearningLoop(membrane).attempt(query)
     from svo_observations import answer as svo_answer
     svo=svo_answer(membrane,query,mode)
     if svo is not None:return svo
