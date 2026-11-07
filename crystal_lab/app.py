@@ -472,4 +472,35 @@ def create_app(workspace):
             new_evidence=evidence_count,new_observation_records=len(new_records),model_parameters_changed=False,calibration_ready=analysis['reliable'] and not analysis['missing_knowledge'] and bool(controls),
             controls=len(controls),answer=response)
 
+    @app.get('/api/semantic-learning')
+    def semantic_learning():
+        from semantic_rules import state,questions
+        with lab.lock:
+            g=lab.population.active
+            view=copy.deepcopy(g)
+            return jsonify(state=state(view),questions=questions(view))
+
+    @app.post('/api/semantic-learning/correct')
+    def semantic_correct():
+        from semantic_rules import correct
+        data=body()
+        if any(not isinstance(data.get(k,''),str) or len(data.get(k,''))>2000 for k in ('id','response','subject','relation','object')):raise ValueError('Correction text budget')
+        with lab.mutation('semantic_correction'):
+            result=correct(lab.population.active,data['id'],data['response'],data.get('subject',''),data.get('relation',''),data.get('object',''))
+        return jsonify(result)
+
+    @app.post('/api/semantic-learning/rollback')
+    def semantic_rollback():
+        from semantic_rules import rollback
+        with lab.mutation('semantic_rollback'):result=rollback(lab.population.active)
+        return jsonify(rolled_back=result)
+
+    @app.post('/api/semantic-learning/import')
+    def semantic_import():
+        from semantic_rules import state,validate_rules
+        data=body();rules=validate_rules(data['rules'])
+        with lab.mutation('semantic_rule_import'):
+            s=state(lab.population.active);s['previous'].append(copy.deepcopy(s['rules']));s['rules']=rules;s['version']+=1
+        return jsonify(imported=len(rules))
+
     return app

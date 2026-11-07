@@ -32,7 +32,7 @@ def respond(membrane,query,mode='auto'):
     for target,packed in r.connections.typed_items():
         if target not in g.resonators:continue
         _,kind=unpack_edge(packed);name=EDGE_NAMES[kind]
-        if name not in ('IS_A','PART_OF','CAUSE'):continue
+        if name not in ('IS_A','PART_OF','CAUSE','EFFECT','COND','EXCEPT','ANALOG','GOAL'):continue
         if requested and requested!=name:continue
         reason=g.edge_meta.get((rid,target,kind))
         if reason is None:continue
@@ -68,6 +68,9 @@ def respond(membrane,query,mode='auto'):
         if 'является' in structured.get('sentence','').casefold() and structured.get('normalization')=='surface_identity':text=structured['sentence'].capitalize()+'.'
         else:text=f'{subject.capitalize()} — это {object_text}.'
     elif kind=='PART_OF':text=f'{subject.capitalize()} — часть {object_text}.'
+    elif kind in ('EFFECT','COND','EXCEPT','ANALOG','GOAL'):
+        predicate={'EFFECT':'возникает вследствие','COND':'требует условия','EXCEPT':'за исключением','ANALOG':'аналогичен','GOAL':'предназначен для'}[kind]
+        text=f'{subject.capitalize()} {predicate} {object_text}.'
     else:
         text=f'{subject.capitalize()} вызывает {object_text}.' if not reason.metadata.get('direction_unknown') else f'Возможная связь «{subject}» и «{object_text}»; направление не установлено.'
     source=reason.metadata.get('source_document') or reason.source_label or reason.source_type

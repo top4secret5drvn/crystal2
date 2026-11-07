@@ -40,6 +40,11 @@ def candidate_labels(membrane,text):
     labels=[label for label in g.observation_aliases.get(key,[]) if label in g.label_to_id]
     if not labels:
         labels=[r.label for r in g.resonators.values() if clean(r.label)==key or clean(membrane._get_surface_form(r.label))==key]
+    space=getattr(g,'semantic_space',None)
+    if space:
+        for lexeme in space.lexemes.values():
+            if key in {clean(x) for x in (lexeme.normalized,)+tuple(lexeme.forms)}:
+                labels.extend(label for label in (lexeme.normalized,) if label in g.label_to_id)
     labels=sorted(set(labels))
     return labels
 

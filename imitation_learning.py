@@ -242,7 +242,7 @@ class ImitationLearner:
             if should_stop():raise TrainingCancelled('Training cancelled before next candidate')
             if record['evaluations']+len(suite)>config.max_evaluations:break
             result=scores(candidate)
-            valid=(result[0]>baseline[0]+1e-12 and all(a>=b-1e-12 for a,b in zip(result[1:],baseline[1:])))
+            valid=calibration_gain(baseline,result)
             valid=valid and all(after[k]>=before[k]-1e-12 for before,after in zip(baseline_metrics[1:],last_metrics[1:])
                                 for k in ('semantic','relation_type','concepts','form','confidence_quality')
                                 if before[k] is not None and after[k] is not None)
@@ -304,5 +304,44 @@ def cli():
             if Path(value).exists():print('Используйте новый файл; исходный snapshot сохраняется.');continue
             lattice.imitation_state=learner.state();CrystalSnapshot.save(lattice,value)
         else:print('Неизвестная команда или не выбран пример.')
+
+
+
+def calibration_gain(before,after):
+    """Shared acceptance contract for generator and interpreter candidate suites."""
+    return bool(after and after[0]>before[0]+1e-12 and all(a>=b-1e-12 for b,a in zip(before[1:],after[1:])))
+
+
+def calibrate_interpretation(lattice,example,rule_id,max_candidates=24):
+    """Local rule candidates use the same guarded train/control acceptance contract."""
+    import copy
+    from semantic_rules import state,interpret,validate_rules,REGISTRY
+    s=state(lattice);controls=[c for c in s['controls'] if c['sentence']!=example['sentence']]
+    if len(controls)>32:raise ValueError('Calibration budget: 32 controls')
+    def score(rules,e):
+        frames=interpret(e['sentence'],rules,e.get('context','global'))
+        return float(len(frames)==1 and [frames[0]['subject'],frames[0]['relation'],frames[0]['object']]==e['gold'] and not frames[0]['negated'])
+    suite=[example]+controls;before=[score(s['rules'],e) for e in suite]
+    result=dict(accepted=False,reason='missing_independent_controls',before=before,attempts=[],new_facts=0)
+    if not controls:return result
+    candidates=[]
+    for index,r in enumerate(s['rules']):
+        if r['id']!=rule_id and r['marker'] not in example['sentence']:continue
+        for field,values in [('reverse',[False,True]),('relation',[example['gold'][1]]),('priority',[min(5,r['priority']+1)]),('confidence',[.6,.8]),('context',[example.get('context','global')])]:
+            for value in values:
+                if value==r.get(field):continue
+                rules=copy.deepcopy(s['rules']);rules[index][field]=value;rules[index]['version']+=1;rules[index]['source']=example['source']
+                candidates.append((rules,dict(rule=r['id'],field=field,value=value)))
+    best=None;best_score=before[0]
+    for rules,change in candidates[:min(24,max_candidates)]:
+        validate_rules(rules);after=[score(rules,e) for e in suite];valid=calibration_gain(before,after)
+        result['attempts'].append(dict(change=change,scores=after,eligible=valid))
+        if valid and after[0]>best_score:best=(rules,change,after);best_score=after[0]
+    if best:
+        s['previous'].append(copy.deepcopy(s['rules']));s['previous']=s['previous'][-20:]
+        s['rules'],change,after=best;s['version']+=1
+        result.update(accepted=True,reason='train_gain_without_control_regression',change=change,after=after)
+    else:result['reason']='no_supported_improvement'
+    return result
 
 if __name__=='__main__':cli()

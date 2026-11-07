@@ -1,0 +1,310 @@
+{
+  "cases": [
+    [
+      "Рубин — это минерал",
+      "рубин",
+      "IS_A",
+      "минерал"
+    ],
+    [
+      "Датчик входит в состав панели",
+      "датчик",
+      "PART_OF",
+      "панели"
+    ],
+    [
+      "Станция состоит из отсеков",
+      "отсеков",
+      "PART_OF",
+      "станция"
+    ],
+    [
+      "Нагрев вызывает расширение",
+      "нагрев",
+      "CAUSE",
+      "расширение"
+    ],
+    [
+      "Сбой возникает вследствие перегрева",
+      "сбой",
+      "EFFECT",
+      "перегрева"
+    ],
+    [
+      "Запуск требует условия готовности",
+      "запуск",
+      "COND",
+      "готовности"
+    ],
+    [
+      "Список за исключением заголовка",
+      "список",
+      "EXCEPT",
+      "заголовка"
+    ],
+    [
+      "Модуль аналогичен блоку",
+      "модуль",
+      "ANALOG",
+      "блоку"
+    ],
+    [
+      "Прибор предназначен для контроля",
+      "прибор",
+      "GOAL",
+      "контроля"
+    ],
+    [
+      "Вода — холодная",
+      null,
+      null,
+      null
+    ],
+    [
+      "Нагрев не вызывает дождь",
+      null,
+      null,
+      null
+    ],
+    [
+      "Если дождь, то мокро",
+      null,
+      null,
+      null
+    ],
+    [
+      "Узел собран из секций",
+      "секций",
+      "PART_OF",
+      "узел"
+    ]
+  ],
+  "results": [
+    {
+      "mode": "baseline",
+      "seed": 17,
+      "tp": 1,
+      "fp": 0,
+      "fn": 9,
+      "precision": 1.0,
+      "recall": 0.1,
+      "f1": 0.18181818181818182,
+      "unknown": 12,
+      "corrections": 0,
+      "accepted_mutations": 0,
+      "seconds": 0.003971712001657579,
+      "peak_bytes": 171331
+    },
+    {
+      "mode": "fixed",
+      "seed": 17,
+      "tp": 8,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.888888888888889,
+      "unknown": 5,
+      "corrections": 0,
+      "accepted_mutations": 0,
+      "seconds": 0.004791008002939634,
+      "peak_bytes": 35069
+    },
+    {
+      "mode": "imitation",
+      "seed": 17,
+      "tp": 8,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.888888888888889,
+      "unknown": 5,
+      "corrections": 2,
+      "accepted_mutations": 0,
+      "seconds": 0.035407618001045194,
+      "peak_bytes": 276720
+    },
+    {
+      "mode": "mutations",
+      "seed": 17,
+      "tp": 9,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.9,
+      "f1": 0.9473684210526316,
+      "unknown": 4,
+      "corrections": 2,
+      "accepted_mutations": 1,
+      "seconds": 0.020785496002645232,
+      "peak_bytes": 128494
+    },
+    {
+      "mode": "active",
+      "seed": 17,
+      "tp": 9,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.9,
+      "f1": 0.9473684210526316,
+      "unknown": 4,
+      "corrections": 2,
+      "accepted_mutations": 1,
+      "seconds": 0.020171575000858866,
+      "peak_bytes": 131446
+    },
+    {
+      "mode": "baseline",
+      "seed": 29,
+      "tp": 1,
+      "fp": 0,
+      "fn": 9,
+      "precision": 1.0,
+      "recall": 0.1,
+      "f1": 0.18181818181818182,
+      "unknown": 12,
+      "corrections": 0,
+      "accepted_mutations": 0,
+      "seconds": 0.001304876001086086,
+      "peak_bytes": 27596
+    },
+    {
+      "mode": "fixed",
+      "seed": 29,
+      "tp": 8,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.888888888888889,
+      "unknown": 5,
+      "corrections": 0,
+      "accepted_mutations": 0,
+      "seconds": 0.005800514998554718,
+      "peak_bytes": 33325
+    },
+    {
+      "mode": "imitation",
+      "seed": 29,
+      "tp": 8,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.888888888888889,
+      "unknown": 5,
+      "corrections": 2,
+      "accepted_mutations": 0,
+      "seconds": 0.021340598999813665,
+      "peak_bytes": 131782
+    },
+    {
+      "mode": "mutations",
+      "seed": 29,
+      "tp": 9,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.9,
+      "f1": 0.9473684210526316,
+      "unknown": 4,
+      "corrections": 2,
+      "accepted_mutations": 1,
+      "seconds": 0.029324092996830586,
+      "peak_bytes": 127452
+    },
+    {
+      "mode": "active",
+      "seed": 29,
+      "tp": 9,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.9,
+      "f1": 0.9473684210526316,
+      "unknown": 4,
+      "corrections": 2,
+      "accepted_mutations": 1,
+      "seconds": 0.02218243899551453,
+      "peak_bytes": 132222
+    },
+    {
+      "mode": "baseline",
+      "seed": 43,
+      "tp": 1,
+      "fp": 0,
+      "fn": 9,
+      "precision": 1.0,
+      "recall": 0.1,
+      "f1": 0.18181818181818182,
+      "unknown": 12,
+      "corrections": 0,
+      "accepted_mutations": 0,
+      "seconds": 0.0015846210008021444,
+      "peak_bytes": 27220
+    },
+    {
+      "mode": "fixed",
+      "seed": 43,
+      "tp": 8,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.888888888888889,
+      "unknown": 5,
+      "corrections": 0,
+      "accepted_mutations": 0,
+      "seconds": 0.005402085000241641,
+      "peak_bytes": 32989
+    },
+    {
+      "mode": "imitation",
+      "seed": 43,
+      "tp": 8,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.888888888888889,
+      "unknown": 5,
+      "corrections": 2,
+      "accepted_mutations": 0,
+      "seconds": 0.022344017997966148,
+      "peak_bytes": 129942
+    },
+    {
+      "mode": "mutations",
+      "seed": 43,
+      "tp": 9,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.9,
+      "f1": 0.9473684210526316,
+      "unknown": 4,
+      "corrections": 2,
+      "accepted_mutations": 1,
+      "seconds": 0.022109490004368126,
+      "peak_bytes": 127856
+    },
+    {
+      "mode": "active",
+      "seed": 43,
+      "tp": 9,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.9,
+      "f1": 0.9473684210526316,
+      "unknown": 4,
+      "corrections": 2,
+      "accepted_mutations": 1,
+      "seconds": 0.021537982000154443,
+      "peak_bytes": 129678
+    }
+  ],
+  "note": "imitation stores corrections without applying rule changes; mutations/active use identical labels, no additional gain is claimed for question ordering; baseline is legacy nominal extraction, not every internal causal hypothesis"
+}
