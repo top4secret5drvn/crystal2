@@ -12,6 +12,6 @@ def main():
     with WorkspaceLease(args.workspace):
         app=create_app(args.workspace)
         print(f'Crystal Lab: http://127.0.0.1:{args.port} | workspace: {args.workspace.resolve()}')
-        app.run(host='127.0.0.1',port=args.port,debug=False,use_reloader=False,threaded=False)
+        app.run(host='127.0.0.1',port=args.port,debug=False,use_reloader=False,threaded=True)
 
 if __name__=='__main__':main()

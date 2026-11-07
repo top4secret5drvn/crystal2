@@ -14,7 +14,7 @@ import shutil
 import threading
 import time
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, Response
 from werkzeug.exceptions import HTTPException
 from command_session import CommandSession
 from engine import CrystalLattice, CrystalPopulation, EDGE_NAMES, unpack_edge
@@ -40,7 +40,7 @@ def reason_json(reason):
 def state_map(g):
     return {'nodes':{r.id:(r.label,r.energy,r.belief_status,r.state.name) for r in g.resonators.values()},
             'edges':{(r.id,t,unpack_edge(p)[1]):unpack_edge(p)[0] for r in g.resonators.values() for t,p in r.connections.typed_items()},
-            'hypotheses':set(g.hypotheses),'parameters':copy.deepcopy((g.imitation_state or {}).get('parameters',{}))}
+            'observation_count':len(g.relation_observations),'hypotheses':set(g.hypotheses),'causal':{k:v['status'] for k,v in g.causal_hypotheses.items()},'parameters':copy.deepcopy((g.imitation_state or {}).get('parameters',{}))}
 
 
 def changes(before,after):
@@ -54,9 +54,11 @@ def changes(before,after):
         beliefs=[dict(id=i,before=before['nodes'][i][2:],after=after['nodes'][i][2:]) for i in sorted(before['nodes'].keys() & after['nodes'].keys()) if before['nodes'][i][2:]!=after['nodes'][i][2:]][:100],
         energy=energy[:100],new_hypotheses=sorted(after['hypotheses']-before['hypotheses'])[:100],
         removed_hypotheses=sorted(before['hypotheses']-after['hypotheses'])[:100],
+        new_causal_hypotheses=[dict(source=k[0],target=k[1],context=k[2],status=after['causal'][k]) for k in sorted(after['causal'].keys()-before['causal'].keys())[:100]],
+        causal_updates=[dict(source=k[0],target=k[1],context=k[2],before=before['causal'][k],after=after['causal'][k]) for k in sorted(before['causal'].keys() & after['causal'].keys()) if before['causal'][k]!=after['causal'][k]][:100],
         parameters={'before':before['parameters'],'after':after['parameters']},
         totals={'added_nodes':len(added),'removed_nodes':len(removed),'new_relations':len(edges),'energy_changes':len(energy)},
-        detail_limit=100)
+        observations_added=after['observation_count']-before['observation_count'],detail_limit=100)
 
 
 class Lab:
@@ -69,6 +71,7 @@ class Lab:
         self.population=CrystalPopulation();self.population.spawn_initial()
         self.session=CommandSession(self.population,LanguageMembrane(self.population.active,data_dir=str(self.root)))
         self.lock=threading.RLock();self.token=secrets.token_urlsafe(32)
+        self.busy_job=None
         self.history=deque(maxlen=100);self.examples=[];self.sequence=0
 
     def path(self,name):
@@ -99,6 +102,7 @@ class Lab:
     def mutation(self,action):
         if not self.lock.acquire(blocking=False):raise RuntimeError('Another operation is running')
         try:
+            if self.busy_job:raise RuntimeError('Interactive job is running; stop it before changing memory')
             data=request.get_json(silent=True) or {}
             if action not in ('select_instance','load_snapshot_copy') and '_instance' in data and int(data['_instance'])!=self.population.active_index:
                 raise ValueError('Active instance changed; refresh before modifying memory')
@@ -137,6 +141,8 @@ class Lab:
 def create_app(workspace):
     app=Flask(__name__);app.config['MAX_CONTENT_LENGTH']=128*1024
     lab=Lab(workspace);app.extensions['lab']=lab
+    from .jobs import Jobs
+    jobs=Jobs(lab);app.extensions['jobs']=jobs
 
     @app.before_request
     def local_only():
@@ -181,9 +187,11 @@ def create_app(workspace):
             g=lab.crystal()
             return jsonify(active=lab.population.active_index,nodes=len(g.resonators),
                 relations=sum(len(list(r.connections.typed_items())) for r in g.resonators.values()),
-                hypotheses=len(g.hypotheses),tick=g.tick_count,context=g.active_context,dormant=g.is_dormant,
+                hypotheses=len(g.hypotheses),node_hypotheses=len(g.hypotheses),
+                causal_hypotheses=sum(h['status']=='hypothesis' for h in g.causal_hypotheses.values()),
+                hypotheses_total=len(g.hypotheses)+sum(h['status']=='hypothesis' for h in g.causal_hypotheses.values()),tick=g.tick_count,context=g.active_context,dormant=g.is_dormant,
                 geometry_mode=g.geometry_mode,imitation=bool(g.imitation_state),history_count=len(lab.history),
-                commands=sorted(SAFE_COMMANDS))
+                commands=sorted(SAFE_COMMANDS),busy_job=lab.busy_job)
 
     @app.get('/api/instances')
     def instances():
@@ -248,7 +256,9 @@ def create_app(workspace):
             if rid not in g.resonators:raise ValueError('Unknown node')
             r=g.resonators[rid];data=node(g,r)
             data['neighbors']=[dict(id=str(t),label=g.resonators[t].label if t in g.resonators else '(missing)',type=EDGE_NAMES[unpack_edge(p)[1]],weight=unpack_edge(p)[0],reason=reason_json(g.edge_meta.get((rid,t,unpack_edge(p)[1])))) for t,p in list(r.connections.typed_items())[:300]]
-            data['hypothesis_reason']=reason_json(g.hypotheses.get(rid));return jsonify(data)
+            data['hypothesis_reason']=reason_json(g.hypotheses.get(rid))
+            data['causal_hypotheses']=[dict(source=a,target=b,context=context,status=h['status'],reason=reason_json(h['reason'])) for (a,b,context),h in g.causal_hypotheses.items() if rid in (a,b)][:50]
+            return jsonify(data)
 
     @app.get('/api/relations/<int:source>/<int:target>/<kind>')
     def relation_details(source,target,kind):
@@ -299,7 +309,7 @@ def create_app(workspace):
 
     @app.get('/api/snapshots')
     def snapshots():
-        with lab.lock:return jsonify([p.name for p in lab.root.glob('*.cry') if not p.is_symlink()])
+        with lab.lock:return jsonify(sorted(p.name for p in lab.root.glob('*.cry') if not p.is_symlink()))
 
     @app.post('/api/snapshots/load')
     def load():
@@ -366,5 +376,63 @@ def create_app(workspace):
             if not learner.rollback():raise ValueError('No previous parameters')
             g.imitation_state=learner.state()
         return jsonify(ok=True)
+
+    @app.post('/api/study/start')
+    def study_start():
+        data=body();topic=data.get('topic')
+        if not isinstance(topic,str) or not 0<len(topic.strip())<=200:raise ValueError('Topic limit: 200 characters')
+        ticks=data.get('ticks',15)
+        if not isinstance(ticks,int) or not 0<=ticks<=15:raise ValueError('Thinking limit: 15 ticks')
+        fetcher=app.config.get('RESEARCH_FETCHER')  # server/test injection only; never a user URL
+        if 'material' in data and data['material']:
+            text=data['material']
+            if not isinstance(text,str) or len(text)>12000:raise ValueError('Local material limit: 12000 characters')
+            def local_material(topic):return dict(text=text,source='local:'+topic,title=topic,source_type='local_text',truncated=False)
+            local_material.source='Локальный материал исследователя'
+            fetcher=local_material
+        job=jobs.start('study',data,fetcher)
+        return jsonify(id=job.id),202
+
+    @app.post('/api/imitation/start')
+    def simple_start():
+        data=body()
+        for key in ('question','reference'):
+            if not isinstance(data.get(key),str) or not 0<len(data[key].strip())<=2000:raise ValueError(key+' limit: 1–2000 characters')
+        return jsonify(id=jobs.start('imitation',data).id),202
+
+    @app.get('/api/jobs/<job_id>')
+    def job_state(job_id):
+        if job_id not in jobs.entries:raise ValueError('Unknown job')
+        job=jobs.entries[job_id]
+        with job.condition:return jsonify(id=job.id,state=job.state,done=job.done,events=job.events)
+
+    @app.get('/api/jobs/<job_id>/events')
+    def job_stream(job_id):
+        if job_id not in jobs.entries:raise ValueError('Unknown job')
+        after=int(request.headers.get('Last-Event-ID','0'))
+        if after<0:raise ValueError('Invalid event cursor')
+        response=Response(jobs.entries[job_id].stream(after),mimetype='text/event-stream')
+        response.headers['X-Accel-Buffering']='no'
+        return response
+
+    @app.post('/api/jobs/<job_id>/stop')
+    def job_stop(job_id):
+        body()
+        if job_id not in jobs.entries:raise ValueError('Unknown job')
+        job=jobs.entries[job_id]
+        with job.condition:
+            if job.state=='running':job.cancel.set()
+            return jsonify(state=job.state,stop_requested=job.cancel.is_set())
+
+    @app.post('/api/imitation/observation')
+    def add_correction_observation():
+        data=body()
+        for key in ('question','reference'):
+            if not isinstance(data.get(key),str) or not 0<len(data[key])<=2000:raise ValueError('Text limit: 2000 characters')
+        from research import ingest_observation
+        with lab.mutation('add_unconfirmed_teaching_observation'):
+            g=lab.population.active
+            ingest_observation(lab.session.membrane,g,data['reference'],'interactive demonstration','user_correction',data['question'])
+        return jsonify(status='observed',confirmed=False)
 
     return app

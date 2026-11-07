@@ -74,54 +74,23 @@ def print_status(lattice: CrystalLattice):
 
 
 def wiki_probe(query: str) -> str:
-    """🔬 Зондирование Wikipedia через ТОЛЬКО stdlib (🆕 исправлены пробелы)."""
-    url = "https://ru.wikipedia.org/w/api.php"
-    params = {
-        "action": "query",
-        "prop": "extracts",
-        "exintro": True,
-        "explaintext": True,
-        "titles": query,
-        "format": "json"
-    }
-    url_full = url + "?" + urllib.parse.urlencode(params)
-    req = urllib.request.Request(url_full, headers={'User-Agent': 'CrystalCognitiveEngine/7.0'})
+    """Compatibility wrapper around the bounded external acquisition layer."""
+    from research import fetch_wikipedia
     try:
-        with urllib.request.urlopen(req, timeout=5) as response:
-            data = json.loads(response.read().decode('utf-8'))
-            pages = data.get("query", {}).get("pages", {})
-            for page_id, page_data in pages.items():
-                if page_id == "-1":
-                    return None
-                return page_data.get("extract", "")
-    except Exception as e:
-        print(f"   ⚠️ Ошибка сети Wikipedia: {e}")
+        return fetch_wikipedia(query)['text']
+    except (OSError, ValueError) as error:
+        print(f"Wikipedia: {error}")
         return None
 
 
 def autonomous_research(membrane, lattice, query: str, ticks: int = 15):
-    """🧬 Автономный цикл познания: Вакуум -> Wikipedia -> Сон -> Снапшот."""
-    print(f"\n📡 [ДЕМОН ЛЮБОПИТСТВА] Зондирование Wikipedia по запросу: '{query}'...")
-    text = wiki_probe(query)
-    if not text:
-        print("   ⚪ Страница не найдена или сеть недоступна. Вакуум остается.")
-        return
-    print(f"   📥 Получено {len(text)} символов. Впрыскивание в мембрану...")
-    lattice.set_epoch(f"wiki:{query}")
-    stats = membrane.inject_text(text)
-    print(f"   🧠 Анализ (думай {ticks})...")
-    for _ in range(ticks):
-        lattice.tick()
-    print("   💤 Сон и отжиг парадоксов...")
-    merged, pruned, dreams = lattice.defragment()
-    annealed = lattice.anneal_paradoxes()
+    from research import research_steps
     safe_name = "".join(c for c in query if c.isalnum() or c in (' ', '_')).strip().replace(' ', '_')
-    fname = f"auto_wiki_{safe_name}.cry"
-    CrystalSnapshot.save(lattice, fname)
-    print(f"   ✅ Цикл завершен. Эпоха 'wiki:{query}' сохранена в {fname}.")
-    print(f"   📊 Извлечено: {stats.cause_links} причин, {stats.except_links} исключений.")
-    if dreams:
-        print(f"   🌌 Сны: {dreams[0]}")
+    try:
+        for event in research_steps(membrane,lattice,query,ticks,snapshot_path=f"auto_wiki_{safe_name}.cry"):
+            print(f"[ИЗУЧИ] {event}")
+    except (OSError, ValueError) as error:
+        print(f"[ИЗУЧИ] Остановлено: {error}")
 
 
 def auto_load_crystals(population: CrystalPopulation, membrane: LanguageMembrane) -> int:

@@ -445,9 +445,13 @@ class LanguageMembrane:
     # ================================================================
     # 💉 Инжекция текста и Опровержение
     # ================================================================
+    @staticmethod
+    def iter_sentences(text):
+        return (sentence.strip() for sentence in re.split(r'[.!?;\n]+',text) if sentence.strip())
+
     def inject_text(self, text: str) -> CausalStats:
         stats = CausalStats()
-        for sentence in re.split(r'[.!?;\n]+', text):
+        for sentence in self.iter_sentences(text):
             if not sentence.strip():
                 continue
             current = self._inject_sentence(sentence)

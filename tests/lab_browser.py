@@ -46,7 +46,7 @@ def main():
                 page.wait_for_selector('#history-list details')
                 page.locator('#history-list details').filter(has_text='думай 1').locator('summary').click()
                 assert 'energy_changes' in page.locator('#history-list').inner_text()
-                page.click('[data-tab="training"]')
+                page.click('[data-tab="imitation"]');page.click('#expert-mode summary')
                 page.fill('#examples-json',(root/'lab-examples.json').read_text(encoding='utf8'));page.click('#examples-import')
                 page.wait_for_function("() => document.querySelector('#example').options.length === 1")
                 assert 'IS_A' in page.locator('#gold').inner_text()
