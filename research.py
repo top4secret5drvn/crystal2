@@ -67,7 +67,12 @@ def ingest_observation(membrane,lattice,text,source,source_type='text',question=
              lattice.resonators[key[0]].connections.get_type(key[1],key[2]) is not None}
     before={(r.id,t,unpack_edge(p)[1]) for r in lattice.resonators.values() for t,p in r.connections.typed_items()}
     previous_observations=len(lattice.relation_observations)
-    stats=membrane.inject_text(text)
+    previous_source=getattr(membrane,'_observation_source',None)
+    membrane._observation_source=source
+    try:stats=membrane.inject_text(text)
+    finally:
+        if previous_source is None:del membrane._observation_source
+        else:membrane._observation_source=previous_source
     for frame in semantic['frames'][frame_start:]:frame['source']=source
     observation_status='user_observed' if source_type=='user_correction' else 'observed'
     for observation in lattice.relation_observations[previous_observations:]:

@@ -19,6 +19,9 @@ def subject_query(membrane,query):
 
 def respond(membrane,query,mode='auto'):
     if mode not in MODES:raise ValueError('Unknown answer mode')
+    from svo_observations import answer as svo_answer
+    svo=svo_answer(membrane,query,mode)
+    if svo is not None:return svo
     g=membrane.lattice;label,requested,possible=subject_query(membrane,query)
     def unknown(code,detail):
         return dict(mode='Unknown',text='Недостаточно подтвержденных оснований. '+detail,status='unknown',confidence=0,

@@ -74,7 +74,8 @@ def interpret(sentence,rules,context='global',world='',source='direct text input
         if p.get('ok'):
             f=SemanticFrame(sentence,p['subject'],p['target'],'nominal definition',p['relation'],context=context,world=world,source=source,rule_id='legacy.nominal')
             f.id=hashlib.sha256((sentence+context+source).encode()).hexdigest()[:24];return [asdict(f)]
-        return []
+        from svo_observations import parse
+        return parse(sentence,context,world,source)[0]
     best=max(p for p,f in frames);selected=[asdict(f) for p,f in frames if p==best]
     alternatives=[dict(subject=f['subject'],object=f['object'],relation=f['relation'],rule_id=f['rule_id']) for f in selected]
     if len({(f['subject'],f['relation'],f['object']) for f in selected})>1:
@@ -89,9 +90,19 @@ def ingest(membrane,sentence):
     seen=s.setdefault('seen_sentences',[])
     if [sentence,g.active_context] not in seen:seen.append([sentence,g.active_context])
     s['seen_sentences']=seen[-1000:]
-    frames=interpret(sentence,s['rules'],g.active_context,g.semantic_world or '')
+    frames=interpret(sentence,s['rules'],g.active_context,g.semantic_world or '',getattr(membrane,'_observation_source','direct text input'))
     for f in frames:
+        f.setdefault('timestamp',g.tick_count)
+        f.setdefault('provenance_id',f['id'])
+        if f['relation']=='SVO':
+            for role in ('subject','object'):
+                f[role+'_id']=g.get_or_create(f[role]).id
+                from structured_observations import clean
+                for form in (f[role],f[role+'_surface']):
+                    labels=g.observation_aliases.setdefault(clean(form),[])
+                    if f[role] not in labels:labels.append(f[role])
         if not any(old['id']==f['id'] for old in s['frames']):s['frames'].append(f)
+        if f['relation']=='SVO':continue
         if f['status']!='observed' or f['negated'] or f['alternatives']:continue
         if f['rule_id']=='legacy.nominal':store(membrane,dict(parse_definition(sentence),sentence=sentence));continue
         a=resolve_label(membrane,f['subject'],True);b=resolve_label(membrane,f['object'],True)
@@ -103,13 +114,19 @@ def ingest(membrane,sentence):
         reason=CrystalReason('input',source_label=f['source'],confidence=f['confidence'],context=f['context'],metadata={'status':'observed','sentence':sentence,'frame_id':f['id'],'rule_id':f['rule_id']})
         g.connect_ids(ra,rb,50,kind,reason);g.relation_observations.append(reason)
     s['frames']=s['frames'][-1000:]
-    if not frames:store(membrane,dict(parse_definition(sentence),sentence=sentence))
+    if not frames:
+        parsed=dict(parse_definition(sentence),sentence=sentence)
+        from svo_observations import parse
+        _,error=parse(sentence,g.active_context)
+        parsed['svo_parse_error']=error
+        store(membrane,parsed)
     return frames
 
 
 def questions(g):
     s=state(g);result=[];seen=set()
     for f in s['frames']:
+        if f.get('relation')=='SVO':continue  # SVO grammar is not a mutable binary-type rule.
         key=(f['sentence'],f['context'])
         if f['id'] in s['questions'] or key in seen:continue
         seen.add(key)

@@ -7,7 +7,7 @@ import re
 import json
 import os
 from typing import List, Dict, Tuple, Optional, Set
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from engine import (TruthValue, EDGE_CAUSE, EDGE_EXCEPT, EDGE_COND, EDGE_SYNTAGM,
                     EDGE_IS_A, EDGE_PART_OF, unpack_edge, MarkerType, Marker, DependencyNode, CrystalReason)
 from calibration import CalibrationProfile
@@ -23,6 +23,10 @@ class CausalStats:
     is_a_links: int = 0
     negations: int = 0
     questions: int = 0
+    semantic_frames: int = 0
+    semantic_relations: int = 0
+    parse_errors: int = 0
+    parse_error_reasons: list = field(default_factory=list)
 
 
 class SuffixTrie:
@@ -456,7 +460,14 @@ class LanguageMembrane:
                 continue
             from semantic_rules import ingest
             current = self._inject_sentence(sentence,extract_definitions=False)
+            known_frames={f['id'] for f in (self.lattice.semantic_rules_state or {}).get('frames',[])}
             frames=ingest(self,sentence)
+            current.semantic_frames=len(frames)
+            current.semantic_relations=sum(f['id'] not in known_frames and f['status']=='observed' and not f['negated'] and not f.get('alternatives') for f in frames)
+            current.parse_errors=int(not frames)
+            if not frames:
+                from svo_observations import parse
+                current.parse_error_reasons=[parse(sentence)[1] or 'unsupported_definition']
             current.is_a_links+=sum(f['relation']=='IS_A' and f['status']=='observed' for f in frames)
             for name in stats.__dataclass_fields__:
                 setattr(stats, name, getattr(stats, name) + getattr(current, name))
