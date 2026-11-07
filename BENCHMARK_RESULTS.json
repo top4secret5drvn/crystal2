@@ -1,0 +1,70 @@
+{
+  "baseline": {
+    "A_D": {
+      "disabled": {
+        "accuracy": 0.4,
+        "false_positives": 0,
+        "test_count": 20,
+        "rules": 0,
+        "seconds": 0.00014892100000452047,
+        "peak_bytes": 81128
+      },
+      "unvalidated": {
+        "accuracy": 0.6,
+        "false_positives": 8,
+        "test_count": 20,
+        "rules": 2,
+        "seconds": 0.00041574699991997477,
+        "peak_bytes": 81840
+      },
+      "heldout_validated": {
+        "accuracy": 1.0,
+        "false_positives": 0,
+        "test_count": 20,
+        "rules": 1,
+        "seconds": 0.00018481400002201553,
+        "peak_bytes": 82080
+      }
+    },
+    "B_restored": false,
+    "C_spurious_cause": true,
+    "C_explicit_cause": true,
+    "seed": 1729,
+    "seconds": 0.018817617000081555,
+    "peak_bytes": 636482
+  },
+  "improved": {
+    "A_D": {
+      "disabled": {
+        "accuracy": 0.4,
+        "false_positives": 0,
+        "test_count": 20,
+        "rules": 0,
+        "seconds": 0.00012800000001789158,
+        "peak_bytes": 162927
+      },
+      "unvalidated": {
+        "accuracy": 1.0,
+        "false_positives": 0,
+        "test_count": 20,
+        "rules": 1,
+        "seconds": 0.00015954699995290866,
+        "peak_bytes": 164079
+      },
+      "heldout_validated": {
+        "accuracy": 1.0,
+        "false_positives": 0,
+        "test_count": 20,
+        "rules": 1,
+        "seconds": 0.00015292699993096903,
+        "peak_bytes": 164319
+      }
+    },
+    "B_restored": true,
+    "C_spurious_cause": false,
+    "C_explicit_cause": true,
+    "seed": 1729,
+    "seconds": 0.019548229999941213,
+    "peak_bytes": 188093
+  }
+}

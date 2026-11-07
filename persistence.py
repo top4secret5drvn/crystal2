@@ -1,6 +1,8 @@
 """
 persistence.py — Бинарные снапшоты и Дельта-кодирование (Вектор 4).
 """
+import json
+from dataclasses import fields, is_dataclass
 import struct
 import time
 import zlib
@@ -13,6 +15,69 @@ class CrystalSnapshot:
     HEADER_SIZE = struct.calcsize(HEADER_FORMAT)
     BYTES_PER_VECTOR = 1250
     
+    # Optional JSON extension inside the existing CRC. Old readers ignore the
+    # trailer; new readers continue accepting graph-only legacy snapshots.
+    META_MAGIC = b'CRYMETA1'
+    META_FIELDS = ('hypotheses', 'causal_hypotheses', 'hypothesis_history',
+                   'belief_history', 'retracted_belief_sources', 'relation_observations', 'edge_meta', 'contexts', 'active_context',
+                   'epochs', 'skills', 'current_epoch', 'self_id', 'tick_count')
+
+    @staticmethod
+    def _encode_meta(value):
+        if is_dataclass(value):
+            return {"class": type(value).__name__, "fields": {
+                f.name: CrystalSnapshot._encode_meta(getattr(value, f.name)) for f in fields(value)}}
+        if isinstance(value, dict):
+            return {"map": [[CrystalSnapshot._encode_meta(k), CrystalSnapshot._encode_meta(v)]
+                            for k, v in value.items()]}
+        if isinstance(value, tuple):
+            return {"tuple": [CrystalSnapshot._encode_meta(v) for v in value]}
+        if isinstance(value, list):
+            return [CrystalSnapshot._encode_meta(v) for v in value]
+        return value
+
+    @staticmethod
+    def _decode_meta(value):
+        from engine import CrystalReason, ContextNode
+        if isinstance(value, list):
+            return [CrystalSnapshot._decode_meta(v) for v in value]
+        if isinstance(value, dict):
+            if "map" in value:
+                return {CrystalSnapshot._decode_meta(k): CrystalSnapshot._decode_meta(v) for k,v in value["map"]}
+            if "tuple" in value:
+                return tuple(CrystalSnapshot._decode_meta(v) for v in value["tuple"])
+            classes = {"CrystalReason": CrystalReason, "ContextNode": ContextNode}
+            return classes[value["class"]](**{k: CrystalSnapshot._decode_meta(v) for k,v in value["fields"].items()})
+        return value
+
+    @staticmethod
+    def _metadata(lattice):
+        data = {name: getattr(lattice, name) for name in CrystalSnapshot.META_FIELDS}
+        data['nodes'] = {rid: {name: getattr(r, name) for name in
+                         ('belief_status', 'belief_confidence', 'belief_reason', 'belief_context', 'context_mask', 'defeats')}
+                         for rid, r in lattice.resonators.items()}
+        payload = json.dumps(CrystalSnapshot._encode_meta(data), ensure_ascii=False).encode('utf-8')
+        return CrystalSnapshot.META_MAGIC + struct.pack('<I', len(payload)) + payload
+
+    @staticmethod
+    def _restore_metadata(lattice, trailer):
+        if not trailer:
+            # Never retain hypotheses belonging to the previous graph.
+            for name in ('hypotheses','causal_hypotheses','hypothesis_history','belief_history','edge_meta'):
+                setattr(lattice, name, {})
+            return
+        if trailer[:8] != CrystalSnapshot.META_MAGIC:
+            raise ValueError('Unknown snapshot metadata extension')
+        size = struct.unpack_from('<I', trailer, 8)[0]
+        if len(trailer) != 12 + size:
+            raise ValueError('Truncated metadata extension')
+        data = CrystalSnapshot._decode_meta(json.loads(trailer[12:].decode('utf-8')))
+        for name in CrystalSnapshot.META_FIELDS:
+            setattr(lattice, name, data[name])
+        for rid, attrs in data['nodes'].items():
+            for name, value in attrs.items():
+                setattr(lattice.resonators[rid], name, value)
+
     @staticmethod
     def rle_compress(data: bytes) -> bytes:
         """PackBits RLE: Сжимает длинные последовательности нулей в 2 байта."""
@@ -110,6 +175,7 @@ class CrystalSnapshot:
             buffer.extend(struct.pack('<I H', rid, len(srcs)))
             for s in srcs: buffer.extend(s.to_bytes(CrystalSnapshot.BYTES_PER_VECTOR, 'little'))
         
+        buffer.extend(CrystalSnapshot._metadata(lattice))
         crc = zlib.crc32(buffer) & 0xFFFFFFFF
         buffer.extend(struct.pack('<I', crc))
         
@@ -156,12 +222,12 @@ class CrystalSnapshot:
             d_energy = r.energy ^ p['energy']
             d_tick = r.last_tick ^ p['tick']
             buffer.extend(struct.pack('<I B I Q', uid, d_state, d_energy, d_tick))
-            if r.connections != p['conns']:
-                for t, w in r.connections.items(): buffer.extend(struct.pack('<I I', t, w))
+            for t, w in r.connections.items(): buffer.extend(struct.pack('<I I', t, w))
             buffer.extend(struct.pack('<I', 0xFFFFFFFF))
             buffer.extend(struct.pack('<H', len(r.context_sources)))
             for s in r.context_sources: buffer.extend(s.to_bytes(CrystalSnapshot.BYTES_PER_VECTOR, 'little'))
         
+        buffer.extend(CrystalSnapshot._metadata(lattice))
         # 🚀 ИСПРАВЛЕНО: Сжимаем ВСЁ после MAGIC (с 8-го байта), а не с 12-го
         compressed_payload = CrystalSnapshot.rle_compress(bytes(buffer[8:]))
         final_buffer = bytearray(CrystalSnapshot.MAGIC_DELTA)
@@ -249,6 +315,7 @@ class CrystalSnapshot:
                     offset += 1250
                     r.context_sources.append(int.from_bytes(hdc_b, 'little'))
         
+        CrystalSnapshot._restore_metadata(lattice, buffer[offset:-4])
         lattice._next_id = max_id + 1 if lattice.resonators else 0
         
         if not hasattr(lattice, 'interference_log'): lattice.interference_log = []
@@ -340,6 +407,8 @@ class CrystalSnapshot:
                     offset += 1250
                     r.context_sources.append(int.from_bytes(hdc_b, 'little'))
         
+        CrystalSnapshot._restore_metadata(lattice, payload[offset:])
+        lattice._next_id = max(lattice.resonators, default=-1) + 1
         print(f"[ПАМЯТЬ] ⚡ Эпизод (Дельта) наложен: {len(lattice.resonators)} узлов.")
         return True
     

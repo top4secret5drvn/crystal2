@@ -447,6 +447,15 @@ class LanguageMembrane:
     def inject_text(self, text: str) -> CausalStats:
         words = self.tokenize(text)
         stats = CausalStats()
+        # Negation scope is not reliably parsed by this stemmer. Preserve the
+        # utterance as evidence rather than declaring the object/class false.
+        if 'не' in words:
+            self.lattice.relation_observations.append(CrystalReason(
+                'input', source_label=text, source_type='text', confidence=0.5,
+                context=self.lattice.active_context, timestamp=self.lattice.tick_count,
+                metadata={'status': 'observed', 'negated': True, 'scope_unresolved': True}))
+            stats.negations += words.count('не')
+            return stats
         resolved_labels = []
         valid_concepts = []
 
@@ -613,6 +622,17 @@ class LanguageMembrane:
                         timestamp=self.lattice.tick_count,
                         metadata={"marker": marker, **({"relation": relation_meta} if relation_meta else {})}
                     )
+                    if edge_type == EDGE_CAUSE:
+                        # Language reports a claim, not a verified intervention.
+                        # Markers such as "потому" can reverse direction; retain
+                        # raw text and explicitly leave direction unverified.
+                        reason.kind = 'hypothesis'
+                        reason.confidence = 0.3
+                        reason.metadata.update(status='observed', raw_text=text, direction_unknown=True)
+                        self.lattice.propose_causal_link(
+                            self.lattice.get_or_create(left_concept).id,
+                            self.lattice.get_or_create(right_concept).id, reason)
+                        continue
                     self.lattice.connect(
                         left_concept, right_concept,
                         weight=self.calibration.causal_marker_weight,

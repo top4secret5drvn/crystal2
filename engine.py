@@ -183,6 +183,9 @@ class HDCEncoder:
         
         result_bytes = bytearray(self.BYTES_PER_VECTOR)
         threshold = len(vectors) / 2
+        # Content-derived tie vector: deterministic, commutative and unbiased.
+        tie = self.encode(b"bundle-tie:" + b"".join(sorted(
+            v.to_bytes(self.BYTES_PER_VECTOR, "little") for v in vectors)))
         vec_bytes = [v.to_bytes(self.BYTES_PER_VECTOR, 'little') for v in vectors]
         
         for byte_idx in range(self.BYTES_PER_VECTOR):
@@ -194,7 +197,8 @@ class HDCEncoder:
                         bit_counts[i] += 1
             res_byte = 0
             for i in range(8):
-                if bit_counts[i] > threshold:
+                if bit_counts[i] > threshold or (bit_counts[i] == threshold and
+                    (tie >> (byte_idx * 8 + i)) & 1):
                     res_byte |= (1 << i)
             result_bytes[byte_idx] = res_byte
         
@@ -458,6 +462,11 @@ class CrystalLattice:
         
         # 🆕 Приоритет 1.5: Гипотезы
         self.hypotheses: Dict[int, CrystalReason] = {}
+        self.causal_hypotheses = {}
+        self.relation_observations = []
+        self.hypothesis_history = {}
+        self.belief_history = {}
+        self.retracted_belief_sources = {}
         
         # 🆕 Приоритет 1.11: Надёжность источников
         self.source_reliability: Dict[str, float] = {
@@ -692,6 +701,11 @@ class CrystalLattice:
             return
         
         r = self.resonators[node_id]
+        self.belief_history.setdefault(node_id, []).append(
+            (r.belief_status, r.belief_confidence, r.belief_reason, r.belief_context))
+        self.belief_history[node_id].append((new_status, new_confidence, new_reason, new_reason.context))
+        if new_reason.context != r.belief_context:
+            return
         old_status = r.belief_status
         old_confidence = r.belief_confidence
         
@@ -714,12 +728,32 @@ class CrystalLattice:
                 )
         else:
             # Старый надёжнее - создаём конфликт
-            r.belief_status = "contradiction"
+            if abs(new_eff - old_eff) < 1e-12:
+                r.belief_status = "contradiction"
             self.paradox_log.append(
                 f"Такт {self.tick_count}: ⚠️ Конфликт: '{r.label}' не может быть {new_status} "
                 f"(старый источник надёжнее: {old_eff:.2f} > {new_eff:.2f})"
             )
     
+    def retract_belief_source(self, node_id: int, source_label: str, context: str = None):
+        """Reconsider preserved evidence in this context without deleting history."""
+        r = self.resonators[node_id]
+        ctx = context or r.belief_context
+        excluded = self.retracted_belief_sources.setdefault((node_id, ctx), [])
+        if source_label not in excluded:
+            excluded.append(source_label)
+        candidates = list(self.belief_history.get(node_id, []))
+        candidates.append((r.belief_status, r.belief_confidence, r.belief_reason, r.belief_context))
+        candidates = [c for c in candidates if c[3] == ctx and c[2] is not None
+                      and c[2].source_label not in excluded]
+        if ctx != r.belief_context:
+            return
+        if not candidates:
+            r.belief_status, r.belief_confidence, r.belief_reason = 'unknown', 0.0, None
+            return
+        best = max(candidates, key=lambda c: c[1] * self.source_reliability.get(c[2].source_type, .5))
+        self.set_belief_status(node_id, best[0], best[1], best[2], ctx)
+
     # 🆕 Приоритет 1.4: Контексты
     def resolve_context(self, query_context: str = None) -> List[str]:
         """Возвращает цепочку контекстов от текущего к глобальному."""
@@ -739,6 +773,7 @@ class CrystalLattice:
         if node_id not in self.resonators:
             return
         self.hypotheses[node_id] = reason
+        self.hypothesis_history.setdefault(node_id, []).append(reason)
         self.set_belief_status(node_id, "hypothesis", reason.confidence, reason)
     
     def confirm_hypothesis(self, node_id: int):
@@ -753,12 +788,35 @@ class CrystalLattice:
             if r.state == TruthValue.VOID:
                 r.state = TruthValue.TRUE
     
+    def evaluate_abstraction(self, node_id: int, example_id: str, predicted: bool,
+                             observed: bool, *, independent: bool):
+        """Evaluate precommitted predictions, excluding construction examples.
+
+        Two distinct successful held-out predictions confirm; any counterexample
+        defeats. New evidence can revise earlier outcomes by identity.
+        """
+        reason = self.hypotheses.get(node_id) or self.resonators[node_id].belief_reason
+        if reason is None or not independent or not example_id:
+            raise ValueError("Independent identified prediction required")
+        if example_id in reason.metadata.get("training_examples", []):
+            raise ValueError("Construction example is not held out")
+        evidence = reason.metadata.setdefault("validation", {})
+        evidence[example_id] = predicted == observed
+        self.hypotheses[node_id] = reason
+        if not all(evidence.values()):
+            self.reject_hypothesis(node_id)
+        elif len(evidence) >= 2:
+            self.confirm_hypothesis(node_id)
+        else:
+            self.set_belief_status(node_id, "hypothesis", reason.confidence, reason)
+        return self.resonators[node_id].belief_status
+
     def reject_hypothesis(self, node_id: int):
-        """Отклонить гипотезу."""
-        if node_id in self.hypotheses:
-            del self.hypotheses[node_id]
+        self.hypotheses.pop(node_id, None)
         self.set_belief_status(node_id, "defeated", 0.0)
-    
+        if node_id in self.resonators:
+            self.resonators[node_id].state = TruthValue.VOID
+
     def _apply_structural_antagonism(self, node_a: 'Resonator', node_b: 'Resonator'):
         """
         🧬 Структурализм Соссюра: Математическое разведение векторов.
@@ -1478,20 +1536,60 @@ class CrystalLattice:
         analogies.sort(key=lambda x: x[1], reverse=True)
         return analogies
     
+    def propose_causal_link(self, a: int, b: int, reason: CrystalReason):
+        """A proposal is separate from executable causal graph edges."""
+        if a == b or a not in self.resonators or b not in self.resonators:
+            raise ValueError("Causal endpoints must be distinct existing nodes")
+        key = (a, b, reason.context)
+        if key not in self.causal_hypotheses:
+            self.causal_hypotheses[key] = {"reason": reason, "status": "hypothesis", "evidence": {}}
+        return key
+
+    def evaluate_causal_link(self, key, evidence_id: str, *, intervention: bool,
+                             temporal_order: bool, replicated: bool, outcome: bool):
+        """Caller supplies independently established experimental evidence.
+
+        Correlation and textual assertions cannot satisfy this contract. Evidence
+        identity prevents repeated use from increasing confidence.
+        """
+        if not evidence_id or not (intervention and temporal_order and replicated):
+            raise ValueError("Require identified, replicated, temporally ordered intervention")
+        h = self.causal_hypotheses[key]
+        h["evidence"][evidence_id] = outcome
+        h["status"] = "confirmed" if all(h["evidence"].values()) else "defeated"
+        a, b, _ = key
+        if h["status"] == "confirmed":
+            self.resonators[a].connections[b] = pack_edge(60, EDGE_CAUSE)
+            self.resonators[b].connections[a] = pack_edge(60, EDGE_EFFECT)
+        else:
+            for x, y, et in ((a,b,EDGE_CAUSE),(b,a,EDGE_EFFECT)):
+                edge = self.resonators[x].connections.get(y)
+                if edge is not None and unpack_edge(edge)[1] == et:
+                    self.resonators[x].connections[y] = pack_edge(unpack_edge(edge)[0], EDGE_SYNTAGM)
+        return h["status"]
+
     def infer_causal_links(self, min_co_activation: int = 3) -> List[str]:
+        """Coactivation proposes an undirected association, never proven causation.
+
+        min_co_activation is retained for API compatibility; historical code never
+        measured repeated activations. No frequency claim is made here.
+        """
         log = []
-        active_nodes = [r for r in self.resonators.values() if r.is_active()]
-        for i in range(len(active_nodes)):
-            for j in range(i + 1, len(active_nodes)):
-                a, b = active_nodes[i], active_nodes[j]
-                if b.id in a.connections:
-                    w, et = unpack_edge(a.connections[b.id])
+        nodes = [r for r in self.resonators.values() if r.is_active()]
+        for i, a in enumerate(nodes):
+            for b in nodes[i+1:]:
+                edge = a.connections.get(b.id)
+                if edge is not None:
+                    w, et = unpack_edge(edge)
                     if et == EDGE_SYNTAGM and w > 50:
-                        a.connections[b.id] = pack_edge(w, EDGE_CAUSE)
-                        b.connections[a.id] = pack_edge(w, EDGE_EFFECT)
-                        log.append(f"🔗 Причинный вывод: '{a.label}' →CAUSE '{b.label}' (вес={w})")
+                        self.propose_causal_link(a.id, b.id, CrystalReason(
+                            "hypothesis", source_label=f"{a.label} ~ {b.label}",
+                            source_type="coactivation", confidence=0.2,
+                            context=self.active_context, timestamp=self.tick_count,
+                            metadata={"weight": w, "direction_unknown": True}))
+                        log.append(f"Causal candidate (unconfirmed): {a.label} ~ {b.label}")
         return log
-    
+
     # --- Обратная волна (Вектор 5) ---
     def tick_backward(self, vacuum_id: int, max_depth: int = None, prefer_syn: bool = False) -> List[int]:
         """
@@ -2022,7 +2120,7 @@ class CrystalLattice:
                     union = len(set1 | set2)
                     jaccard = intersection / union if union > 0 else 0
                     if jaccard > self.calibration.syngrammy_jaccard_thresh:
-                        abstract_label = f"mdl:{r1.label}+{r2.label}"
+                        abstract_label = "mdl:" + "+".join(sorted((r1.label, r2.label)))
                         if abstract_label not in self.label_to_id:
                             # 🆕 Приоритет 1.10: Оценка поддержки
                             support = len([r for r in self.resonators.values()
@@ -2047,7 +2145,7 @@ class CrystalLattice:
                                 confidence=0.4,
                                 context=self.active_context,
                                 timestamp=self.tick_count,
-                                metadata={"support": support}
+                                metadata={"support": support, "training_examples": [r1.label, r2.label]}
                             )
                             
                             self.connect(abstract_label, r1.label, weight=80, edge_type=EDGE_COND, reason=reason)
@@ -2057,11 +2155,7 @@ class CrystalLattice:
                             self.add_hypothesis(new_id, reason)
                             
                             # Если поддержка высокая - автоматически подтверждаем
-                            if support >= 3:
-                                self.confirm_hypothesis(new_id)
-                                dreams.append(f"🍎 Сингамия: '{abstract_label}' (Изоморфизм: {jaccard:.2f}, поддержка: {support}) ✓")
-                            else:
-                                dreams.append(f"🍎 Сингамия: '{abstract_label}' (Изоморфизм: {jaccard:.2f}, поддержка: {support}) [гипотеза]")
+                            dreams.append(f"🍎 Сингамия: '{abstract_label}' (Изоморфизм: {jaccard:.2f}, поддержка: {support}) [гипотеза]")
                             syngrammy_created += 1  # 🆕 учёт и в ветке гипотезы
         return dreams
     
@@ -2126,7 +2220,7 @@ class CrystalLattice:
         for weight, r_id, tgt_id in strong_bonds[:5]:  # 🆕 фикс: максимум 5 кластеров за сон
             r = self.resonators[r_id]
             target_r = self.resonators[tgt_id]
-            cluster_label = f"cluster:{r.label}+{target_r.label}"
+            cluster_label = "cluster:" + "+".join(sorted((r.label, target_r.label)))
             if cluster_label not in self.label_to_id:
                 # 🆕 Приоритет 1.10: Оценка поддержки
                 support = len([node for node in self.resonators.values()
@@ -2157,11 +2251,7 @@ class CrystalLattice:
                 self.connect(cluster_label, target_r.label, weight=50, reason=reason)
                 
                 self.add_hypothesis(new_id, reason)
-                if support >= 3:
-                    self.confirm_hypothesis(new_id)
-                    dreams.append(f"🌌 Абстракция: '{cluster_label}' (поддержка: {support}) ✓")
-                else:
-                    dreams.append(f"🌌 Абстракция: '{cluster_label}' (поддержка: {support}) [гипотеза]")
+                dreams.append(f"🌌 Абстракция: '{cluster_label}' (поддержка: {support}) [гипотеза]")
         triads = {}
         for r in list(self.resonators.values()):
             for tgt_id, packed in r.connections.items():
@@ -2214,11 +2304,7 @@ class CrystalLattice:
                     self.connect(shortcut_label, c_label, weight=80, reason=reason)
                     
                     self.add_hypothesis(new_id, reason)
-                    if count >= 5:
-                        self.confirm_hypothesis(new_id)
-                        dreams.append(f"🗜️ MDL: '{shortcut_label}' (×{count}) ✓")
-                    else:
-                        dreams.append(f"🗜️ MDL: '{shortcut_label}' (×{count}) [гипотеза]")
+                    dreams.append(f"🗜️ MDL: '{shortcut_label}' (×{count}) [гипотеза]")
                     mdl_created += 1
         potential_antagonists = []
         for r in list(self.resonators.values()):
