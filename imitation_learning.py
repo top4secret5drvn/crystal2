@@ -156,6 +156,9 @@ def diagnose(attempt, example):
     return {'kind':'correct','alternatives':[]}
 
 
+class TrainingCancelled(RuntimeError):pass
+
+
 class ImitationLearner:
     def __init__(self,lattice,validation=(),state=None):
         if any(e.split!='validation' for e in validation):raise ValueError('Validation split required')
@@ -181,7 +184,7 @@ class ImitationLearner:
         self.history.append({'action':'manual_rollback','parameters':asdict(self.parameters)})
         return True
 
-    def train_on_example(self,example,config=Config()):
+    def train_on_example(self,example,config=Config(),*,on_event=None,should_stop=lambda:False):
         if example.split!='train':raise ValueError('Only train examples may generate mutations')
         if any(e.id==example.id or e.query==example.query for e in self.validation):raise ValueError('Train/validation overlap')
         if config.max_candidates<0 or config.max_evaluations<0:raise ValueError('Invalid budget')
@@ -190,6 +193,8 @@ class ImitationLearner:
                     annotated_relations=list(example.relations),concept_ids=list(example.concept_ids),source=example.correction_source,scope={'context':example.context,'world':example.world},
                     before=asdict(before),references=list(example.references),diagnosis=diagnosis,human_error_label=example.error_label,
                     accepted=False,attempts=[],evaluations=0,reason='not_enabled')
+        if on_event:on_event(dict(stage='initial_attempt',attempt=asdict(before),diagnosis=diagnosis,comparison=evaluate(before,example)))
+        if should_stop():raise TrainingCancelled('Training cancelled')
         if not config.enabled: return record
         if any(e.id==example.id for e in self.skills) and evaluate(before,example)['semantic']==1 and evaluate(before,example)['form']!=0:
             record['reason']='already_consolidated';return record
@@ -200,11 +205,12 @@ class ImitationLearner:
         suite=[example]+controls
         if len(suite)>config.max_evaluations:
             record['reason']='budget';self.history.append(record);return record
-        last_metrics=[]
+        last_metrics=[];last_train_attempt=None
         def scores(params):
-            nonlocal last_metrics
+            nonlocal last_metrics,last_train_attempt
             record['evaluations']+=len(suite)
-            last_metrics=[evaluate(answer(self.lattice,e,params),e) for e in suite]
+            last_train_attempt=answer(self.lattice,suite[0],params)
+            last_metrics=[evaluate(last_train_attempt,suite[0])]+[evaluate(answer(self.lattice,e,params),e) for e in suite[1:]]
             return [m['score'] for m in last_metrics]
         baseline=scores(self.parameters)
         baseline_metrics=last_metrics
@@ -220,6 +226,7 @@ class ImitationLearner:
         random.Random(config.seed).shuffle(candidates)
         best=None;best_score=baseline[0]
         for candidate in candidates[:config.max_candidates]:
+            if should_stop():raise TrainingCancelled('Training cancelled before next candidate')
             if record['evaluations']+len(suite)>config.max_evaluations:break
             result=scores(candidate)
             valid=(result[0]>baseline[0]+1e-12 and all(a>=b-1e-12 for a,b in zip(result[1:],baseline[1:])))
@@ -227,8 +234,13 @@ class ImitationLearner:
                                 for k in ('semantic','relation_type','concepts','form','confidence_quality')
                                 if before[k] is not None and after[k] is not None)
             record['attempts'].append(dict(parameters=asdict(candidate),train=result[0],controls=result[1:],metrics=last_metrics,accepted=valid))
+            if on_event:on_event(dict(stage='candidate',iteration=len(record['attempts']),attempt=asdict(last_train_attempt),
+                diagnosis=diagnose(last_train_attempt,example),comparison=last_metrics[0],controls=last_metrics[1:],
+                eligible=valid,parameters=asdict(candidate),changed={k:v for k,v in asdict(candidate).items() if v!=getattr(self.parameters,k)}))
+            if should_stop():raise TrainingCancelled('Training cancelled after current evaluation')
             if valid and result[0]>best_score:
                 best,best_score=candidate,result[0]
+        if should_stop():raise TrainingCancelled('Training cancelled before parameter application')
         if best is not None:
             self.previous.append(self.parameters);self.parameters=best
             if not any(e.id==example.id for e in self.skills):self.skills.append(example)
