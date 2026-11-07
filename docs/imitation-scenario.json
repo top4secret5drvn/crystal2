@@ -1,0 +1,6323 @@
+[
+  {
+    "stage": "started",
+    "kind": "imitation",
+    "instance": 1,
+    "backup": "1794029401455436225-3.cry",
+    "temporary": true,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 1,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.458004
+  },
+  {
+    "stage": "analysis",
+    "analysis": {
+      "original_question": "Что такое яблоко?",
+      "normalized_query": "IS_A яблоко",
+      "parsed_relations": [
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ]
+      ],
+      "reliable": true,
+      "world": "предметные понятия",
+      "knowledge_asserted": false,
+      "controls": 5,
+      "control_policy": "Other subjects with already confirmed relations; not independent ground-truth discovery"
+    },
+    "sequence": 2,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.458378
+  },
+  {
+    "stage": "initial_attempt",
+    "attempt": {
+      "text": "Яблоко входит в состав система.",
+      "relation": [
+        "яблоко",
+        "PART_OF",
+        "система"
+      ],
+      "path": [
+        1,
+        4
+      ],
+      "confidence": 0.9,
+      "alternatives": [
+        [
+          "яблоко",
+          "PART_OF",
+          "система"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "предмет"
+        ]
+      ],
+      "parameters": {
+        "request_weight": 0.0,
+        "is_a_form": 0,
+        "isa_priority": 0.0,
+        "part_priority": 0.0,
+        "cause_priority": 0.0
+      },
+      "provenance": [
+        {
+          "source": "Synthetic Lab demonstration",
+          "source_type": "",
+          "context": "global",
+          "timestamp": 0,
+          "metadata": {
+            "status": "confirmed"
+          }
+        }
+      ]
+    },
+    "diagnosis": {
+      "kind": "C",
+      "alternatives": [
+        "C"
+      ]
+    },
+    "comparison": {
+      "semantic": 0.0,
+      "relation_type": 0.0,
+      "concepts": 0.0,
+      "form": 0.0,
+      "confidence_quality": 0.09999999999999998,
+      "score": 0.004999999999999999
+    },
+    "round": 1,
+    "graph": {
+      "nodes": [
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 3,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.4587219
+  },
+  {
+    "stage": "candidate",
+    "iteration": 1,
+    "attempt": {
+      "text": "Яблоко является фрукт.",
+      "relation": [
+        "яблоко",
+        "IS_A",
+        "фрукт"
+      ],
+      "path": [
+        1,
+        2
+      ],
+      "confidence": 0.9,
+      "alternatives": [
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        [
+          "яблоко",
+          "PART_OF",
+          "система"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "предмет"
+        ]
+      ],
+      "parameters": {
+        "request_weight": 0.0,
+        "is_a_form": 0,
+        "isa_priority": 0.25,
+        "part_priority": 0.0,
+        "cause_priority": 0.0
+      },
+      "provenance": [
+        {
+          "source": "Synthetic Lab demonstration",
+          "source_type": "",
+          "context": "global",
+          "timestamp": 0,
+          "metadata": {
+            "status": "confirmed"
+          }
+        }
+      ]
+    },
+    "diagnosis": {
+      "kind": "A",
+      "alternatives": []
+    },
+    "comparison": {
+      "semantic": 1.0,
+      "relation_type": 1.0,
+      "concepts": 1.0,
+      "form": 0.0,
+      "confidence_quality": 0.9,
+      "score": 0.895
+    },
+    "controls": [
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 0.0,
+        "confidence_quality": 0.9,
+        "score": 0.895
+      },
+      {
+        "semantic": 0.0,
+        "relation_type": 0.0,
+        "concepts": 0.0,
+        "form": null,
+        "confidence_quality": 0.09999999999999998,
+        "score": 0.004999999999999999
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      }
+    ],
+    "eligible": false,
+    "parameters": {
+      "request_weight": 0.0,
+      "is_a_form": 0,
+      "isa_priority": 0.25,
+      "part_priority": 0.0,
+      "cause_priority": 0.0
+    },
+    "changed": {
+      "isa_priority": 0.25
+    },
+    "round": 1,
+    "graph": {
+      "nodes": [
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 4,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.4593465
+  },
+  {
+    "stage": "candidate",
+    "iteration": 2,
+    "attempt": {
+      "text": "Яблоко является фрукт.",
+      "relation": [
+        "яблоко",
+        "IS_A",
+        "фрукт"
+      ],
+      "path": [
+        1,
+        2
+      ],
+      "confidence": 0.9,
+      "alternatives": [
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        [
+          "яблоко",
+          "PART_OF",
+          "система"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "предмет"
+        ]
+      ],
+      "parameters": {
+        "request_weight": 0.25,
+        "is_a_form": 0,
+        "isa_priority": 0.0,
+        "part_priority": 0.0,
+        "cause_priority": 0.0
+      },
+      "provenance": [
+        {
+          "source": "Synthetic Lab demonstration",
+          "source_type": "",
+          "context": "global",
+          "timestamp": 0,
+          "metadata": {
+            "status": "confirmed"
+          }
+        }
+      ]
+    },
+    "diagnosis": {
+      "kind": "A",
+      "alternatives": []
+    },
+    "comparison": {
+      "semantic": 1.0,
+      "relation_type": 1.0,
+      "concepts": 1.0,
+      "form": 0.0,
+      "confidence_quality": 0.9,
+      "score": 0.895
+    },
+    "controls": [
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 0.0,
+        "confidence_quality": 0.9,
+        "score": 0.895
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": null,
+        "confidence_quality": 0.9,
+        "score": 0.895
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      }
+    ],
+    "eligible": true,
+    "parameters": {
+      "request_weight": 0.25,
+      "is_a_form": 0,
+      "isa_priority": 0.0,
+      "part_priority": 0.0,
+      "cause_priority": 0.0
+    },
+    "changed": {
+      "request_weight": 0.25
+    },
+    "round": 1,
+    "graph": {
+      "nodes": [
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 5,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.459702
+  },
+  {
+    "stage": "candidate",
+    "iteration": 3,
+    "attempt": {
+      "text": "Яблоко входит в состав система.",
+      "relation": [
+        "яблоко",
+        "PART_OF",
+        "система"
+      ],
+      "path": [
+        1,
+        4
+      ],
+      "confidence": 0.9,
+      "alternatives": [
+        [
+          "яблоко",
+          "PART_OF",
+          "система"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "предмет"
+        ]
+      ],
+      "parameters": {
+        "request_weight": -0.25,
+        "is_a_form": 0,
+        "isa_priority": 0.0,
+        "part_priority": 0.0,
+        "cause_priority": 0.0
+      },
+      "provenance": [
+        {
+          "source": "Synthetic Lab demonstration",
+          "source_type": "",
+          "context": "global",
+          "timestamp": 0,
+          "metadata": {
+            "status": "confirmed"
+          }
+        }
+      ]
+    },
+    "diagnosis": {
+      "kind": "C",
+      "alternatives": [
+        "C"
+      ]
+    },
+    "comparison": {
+      "semantic": 0.0,
+      "relation_type": 0.0,
+      "concepts": 0.0,
+      "form": 0.0,
+      "confidence_quality": 0.09999999999999998,
+      "score": 0.004999999999999999
+    },
+    "controls": [
+      {
+        "semantic": 0.0,
+        "relation_type": 0.0,
+        "concepts": 0.0,
+        "form": 0.0,
+        "confidence_quality": 0.09999999999999998,
+        "score": 0.004999999999999999
+      },
+      {
+        "semantic": 0.0,
+        "relation_type": 0.0,
+        "concepts": 0.0,
+        "form": null,
+        "confidence_quality": 0.09999999999999998,
+        "score": 0.004999999999999999
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      }
+    ],
+    "eligible": false,
+    "parameters": {
+      "request_weight": -0.25,
+      "is_a_form": 0,
+      "isa_priority": 0.0,
+      "part_priority": 0.0,
+      "cause_priority": 0.0
+    },
+    "changed": {
+      "request_weight": -0.25
+    },
+    "round": 1,
+    "graph": {
+      "nodes": [
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 6,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.4600987
+  },
+  {
+    "stage": "candidate",
+    "iteration": 4,
+    "attempt": {
+      "text": "Яблоко является фрукт.",
+      "relation": [
+        "яблоко",
+        "IS_A",
+        "фрукт"
+      ],
+      "path": [
+        1,
+        2
+      ],
+      "confidence": 0.9,
+      "alternatives": [
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        [
+          "яблоко",
+          "PART_OF",
+          "система"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "предмет"
+        ]
+      ],
+      "parameters": {
+        "request_weight": 0.0,
+        "is_a_form": 0,
+        "isa_priority": 0.0,
+        "part_priority": -0.25,
+        "cause_priority": 0.0
+      },
+      "provenance": [
+        {
+          "source": "Synthetic Lab demonstration",
+          "source_type": "",
+          "context": "global",
+          "timestamp": 0,
+          "metadata": {
+            "status": "confirmed"
+          }
+        }
+      ]
+    },
+    "diagnosis": {
+      "kind": "A",
+      "alternatives": []
+    },
+    "comparison": {
+      "semantic": 1.0,
+      "relation_type": 1.0,
+      "concepts": 1.0,
+      "form": 0.0,
+      "confidence_quality": 0.9,
+      "score": 0.895
+    },
+    "controls": [
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 0.0,
+        "confidence_quality": 0.9,
+        "score": 0.895
+      },
+      {
+        "semantic": 0.0,
+        "relation_type": 0.0,
+        "concepts": 0.0,
+        "form": null,
+        "confidence_quality": 0.09999999999999998,
+        "score": 0.004999999999999999
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      }
+    ],
+    "eligible": false,
+    "parameters": {
+      "request_weight": 0.0,
+      "is_a_form": 0,
+      "isa_priority": 0.0,
+      "part_priority": -0.25,
+      "cause_priority": 0.0
+    },
+    "changed": {
+      "part_priority": -0.25
+    },
+    "round": 1,
+    "graph": {
+      "nodes": [
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 7,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.4604545
+  },
+  {
+    "stage": "candidate",
+    "iteration": 5,
+    "attempt": {
+      "text": "Яблоко входит в состав система.",
+      "relation": [
+        "яблоко",
+        "PART_OF",
+        "система"
+      ],
+      "path": [
+        1,
+        4
+      ],
+      "confidence": 0.9,
+      "alternatives": [
+        [
+          "яблоко",
+          "PART_OF",
+          "система"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "предмет"
+        ]
+      ],
+      "parameters": {
+        "request_weight": 0.0,
+        "is_a_form": 0,
+        "isa_priority": 0.0,
+        "part_priority": 0.25,
+        "cause_priority": 0.0
+      },
+      "provenance": [
+        {
+          "source": "Synthetic Lab demonstration",
+          "source_type": "",
+          "context": "global",
+          "timestamp": 0,
+          "metadata": {
+            "status": "confirmed"
+          }
+        }
+      ]
+    },
+    "diagnosis": {
+      "kind": "C",
+      "alternatives": [
+        "C"
+      ]
+    },
+    "comparison": {
+      "semantic": 0.0,
+      "relation_type": 0.0,
+      "concepts": 0.0,
+      "form": 0.0,
+      "confidence_quality": 0.09999999999999998,
+      "score": 0.004999999999999999
+    },
+    "controls": [
+      {
+        "semantic": 0.0,
+        "relation_type": 0.0,
+        "concepts": 0.0,
+        "form": 0.0,
+        "confidence_quality": 0.09999999999999998,
+        "score": 0.004999999999999999
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": null,
+        "confidence_quality": 0.9,
+        "score": 0.895
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      }
+    ],
+    "eligible": false,
+    "parameters": {
+      "request_weight": 0.0,
+      "is_a_form": 0,
+      "isa_priority": 0.0,
+      "part_priority": 0.25,
+      "cause_priority": 0.0
+    },
+    "changed": {
+      "part_priority": 0.25
+    },
+    "round": 1,
+    "graph": {
+      "nodes": [
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 8,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.4608247
+  },
+  {
+    "stage": "candidate",
+    "iteration": 6,
+    "attempt": {
+      "text": "Яблоко входит в состав система.",
+      "relation": [
+        "яблоко",
+        "PART_OF",
+        "система"
+      ],
+      "path": [
+        1,
+        4
+      ],
+      "confidence": 0.9,
+      "alternatives": [
+        [
+          "яблоко",
+          "PART_OF",
+          "система"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "предмет"
+        ]
+      ],
+      "parameters": {
+        "request_weight": 0.0,
+        "is_a_form": 0,
+        "isa_priority": -0.25,
+        "part_priority": 0.0,
+        "cause_priority": 0.0
+      },
+      "provenance": [
+        {
+          "source": "Synthetic Lab demonstration",
+          "source_type": "",
+          "context": "global",
+          "timestamp": 0,
+          "metadata": {
+            "status": "confirmed"
+          }
+        }
+      ]
+    },
+    "diagnosis": {
+      "kind": "C",
+      "alternatives": [
+        "C"
+      ]
+    },
+    "comparison": {
+      "semantic": 0.0,
+      "relation_type": 0.0,
+      "concepts": 0.0,
+      "form": 0.0,
+      "confidence_quality": 0.09999999999999998,
+      "score": 0.004999999999999999
+    },
+    "controls": [
+      {
+        "semantic": 0.0,
+        "relation_type": 0.0,
+        "concepts": 0.0,
+        "form": 0.0,
+        "confidence_quality": 0.09999999999999998,
+        "score": 0.004999999999999999
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": null,
+        "confidence_quality": 0.9,
+        "score": 0.895
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      }
+    ],
+    "eligible": false,
+    "parameters": {
+      "request_weight": 0.0,
+      "is_a_form": 0,
+      "isa_priority": -0.25,
+      "part_priority": 0.0,
+      "cause_priority": 0.0
+    },
+    "changed": {
+      "isa_priority": -0.25
+    },
+    "round": 1,
+    "graph": {
+      "nodes": [
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 9,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.4611883
+  },
+  {
+    "stage": "candidate",
+    "iteration": 7,
+    "attempt": {
+      "text": "Яблоко входит в состав система.",
+      "relation": [
+        "яблоко",
+        "PART_OF",
+        "система"
+      ],
+      "path": [
+        1,
+        4
+      ],
+      "confidence": 0.9,
+      "alternatives": [
+        [
+          "яблоко",
+          "PART_OF",
+          "система"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "предмет"
+        ]
+      ],
+      "parameters": {
+        "request_weight": 0.0,
+        "is_a_form": 0,
+        "isa_priority": 0.0,
+        "part_priority": 0.0,
+        "cause_priority": 0.25
+      },
+      "provenance": [
+        {
+          "source": "Synthetic Lab demonstration",
+          "source_type": "",
+          "context": "global",
+          "timestamp": 0,
+          "metadata": {
+            "status": "confirmed"
+          }
+        }
+      ]
+    },
+    "diagnosis": {
+      "kind": "C",
+      "alternatives": [
+        "C"
+      ]
+    },
+    "comparison": {
+      "semantic": 0.0,
+      "relation_type": 0.0,
+      "concepts": 0.0,
+      "form": 0.0,
+      "confidence_quality": 0.09999999999999998,
+      "score": 0.004999999999999999
+    },
+    "controls": [
+      {
+        "semantic": 0.0,
+        "relation_type": 0.0,
+        "concepts": 0.0,
+        "form": 0.0,
+        "confidence_quality": 0.09999999999999998,
+        "score": 0.004999999999999999
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": null,
+        "confidence_quality": 0.9,
+        "score": 0.895
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      }
+    ],
+    "eligible": false,
+    "parameters": {
+      "request_weight": 0.0,
+      "is_a_form": 0,
+      "isa_priority": 0.0,
+      "part_priority": 0.0,
+      "cause_priority": 0.25
+    },
+    "changed": {
+      "cause_priority": 0.25
+    },
+    "round": 1,
+    "graph": {
+      "nodes": [
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 10,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.4615257
+  },
+  {
+    "stage": "candidate",
+    "iteration": 8,
+    "attempt": {
+      "text": "Яблоко входит в состав система.",
+      "relation": [
+        "яблоко",
+        "PART_OF",
+        "система"
+      ],
+      "path": [
+        1,
+        4
+      ],
+      "confidence": 0.9,
+      "alternatives": [
+        [
+          "яблоко",
+          "PART_OF",
+          "система"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "предмет"
+        ]
+      ],
+      "parameters": {
+        "request_weight": 0.0,
+        "is_a_form": 0,
+        "isa_priority": 0.0,
+        "part_priority": 0.0,
+        "cause_priority": -0.25
+      },
+      "provenance": [
+        {
+          "source": "Synthetic Lab demonstration",
+          "source_type": "",
+          "context": "global",
+          "timestamp": 0,
+          "metadata": {
+            "status": "confirmed"
+          }
+        }
+      ]
+    },
+    "diagnosis": {
+      "kind": "C",
+      "alternatives": [
+        "C"
+      ]
+    },
+    "comparison": {
+      "semantic": 0.0,
+      "relation_type": 0.0,
+      "concepts": 0.0,
+      "form": 0.0,
+      "confidence_quality": 0.09999999999999998,
+      "score": 0.004999999999999999
+    },
+    "controls": [
+      {
+        "semantic": 0.0,
+        "relation_type": 0.0,
+        "concepts": 0.0,
+        "form": 0.0,
+        "confidence_quality": 0.09999999999999998,
+        "score": 0.004999999999999999
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": null,
+        "confidence_quality": 0.9,
+        "score": 0.895
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      }
+    ],
+    "eligible": false,
+    "parameters": {
+      "request_weight": 0.0,
+      "is_a_form": 0,
+      "isa_priority": 0.0,
+      "part_priority": 0.0,
+      "cause_priority": -0.25
+    },
+    "changed": {
+      "cause_priority": -0.25
+    },
+    "round": 1,
+    "graph": {
+      "nodes": [
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 11,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.461865
+  },
+  {
+    "stage": "round_complete",
+    "round": 1,
+    "result": {
+      "id": "simple-b9e4128930d5a2a5cf19",
+      "query": "IS_A яблоко",
+      "correction_confidence": 1.0,
+      "annotated_relations": [
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ]
+      ],
+      "concept_ids": [],
+      "source": "interactive demonstration; not a knowledge assertion",
+      "scope": {
+        "context": "global",
+        "world": "предметные понятия"
+      },
+      "before": {
+        "text": "Яблоко входит в состав система.",
+        "relation": [
+          "яблоко",
+          "PART_OF",
+          "система"
+        ],
+        "path": [
+          1,
+          4
+        ],
+        "confidence": 0.9,
+        "alternatives": [
+          [
+            "яблоко",
+            "PART_OF",
+            "система"
+          ],
+          [
+            "яблоко",
+            "IS_A",
+            "фрукт"
+          ],
+          [
+            "яблоко",
+            "IS_A",
+            "предмет"
+          ]
+        ],
+        "parameters": {
+          "request_weight": 0.0,
+          "is_a_form": 0,
+          "isa_priority": 0.0,
+          "part_priority": 0.0,
+          "cause_priority": 0.0
+        },
+        "provenance": [
+          {
+            "source": "Synthetic Lab demonstration",
+            "source_type": "",
+            "context": "global",
+            "timestamp": 0,
+            "metadata": {
+              "status": "confirmed"
+            }
+          }
+        ]
+      },
+      "references": [
+        "Яблоко является фруктом."
+      ],
+      "diagnosis": {
+        "kind": "C",
+        "alternatives": [
+          "C"
+        ]
+      },
+      "human_error_label": "",
+      "accepted": true,
+      "attempts": [
+        {
+          "parameters": {
+            "request_weight": 0.0,
+            "is_a_form": 0,
+            "isa_priority": 0.25,
+            "part_priority": 0.0,
+            "cause_priority": 0.0
+          },
+          "train": 0.895,
+          "controls": [
+            0.895,
+            0.004999999999999999,
+            0.995,
+            0.995,
+            0.995
+          ],
+          "metrics": [
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 0.0,
+              "confidence_quality": 0.9,
+              "score": 0.895
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 0.0,
+              "confidence_quality": 0.9,
+              "score": 0.895
+            },
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": null,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            }
+          ],
+          "accepted": false
+        },
+        {
+          "parameters": {
+            "request_weight": 0.25,
+            "is_a_form": 0,
+            "isa_priority": 0.0,
+            "part_priority": 0.0,
+            "cause_priority": 0.0
+          },
+          "train": 0.895,
+          "controls": [
+            0.895,
+            0.895,
+            0.995,
+            0.995,
+            0.995
+          ],
+          "metrics": [
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 0.0,
+              "confidence_quality": 0.9,
+              "score": 0.895
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 0.0,
+              "confidence_quality": 0.9,
+              "score": 0.895
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": null,
+              "confidence_quality": 0.9,
+              "score": 0.895
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            }
+          ],
+          "accepted": true
+        },
+        {
+          "parameters": {
+            "request_weight": -0.25,
+            "is_a_form": 0,
+            "isa_priority": 0.0,
+            "part_priority": 0.0,
+            "cause_priority": 0.0
+          },
+          "train": 0.004999999999999999,
+          "controls": [
+            0.004999999999999999,
+            0.004999999999999999,
+            0.995,
+            0.995,
+            0.995
+          ],
+          "metrics": [
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": 0.0,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": 0.0,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": null,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            }
+          ],
+          "accepted": false
+        },
+        {
+          "parameters": {
+            "request_weight": 0.0,
+            "is_a_form": 0,
+            "isa_priority": 0.0,
+            "part_priority": -0.25,
+            "cause_priority": 0.0
+          },
+          "train": 0.895,
+          "controls": [
+            0.895,
+            0.004999999999999999,
+            0.995,
+            0.995,
+            0.995
+          ],
+          "metrics": [
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 0.0,
+              "confidence_quality": 0.9,
+              "score": 0.895
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 0.0,
+              "confidence_quality": 0.9,
+              "score": 0.895
+            },
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": null,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            }
+          ],
+          "accepted": false
+        },
+        {
+          "parameters": {
+            "request_weight": 0.0,
+            "is_a_form": 0,
+            "isa_priority": 0.0,
+            "part_priority": 0.25,
+            "cause_priority": 0.0
+          },
+          "train": 0.004999999999999999,
+          "controls": [
+            0.004999999999999999,
+            0.895,
+            0.995,
+            0.995,
+            0.995
+          ],
+          "metrics": [
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": 0.0,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": 0.0,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": null,
+              "confidence_quality": 0.9,
+              "score": 0.895
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            }
+          ],
+          "accepted": false
+        },
+        {
+          "parameters": {
+            "request_weight": 0.0,
+            "is_a_form": 0,
+            "isa_priority": -0.25,
+            "part_priority": 0.0,
+            "cause_priority": 0.0
+          },
+          "train": 0.004999999999999999,
+          "controls": [
+            0.004999999999999999,
+            0.895,
+            0.995,
+            0.995,
+            0.995
+          ],
+          "metrics": [
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": 0.0,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": 0.0,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": null,
+              "confidence_quality": 0.9,
+              "score": 0.895
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            }
+          ],
+          "accepted": false
+        },
+        {
+          "parameters": {
+            "request_weight": 0.0,
+            "is_a_form": 0,
+            "isa_priority": 0.0,
+            "part_priority": 0.0,
+            "cause_priority": 0.25
+          },
+          "train": 0.004999999999999999,
+          "controls": [
+            0.004999999999999999,
+            0.895,
+            0.995,
+            0.995,
+            0.995
+          ],
+          "metrics": [
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": 0.0,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": 0.0,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": null,
+              "confidence_quality": 0.9,
+              "score": 0.895
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            }
+          ],
+          "accepted": false
+        },
+        {
+          "parameters": {
+            "request_weight": 0.0,
+            "is_a_form": 0,
+            "isa_priority": 0.0,
+            "part_priority": 0.0,
+            "cause_priority": -0.25
+          },
+          "train": 0.004999999999999999,
+          "controls": [
+            0.004999999999999999,
+            0.895,
+            0.995,
+            0.995,
+            0.995
+          ],
+          "metrics": [
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": 0.0,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 0.0,
+              "relation_type": 0.0,
+              "concepts": 0.0,
+              "form": 0.0,
+              "confidence_quality": 0.09999999999999998,
+              "score": 0.004999999999999999
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": null,
+              "confidence_quality": 0.9,
+              "score": 0.895
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            }
+          ],
+          "accepted": false
+        }
+      ],
+      "evaluations": 54,
+      "reason": "train_gain_without_control_regression",
+      "baseline_metrics": [
+        {
+          "semantic": 0.0,
+          "relation_type": 0.0,
+          "concepts": 0.0,
+          "form": 0.0,
+          "confidence_quality": 0.09999999999999998,
+          "score": 0.004999999999999999
+        },
+        {
+          "semantic": 0.0,
+          "relation_type": 0.0,
+          "concepts": 0.0,
+          "form": 0.0,
+          "confidence_quality": 0.09999999999999998,
+          "score": 0.004999999999999999
+        },
+        {
+          "semantic": 1.0,
+          "relation_type": 1.0,
+          "concepts": 1.0,
+          "form": null,
+          "confidence_quality": 0.9,
+          "score": 0.895
+        },
+        {
+          "semantic": 1.0,
+          "relation_type": 1.0,
+          "concepts": 1.0,
+          "form": 1.0,
+          "confidence_quality": 0.9,
+          "score": 0.995
+        },
+        {
+          "semantic": 1.0,
+          "relation_type": 1.0,
+          "concepts": 1.0,
+          "form": 1.0,
+          "confidence_quality": 0.9,
+          "score": 0.995
+        },
+        {
+          "semantic": 1.0,
+          "relation_type": 1.0,
+          "concepts": 1.0,
+          "form": 1.0,
+          "confidence_quality": 0.9,
+          "score": 0.995
+        }
+      ],
+      "after": {
+        "text": "Яблоко является фрукт.",
+        "relation": [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        "path": [
+          1,
+          2
+        ],
+        "confidence": 0.9,
+        "alternatives": [
+          [
+            "яблоко",
+            "IS_A",
+            "фрукт"
+          ],
+          [
+            "яблоко",
+            "PART_OF",
+            "система"
+          ],
+          [
+            "яблоко",
+            "IS_A",
+            "предмет"
+          ]
+        ],
+        "parameters": {
+          "request_weight": 0.25,
+          "is_a_form": 0,
+          "isa_priority": 0.0,
+          "part_priority": 0.0,
+          "cause_priority": 0.0
+        },
+        "provenance": [
+          {
+            "source": "Synthetic Lab demonstration",
+            "source_type": "",
+            "context": "global",
+            "timestamp": 0,
+            "metadata": {
+              "status": "confirmed"
+            }
+          }
+        ]
+      },
+      "baseline_scores": [
+        0.004999999999999999,
+        0.004999999999999999,
+        0.895,
+        0.995,
+        0.995,
+        0.995
+      ],
+      "changed": {
+        "request_weight": [
+          0.0,
+          0.25
+        ]
+      }
+    },
+    "sequence": 12,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.4622626
+  },
+  {
+    "stage": "initial_attempt",
+    "attempt": {
+      "text": "Яблоко является фрукт.",
+      "relation": [
+        "яблоко",
+        "IS_A",
+        "фрукт"
+      ],
+      "path": [
+        1,
+        2
+      ],
+      "confidence": 0.9,
+      "alternatives": [
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        [
+          "яблоко",
+          "PART_OF",
+          "система"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "предмет"
+        ]
+      ],
+      "parameters": {
+        "request_weight": 0.25,
+        "is_a_form": 0,
+        "isa_priority": 0.0,
+        "part_priority": 0.0,
+        "cause_priority": 0.0
+      },
+      "provenance": [
+        {
+          "source": "Synthetic Lab demonstration",
+          "source_type": "",
+          "context": "global",
+          "timestamp": 0,
+          "metadata": {
+            "status": "confirmed"
+          }
+        }
+      ]
+    },
+    "diagnosis": {
+      "kind": "A",
+      "alternatives": []
+    },
+    "comparison": {
+      "semantic": 1.0,
+      "relation_type": 1.0,
+      "concepts": 1.0,
+      "form": 0.0,
+      "confidence_quality": 0.9,
+      "score": 0.895
+    },
+    "round": 2,
+    "graph": {
+      "nodes": [
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 13,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.4626603
+  },
+  {
+    "stage": "candidate",
+    "iteration": 1,
+    "attempt": {
+      "text": "Яблоко является фруктом.",
+      "relation": [
+        "яблоко",
+        "IS_A",
+        "фрукт"
+      ],
+      "path": [
+        1,
+        2
+      ],
+      "confidence": 0.9,
+      "alternatives": [
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        [
+          "яблоко",
+          "PART_OF",
+          "система"
+        ],
+        [
+          "яблоко",
+          "IS_A",
+          "предмет"
+        ]
+      ],
+      "parameters": {
+        "request_weight": 0.25,
+        "is_a_form": 1,
+        "isa_priority": 0.0,
+        "part_priority": 0.0,
+        "cause_priority": 0.0
+      },
+      "provenance": [
+        {
+          "source": "Synthetic Lab demonstration",
+          "source_type": "",
+          "context": "global",
+          "timestamp": 0,
+          "metadata": {
+            "status": "confirmed"
+          }
+        }
+      ]
+    },
+    "diagnosis": {
+      "kind": "correct",
+      "alternatives": []
+    },
+    "comparison": {
+      "semantic": 1.0,
+      "relation_type": 1.0,
+      "concepts": 1.0,
+      "form": 1.0,
+      "confidence_quality": 0.9,
+      "score": 0.995
+    },
+    "controls": [
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": null,
+        "confidence_quality": 0.9,
+        "score": 0.895
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      },
+      {
+        "semantic": 1.0,
+        "relation_type": 1.0,
+        "concepts": 1.0,
+        "form": 1.0,
+        "confidence_quality": 0.9,
+        "score": 0.995
+      }
+    ],
+    "eligible": true,
+    "parameters": {
+      "request_weight": 0.25,
+      "is_a_form": 1,
+      "isa_priority": 0.0,
+      "part_priority": 0.0,
+      "cause_priority": 0.0
+    },
+    "changed": {
+      "is_a_form": 1
+    },
+    "round": 2,
+    "graph": {
+      "nodes": [
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 14,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.463753
+  },
+  {
+    "stage": "round_complete",
+    "round": 2,
+    "result": {
+      "id": "simple-b9e4128930d5a2a5cf19",
+      "query": "IS_A яблоко",
+      "correction_confidence": 1.0,
+      "annotated_relations": [
+        [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ]
+      ],
+      "concept_ids": [],
+      "source": "interactive demonstration; not a knowledge assertion",
+      "scope": {
+        "context": "global",
+        "world": "предметные понятия"
+      },
+      "before": {
+        "text": "Яблоко является фрукт.",
+        "relation": [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        "path": [
+          1,
+          2
+        ],
+        "confidence": 0.9,
+        "alternatives": [
+          [
+            "яблоко",
+            "IS_A",
+            "фрукт"
+          ],
+          [
+            "яблоко",
+            "PART_OF",
+            "система"
+          ],
+          [
+            "яблоко",
+            "IS_A",
+            "предмет"
+          ]
+        ],
+        "parameters": {
+          "request_weight": 0.25,
+          "is_a_form": 0,
+          "isa_priority": 0.0,
+          "part_priority": 0.0,
+          "cause_priority": 0.0
+        },
+        "provenance": [
+          {
+            "source": "Synthetic Lab demonstration",
+            "source_type": "",
+            "context": "global",
+            "timestamp": 0,
+            "metadata": {
+              "status": "confirmed"
+            }
+          }
+        ]
+      },
+      "references": [
+        "Яблоко является фруктом."
+      ],
+      "diagnosis": {
+        "kind": "A",
+        "alternatives": []
+      },
+      "human_error_label": "",
+      "accepted": true,
+      "attempts": [
+        {
+          "parameters": {
+            "request_weight": 0.25,
+            "is_a_form": 1,
+            "isa_priority": 0.0,
+            "part_priority": 0.0,
+            "cause_priority": 0.0
+          },
+          "train": 0.995,
+          "controls": [
+            0.995,
+            0.895,
+            0.995,
+            0.995,
+            0.995,
+            0.995
+          ],
+          "metrics": [
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": null,
+              "confidence_quality": 0.9,
+              "score": 0.895
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            },
+            {
+              "semantic": 1.0,
+              "relation_type": 1.0,
+              "concepts": 1.0,
+              "form": 1.0,
+              "confidence_quality": 0.9,
+              "score": 0.995
+            }
+          ],
+          "accepted": true
+        }
+      ],
+      "evaluations": 14,
+      "reason": "train_gain_without_control_regression",
+      "baseline_metrics": [
+        {
+          "semantic": 1.0,
+          "relation_type": 1.0,
+          "concepts": 1.0,
+          "form": 0.0,
+          "confidence_quality": 0.9,
+          "score": 0.895
+        },
+        {
+          "semantic": 1.0,
+          "relation_type": 1.0,
+          "concepts": 1.0,
+          "form": 0.0,
+          "confidence_quality": 0.9,
+          "score": 0.895
+        },
+        {
+          "semantic": 1.0,
+          "relation_type": 1.0,
+          "concepts": 1.0,
+          "form": null,
+          "confidence_quality": 0.9,
+          "score": 0.895
+        },
+        {
+          "semantic": 1.0,
+          "relation_type": 1.0,
+          "concepts": 1.0,
+          "form": 1.0,
+          "confidence_quality": 0.9,
+          "score": 0.995
+        },
+        {
+          "semantic": 1.0,
+          "relation_type": 1.0,
+          "concepts": 1.0,
+          "form": 1.0,
+          "confidence_quality": 0.9,
+          "score": 0.995
+        },
+        {
+          "semantic": 1.0,
+          "relation_type": 1.0,
+          "concepts": 1.0,
+          "form": 1.0,
+          "confidence_quality": 0.9,
+          "score": 0.995
+        },
+        {
+          "semantic": 1.0,
+          "relation_type": 1.0,
+          "concepts": 1.0,
+          "form": 0.0,
+          "confidence_quality": 0.9,
+          "score": 0.895
+        }
+      ],
+      "after": {
+        "text": "Яблоко является фруктом.",
+        "relation": [
+          "яблоко",
+          "IS_A",
+          "фрукт"
+        ],
+        "path": [
+          1,
+          2
+        ],
+        "confidence": 0.9,
+        "alternatives": [
+          [
+            "яблоко",
+            "IS_A",
+            "фрукт"
+          ],
+          [
+            "яблоко",
+            "PART_OF",
+            "система"
+          ],
+          [
+            "яблоко",
+            "IS_A",
+            "предмет"
+          ]
+        ],
+        "parameters": {
+          "request_weight": 0.25,
+          "is_a_form": 1,
+          "isa_priority": 0.0,
+          "part_priority": 0.0,
+          "cause_priority": 0.0
+        },
+        "provenance": [
+          {
+            "source": "Synthetic Lab demonstration",
+            "source_type": "",
+            "context": "global",
+            "timestamp": 0,
+            "metadata": {
+              "status": "confirmed"
+            }
+          }
+        ]
+      },
+      "baseline_scores": [
+        0.895,
+        0.895,
+        0.895,
+        0.995,
+        0.995,
+        0.995,
+        0.895
+      ],
+      "changed": {
+        "is_a_form": [
+          0,
+          1
+        ]
+      }
+    },
+    "sequence": 15,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.4656012
+  },
+  {
+    "stage": "completed",
+    "committed": true,
+    "diff": {
+      "added_nodes": [],
+      "removed_nodes": [],
+      "new_relations": [],
+      "removed_relations": 0,
+      "changed_weights": 0,
+      "beliefs": [],
+      "energy": [],
+      "new_hypotheses": [],
+      "removed_hypotheses": [],
+      "new_causal_hypotheses": [],
+      "causal_updates": [],
+      "parameters": {
+        "before": {},
+        "after": {
+          "request_weight": 0.25,
+          "is_a_form": 1,
+          "isa_priority": 0.0,
+          "part_priority": 0.0,
+          "cause_priority": 0.0
+        }
+      },
+      "totals": {
+        "added_nodes": 0,
+        "removed_nodes": 0,
+        "new_relations": 0,
+        "energy_changes": 0
+      },
+      "observations_added": 0,
+      "detail_limit": 100
+    },
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "куст",
+          "energy": 250,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "9",
+          "label": "трава",
+          "energy": 230,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "7",
+          "label": "дерево",
+          "energy": 210,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "абрикос",
+          "energy": 190,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "апельсин",
+          "energy": 170,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "яблоко",
+          "energy": 150,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "предмет",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "система",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "растение",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "10:8:1610612736",
+          "source": "10",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "10:8:0",
+          "source": "10",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:8:1610612736",
+          "source": "9",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "9:8:0",
+          "source": "9",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:8:1610612736",
+          "source": "7",
+          "target": "8",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "7:8:0",
+          "source": "7",
+          "target": "8",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:2:1610612736",
+          "source": "6",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:2:0",
+          "source": "6",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:1610612736",
+          "source": "6",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "6:4:1879048192",
+          "source": "6",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:1610612736",
+          "source": "5",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:3:1610612736",
+          "source": "5",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "5:4:1879048192",
+          "source": "5",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:1610612736",
+          "source": "1",
+          "target": "3",
+          "type": "IS_A",
+          "weight": 60,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "1:4:1879048192",
+          "source": "1",
+          "target": "4",
+          "type": "PART_OF",
+          "weight": 90,
+          "edge_origin": "typed_relation",
+          "confirmed": true
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:6:0",
+          "source": "2",
+          "target": "6",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:7:0",
+          "source": "8",
+          "target": "7",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:9:0",
+          "source": "8",
+          "target": "9",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:10:0",
+          "source": "8",
+          "target": "10",
+          "type": "SYN",
+          "weight": 20,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "snapshot": null,
+    "note": "Text observations and hypotheses are not confirmed knowledge",
+    "sequence": 16,
+    "job": "78958cbc372044bc90353bbe18923376",
+    "time": 1794029401.467568
+  }
+]

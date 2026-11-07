@@ -1,0 +1,5569 @@
+[
+  {
+    "stage": "started",
+    "kind": "study",
+    "instance": 0,
+    "backup": "1794029400676359692-1.cry",
+    "temporary": true,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [],
+      "total_nodes": 1,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 1,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.67671
+  },
+  {
+    "stage": "fetching",
+    "topic": "яблоко",
+    "source": "Локальный материал исследователя",
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [],
+      "total_nodes": 1,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 2,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6771114
+  },
+  {
+    "stage": "material",
+    "material": {
+      "text": "Яблоко это фрукт. Яблоко вызывает рост. Фрукт это пища.",
+      "source": "local:яблоко",
+      "title": "яблоко",
+      "source_type": "local_text",
+      "truncated": false
+    },
+    "epistemic_status": "external_information_not_proof",
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [],
+      "total_nodes": 1,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 3,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6771603
+  },
+  {
+    "stage": "observation",
+    "sentence": 1,
+    "total_sentences": 3,
+    "text": "Яблоко это фрукт",
+    "stats": {
+      "cause_links": 0,
+      "except_links": 0,
+      "cond_links": 0,
+      "syntagm_links": 1,
+      "is_a_links": 2,
+      "negations": 0,
+      "questions": 0
+    },
+    "epistemic_status": "observed",
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 800,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 800,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        }
+      ],
+      "total_nodes": 3,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [],
+      "causal_hypothesis_count": 0,
+      "temporary": true
+    },
+    "sequence": 4,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.678388
+  },
+  {
+    "stage": "observation",
+    "sentence": 2,
+    "total_sentences": 3,
+    "text": "Яблоко вызывает рост",
+    "stats": {
+      "cause_links": 0,
+      "except_links": 0,
+      "cond_links": 0,
+      "syntagm_links": 0,
+      "is_a_links": 0,
+      "negations": 0,
+      "questions": 0
+    },
+    "epistemic_status": "observed",
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1600,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 800,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 5,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 5,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.679069
+  },
+  {
+    "stage": "observation",
+    "sentence": 3,
+    "total_sentences": 3,
+    "text": "Фрукт это пища",
+    "stats": {
+      "cause_links": 0,
+      "except_links": 0,
+      "cond_links": 0,
+      "syntagm_links": 1,
+      "is_a_links": 2,
+      "negations": 0,
+      "questions": 0
+    },
+    "epistemic_status": "observed",
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1600,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 1600,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 800,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 0,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 0,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 6,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.680469
+  },
+  {
+    "stage": "tick",
+    "iteration": 1,
+    "tick": 1,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 1177,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1000,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 600,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 200,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 200,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 58,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 35,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 35,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 58,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 35,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 35,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 32,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 1,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 7,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6807625
+  },
+  {
+    "stage": "tick",
+    "iteration": 2,
+    "tick": 2,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 938,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 769,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 500,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 326,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 326,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 64,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 41,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 41,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 64,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 41,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 38,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 41,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 38,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 2,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 8,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6810145
+  },
+  {
+    "stage": "tick",
+    "iteration": 3,
+    "tick": 3,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 795,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 703,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 575,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 430,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 430,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 47,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 47,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 70,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 47,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 44,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 47,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 44,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 3,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 9,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6812272
+  },
+  {
+    "stage": "tick",
+    "iteration": 4,
+    "tick": 4,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 739,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 722,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 539,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 539,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 479,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 76,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 53,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 53,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 53,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 53,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 76,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 4,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 10,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6814206
+  },
+  {
+    "stage": "tick",
+    "iteration": 5,
+    "tick": 5,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 798,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 700,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 538,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 538,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 537,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 59,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 59,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 82,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 59,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 56,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 59,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 56,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 82,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 5,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 11,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6816907
+  },
+  {
+    "stage": "tick",
+    "iteration": 6,
+    "tick": 6,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 860,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 730,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 584,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 584,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 437,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 65,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 65,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 88,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 65,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 62,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 65,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 62,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 88,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 6,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 12,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6820514
+  },
+  {
+    "stage": "tick",
+    "iteration": 7,
+    "tick": 7,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 941,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 730,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 648,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 648,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 503,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 71,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 71,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 94,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 71,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 68,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 71,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 68,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 94,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 7,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 13,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.682293
+  },
+  {
+    "stage": "tick",
+    "iteration": 8,
+    "tick": 8,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1043,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 764,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 711,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 711,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 427,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 77,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 77,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 100,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 77,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 74,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 77,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 74,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 100,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 8,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 14,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6825974
+  },
+  {
+    "stage": "tick",
+    "iteration": 9,
+    "tick": 9,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1136,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 770,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 770,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 763,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 505,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 83,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 83,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 83,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 80,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 83,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 80,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 106,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 106,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 9,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 15,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6829584
+  },
+  {
+    "stage": "tick",
+    "iteration": 10,
+    "tick": 10,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1183,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 800,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 800,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 796,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 436,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 89,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 89,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 89,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 86,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 89,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 86,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 112,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 112,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 10,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 16,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6831884
+  },
+  {
+    "stage": "tick",
+    "iteration": 11,
+    "tick": 11,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1206,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 815,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 815,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 803,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 519,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 95,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 95,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 95,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 92,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 95,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 92,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 118,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 118,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 11,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 17,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6833735
+  },
+  {
+    "stage": "tick",
+    "iteration": 12,
+    "tick": 12,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1218,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 822,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 822,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 816,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 453,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 101,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 101,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 101,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 98,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 101,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 98,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 124,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 124,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 12,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 18,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6836274
+  },
+  {
+    "stage": "tick",
+    "iteration": 13,
+    "tick": 13,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1224,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 826,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 826,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 823,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 536,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 107,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 107,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 107,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 104,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 107,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 104,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 130,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 130,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 13,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 19,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6839447
+  },
+  {
+    "stage": "tick",
+    "iteration": 14,
+    "tick": 14,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1227,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 828,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 828,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 826,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 467,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 113,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 113,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 113,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 110,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 113,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 110,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 136,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 136,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 14,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 20,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6841612
+  },
+  {
+    "stage": "tick",
+    "iteration": 15,
+    "tick": 15,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1228,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 829,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 829,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 828,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 550,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 116,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 116,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 142,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 142,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 6,
+      "tick": 15,
+      "hypotheses": 0,
+      "node_hypotheses": [],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 21,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.6843448
+  },
+  {
+    "stage": "sleep",
+    "merged": 0,
+    "pruned": 0,
+    "dreams": [
+      "🌌 Абстракция: 'cluster:root:яблок+вызывает' (поддержка: 4) [гипотеза]",
+      "🌌 Абстракция: 'cluster:root:яблок+рост' (поддержка: 5) [гипотеза]",
+      "🌌 Абстракция: 'cluster:вызывает+рост' (поддержка: 5) [гипотеза]",
+      "🌌 Абстракция: 'cluster:root:яблок+фрукт' (поддержка: 7) [гипотеза]",
+      "🌌 Абстракция: 'cluster:пища+фрукт' (поддержка: 4) [гипотеза]",
+      "🧬 Геном: Decay=25%, Thresh=0.80"
+    ],
+    "annealed": 0,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1228,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "cluster:root:яблок+вызывает",
+          "energy": 1028,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "7",
+          "label": "cluster:root:яблок+рост",
+          "energy": 1028,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "9",
+          "label": "cluster:root:яблок+фрукт",
+          "energy": 1028,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 829,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 829,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "cluster:вызывает+рост",
+          "energy": 829,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 828,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "cluster:пища+фрукт",
+          "energy": 689,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 550,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:6:0",
+          "source": "1",
+          "target": "6",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:7:0",
+          "source": "1",
+          "target": "7",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:9:0",
+          "source": "1",
+          "target": "9",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:1:0",
+          "source": "6",
+          "target": "1",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:0",
+          "source": "6",
+          "target": "3",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:1:0",
+          "source": "7",
+          "target": "1",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:4:0",
+          "source": "7",
+          "target": "4",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:1:0",
+          "source": "9",
+          "target": "1",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:2:0",
+          "source": "9",
+          "target": "2",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 116,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:6:0",
+          "source": "3",
+          "target": "6",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:8:0",
+          "source": "3",
+          "target": "8",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 116,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:7:0",
+          "source": "4",
+          "target": "7",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:8:0",
+          "source": "4",
+          "target": "8",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:3:0",
+          "source": "8",
+          "target": "3",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:4:0",
+          "source": "8",
+          "target": "4",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 142,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:9:0",
+          "source": "2",
+          "target": "9",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:10:0",
+          "source": "2",
+          "target": "10",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:2:0",
+          "source": "10",
+          "target": "2",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:5:0",
+          "source": "10",
+          "target": "5",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 142,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:10:0",
+          "source": "5",
+          "target": "10",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 15,
+      "hypotheses": 5,
+      "node_hypotheses": [
+        {
+          "id": 6,
+          "source": "cluster:root:яблок+вызывает",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            1,
+            3
+          ]
+        },
+        {
+          "id": 7,
+          "source": "cluster:root:яблок+рост",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            1,
+            4
+          ]
+        },
+        {
+          "id": 8,
+          "source": "cluster:вызывает+рост",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            3,
+            4
+          ]
+        },
+        {
+          "id": 9,
+          "source": "cluster:root:яблок+фрукт",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": 10,
+          "source": "cluster:пища+фрукт",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            2,
+            5
+          ]
+        }
+      ],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 22,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.7009785
+  },
+  {
+    "stage": "snapshot",
+    "name": "research.cry",
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1228,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "cluster:root:яблок+вызывает",
+          "energy": 1028,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "7",
+          "label": "cluster:root:яблок+рост",
+          "energy": 1028,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "9",
+          "label": "cluster:root:яблок+фрукт",
+          "energy": 1028,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 829,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 829,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "cluster:вызывает+рост",
+          "energy": 829,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 828,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "cluster:пища+фрукт",
+          "energy": 689,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 550,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:6:0",
+          "source": "1",
+          "target": "6",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:7:0",
+          "source": "1",
+          "target": "7",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:9:0",
+          "source": "1",
+          "target": "9",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:1:0",
+          "source": "6",
+          "target": "1",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:0",
+          "source": "6",
+          "target": "3",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:1:0",
+          "source": "7",
+          "target": "1",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:4:0",
+          "source": "7",
+          "target": "4",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:1:0",
+          "source": "9",
+          "target": "1",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:2:0",
+          "source": "9",
+          "target": "2",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 116,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:6:0",
+          "source": "3",
+          "target": "6",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:8:0",
+          "source": "3",
+          "target": "8",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 116,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:7:0",
+          "source": "4",
+          "target": "7",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:8:0",
+          "source": "4",
+          "target": "8",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:3:0",
+          "source": "8",
+          "target": "3",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:4:0",
+          "source": "8",
+          "target": "4",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 142,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:9:0",
+          "source": "2",
+          "target": "9",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:10:0",
+          "source": "2",
+          "target": "10",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:2:0",
+          "source": "10",
+          "target": "2",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:5:0",
+          "source": "10",
+          "target": "5",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 142,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:10:0",
+          "source": "5",
+          "target": "10",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 15,
+      "hypotheses": 5,
+      "node_hypotheses": [
+        {
+          "id": 6,
+          "source": "cluster:root:яблок+вызывает",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            1,
+            3
+          ]
+        },
+        {
+          "id": 7,
+          "source": "cluster:root:яблок+рост",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            1,
+            4
+          ]
+        },
+        {
+          "id": 8,
+          "source": "cluster:вызывает+рост",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            3,
+            4
+          ]
+        },
+        {
+          "id": 9,
+          "source": "cluster:root:яблок+фрукт",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": 10,
+          "source": "cluster:пища+фрукт",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            2,
+            5
+          ]
+        }
+      ],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 23,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.7059326
+  },
+  {
+    "stage": "research_complete",
+    "tick": 15,
+    "hypotheses": 5,
+    "observations": 3,
+    "causal_hypotheses": 1,
+    "confirmed_relations": 0,
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1228,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "cluster:root:яблок+вызывает",
+          "energy": 1028,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "7",
+          "label": "cluster:root:яблок+рост",
+          "energy": 1028,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "9",
+          "label": "cluster:root:яблок+фрукт",
+          "energy": 1028,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 829,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 829,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "cluster:вызывает+рост",
+          "energy": 829,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 828,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "cluster:пища+фрукт",
+          "energy": 689,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 550,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:6:0",
+          "source": "1",
+          "target": "6",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:7:0",
+          "source": "1",
+          "target": "7",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:9:0",
+          "source": "1",
+          "target": "9",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:1:0",
+          "source": "6",
+          "target": "1",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:0",
+          "source": "6",
+          "target": "3",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:1:0",
+          "source": "7",
+          "target": "1",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:4:0",
+          "source": "7",
+          "target": "4",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:1:0",
+          "source": "9",
+          "target": "1",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:2:0",
+          "source": "9",
+          "target": "2",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 116,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:6:0",
+          "source": "3",
+          "target": "6",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:8:0",
+          "source": "3",
+          "target": "8",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 116,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:7:0",
+          "source": "4",
+          "target": "7",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:8:0",
+          "source": "4",
+          "target": "8",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:3:0",
+          "source": "8",
+          "target": "3",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:4:0",
+          "source": "8",
+          "target": "4",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 142,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:9:0",
+          "source": "2",
+          "target": "9",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:10:0",
+          "source": "2",
+          "target": "10",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:2:0",
+          "source": "10",
+          "target": "2",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:5:0",
+          "source": "10",
+          "target": "5",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 142,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:10:0",
+          "source": "5",
+          "target": "10",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 15,
+      "hypotheses": 5,
+      "node_hypotheses": [
+        {
+          "id": 6,
+          "source": "cluster:root:яблок+вызывает",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            1,
+            3
+          ]
+        },
+        {
+          "id": 7,
+          "source": "cluster:root:яблок+рост",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            1,
+            4
+          ]
+        },
+        {
+          "id": 8,
+          "source": "cluster:вызывает+рост",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            3,
+            4
+          ]
+        },
+        {
+          "id": 9,
+          "source": "cluster:root:яблок+фрукт",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": 10,
+          "source": "cluster:пища+фрукт",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            2,
+            5
+          ]
+        }
+      ],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "sequence": 24,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.706327
+  },
+  {
+    "stage": "completed",
+    "committed": true,
+    "diff": {
+      "added_nodes": [
+        {
+          "id": 1,
+          "label": "root:яблок"
+        },
+        {
+          "id": 2,
+          "label": "фрукт"
+        },
+        {
+          "id": 3,
+          "label": "вызывает"
+        },
+        {
+          "id": 4,
+          "label": "рост"
+        },
+        {
+          "id": 5,
+          "label": "пища"
+        },
+        {
+          "id": 6,
+          "label": "cluster:root:яблок+вызывает"
+        },
+        {
+          "id": 7,
+          "label": "cluster:root:яблок+рост"
+        },
+        {
+          "id": 8,
+          "label": "cluster:вызывает+рост"
+        },
+        {
+          "id": 9,
+          "label": "cluster:root:яблок+фрукт"
+        },
+        {
+          "id": 10,
+          "label": "cluster:пища+фрукт"
+        }
+      ],
+      "removed_nodes": [],
+      "new_relations": [
+        {
+          "source": 1,
+          "target": 2,
+          "type": "SYN"
+        },
+        {
+          "source": 1,
+          "target": 2,
+          "type": "IS_A"
+        },
+        {
+          "source": 1,
+          "target": 3,
+          "type": "SYN"
+        },
+        {
+          "source": 1,
+          "target": 4,
+          "type": "SYN"
+        },
+        {
+          "source": 1,
+          "target": 6,
+          "type": "SYN"
+        },
+        {
+          "source": 1,
+          "target": 7,
+          "type": "SYN"
+        },
+        {
+          "source": 1,
+          "target": 9,
+          "type": "SYN"
+        },
+        {
+          "source": 2,
+          "target": 1,
+          "type": "SYN"
+        },
+        {
+          "source": 2,
+          "target": 5,
+          "type": "SYN"
+        },
+        {
+          "source": 2,
+          "target": 5,
+          "type": "IS_A"
+        },
+        {
+          "source": 2,
+          "target": 9,
+          "type": "SYN"
+        },
+        {
+          "source": 2,
+          "target": 10,
+          "type": "SYN"
+        },
+        {
+          "source": 3,
+          "target": 1,
+          "type": "SYN"
+        },
+        {
+          "source": 3,
+          "target": 4,
+          "type": "SYN"
+        },
+        {
+          "source": 3,
+          "target": 6,
+          "type": "SYN"
+        },
+        {
+          "source": 3,
+          "target": 8,
+          "type": "SYN"
+        },
+        {
+          "source": 4,
+          "target": 1,
+          "type": "SYN"
+        },
+        {
+          "source": 4,
+          "target": 3,
+          "type": "SYN"
+        },
+        {
+          "source": 4,
+          "target": 7,
+          "type": "SYN"
+        },
+        {
+          "source": 4,
+          "target": 8,
+          "type": "SYN"
+        },
+        {
+          "source": 5,
+          "target": 2,
+          "type": "SYN"
+        },
+        {
+          "source": 5,
+          "target": 10,
+          "type": "SYN"
+        },
+        {
+          "source": 6,
+          "target": 1,
+          "type": "SYN"
+        },
+        {
+          "source": 6,
+          "target": 3,
+          "type": "SYN"
+        },
+        {
+          "source": 7,
+          "target": 1,
+          "type": "SYN"
+        },
+        {
+          "source": 7,
+          "target": 4,
+          "type": "SYN"
+        },
+        {
+          "source": 8,
+          "target": 3,
+          "type": "SYN"
+        },
+        {
+          "source": 8,
+          "target": 4,
+          "type": "SYN"
+        },
+        {
+          "source": 9,
+          "target": 1,
+          "type": "SYN"
+        },
+        {
+          "source": 9,
+          "target": 2,
+          "type": "SYN"
+        },
+        {
+          "source": 10,
+          "target": 2,
+          "type": "SYN"
+        },
+        {
+          "source": 10,
+          "target": 5,
+          "type": "SYN"
+        }
+      ],
+      "removed_relations": 0,
+      "changed_weights": 0,
+      "beliefs": [],
+      "energy": [],
+      "new_hypotheses": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "removed_hypotheses": [],
+      "new_causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis"
+        }
+      ],
+      "causal_updates": [],
+      "parameters": {
+        "before": {},
+        "after": {}
+      },
+      "totals": {
+        "added_nodes": 10,
+        "removed_nodes": 0,
+        "new_relations": 32,
+        "energy_changes": 0
+      },
+      "observations_added": 3,
+      "detail_limit": 100
+    },
+    "graph": {
+      "nodes": [
+        {
+          "id": "0",
+          "label": "SELF",
+          "energy": 999999,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "1",
+          "label": "root:яблок",
+          "energy": 1228,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "6",
+          "label": "cluster:root:яблок+вызывает",
+          "energy": 1028,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "7",
+          "label": "cluster:root:яблок+рост",
+          "energy": 1028,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "9",
+          "label": "cluster:root:яблок+фрукт",
+          "energy": 1028,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "3",
+          "label": "вызывает",
+          "energy": 829,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "4",
+          "label": "рост",
+          "energy": 829,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "8",
+          "label": "cluster:вызывает+рост",
+          "energy": 829,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "2",
+          "label": "фрукт",
+          "energy": 828,
+          "status": "unknown",
+          "hypothesis": false
+        },
+        {
+          "id": "10",
+          "label": "cluster:пища+фрукт",
+          "energy": 689,
+          "status": "hypothesis",
+          "hypothesis": true
+        },
+        {
+          "id": "5",
+          "label": "пища",
+          "energy": 550,
+          "status": "unknown",
+          "hypothesis": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "1:2:0",
+          "source": "1",
+          "target": "2",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:2:1610612736",
+          "source": "1",
+          "target": "2",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:3:0",
+          "source": "1",
+          "target": "3",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:4:0",
+          "source": "1",
+          "target": "4",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:6:0",
+          "source": "1",
+          "target": "6",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:7:0",
+          "source": "1",
+          "target": "7",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "1:9:0",
+          "source": "1",
+          "target": "9",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:1:0",
+          "source": "6",
+          "target": "1",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "6:3:0",
+          "source": "6",
+          "target": "3",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:1:0",
+          "source": "7",
+          "target": "1",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "7:4:0",
+          "source": "7",
+          "target": "4",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:1:0",
+          "source": "9",
+          "target": "1",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "9:2:0",
+          "source": "9",
+          "target": "2",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:1:0",
+          "source": "3",
+          "target": "1",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:4:0",
+          "source": "3",
+          "target": "4",
+          "type": "SYN",
+          "weight": 116,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:6:0",
+          "source": "3",
+          "target": "6",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "3:8:0",
+          "source": "3",
+          "target": "8",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:1:0",
+          "source": "4",
+          "target": "1",
+          "type": "SYN",
+          "weight": 119,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:3:0",
+          "source": "4",
+          "target": "3",
+          "type": "SYN",
+          "weight": 116,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:7:0",
+          "source": "4",
+          "target": "7",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "4:8:0",
+          "source": "4",
+          "target": "8",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:3:0",
+          "source": "8",
+          "target": "3",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "8:4:0",
+          "source": "8",
+          "target": "4",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:1:0",
+          "source": "2",
+          "target": "1",
+          "type": "SYN",
+          "weight": 142,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:0",
+          "source": "2",
+          "target": "5",
+          "type": "SYN",
+          "weight": 52,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:5:1610612736",
+          "source": "2",
+          "target": "5",
+          "type": "IS_A",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:9:0",
+          "source": "2",
+          "target": "9",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "2:10:0",
+          "source": "2",
+          "target": "10",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:2:0",
+          "source": "10",
+          "target": "2",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "10:5:0",
+          "source": "10",
+          "target": "5",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:2:0",
+          "source": "5",
+          "target": "2",
+          "type": "SYN",
+          "weight": 142,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "5:10:0",
+          "source": "5",
+          "target": "10",
+          "type": "SYN",
+          "weight": 50,
+          "edge_origin": "typed_relation",
+          "confirmed": false
+        },
+        {
+          "id": "hyp:1:4:local_text:яблоко",
+          "source": "1",
+          "target": "4",
+          "type": "CAUSE?",
+          "weight": 0,
+          "confirmed": false,
+          "edge_origin": "causal_hypothesis"
+        }
+      ],
+      "total_nodes": 11,
+      "tick": 15,
+      "hypotheses": 5,
+      "node_hypotheses": [
+        {
+          "id": 6,
+          "source": "cluster:root:яблок+вызывает",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            1,
+            3
+          ]
+        },
+        {
+          "id": 7,
+          "source": "cluster:root:яблок+рост",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            1,
+            4
+          ]
+        },
+        {
+          "id": 8,
+          "source": "cluster:вызывает+рост",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            3,
+            4
+          ]
+        },
+        {
+          "id": 9,
+          "source": "cluster:root:яблок+фрукт",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": 10,
+          "source": "cluster:пища+фрукт",
+          "source_type": "sleep_abstraction",
+          "context": "local_text:яблоко",
+          "confidence": 0.4,
+          "components": [
+            2,
+            5
+          ]
+        }
+      ],
+      "causal_hypotheses": [
+        {
+          "source": 1,
+          "target": 4,
+          "context": "local_text:яблоко",
+          "status": "hypothesis",
+          "confidence": 0.3,
+          "provenance": {
+            "kind": "hypothesis",
+            "source": "root:яблок->рост",
+            "source_type": "text",
+            "source_document": "local:яблоко"
+          }
+        }
+      ],
+      "causal_hypothesis_count": 1,
+      "temporary": true
+    },
+    "snapshot": "study-ed9d686eadc74ca3a15f5611a1e66c4c.cry",
+    "note": "Text observations and hypotheses are not confirmed knowledge",
+    "sequence": 25,
+    "job": "ed9d686eadc74ca3a15f5611a1e66c4c",
+    "time": 1794029400.708052
+  }
+]
