@@ -123,10 +123,19 @@ class Jobs:
                     def progress(event):
                         event['round']=round_index+1;event['graph']=frame(g,event.get('attempt',{}).get('path',()))
                         job.emit(event)
-                    record=learner.train_on_example(example,Config(enabled=True,max_candidates=8,max_evaluations=200,guard_previous=True),
+                    control_ids=[e.id for e in list(controls)+learner.skills]
+                    record=learner.train_on_example(example,Config(enabled=True,max_candidates=8,max_evaluations=200,guard_previous=True,allow_user_observed=example.evidence_mode=='user_observed'),
                         on_event=progress,should_stop=job.cancel.is_set)
                     accepted_any=accepted_any or record['accepted']
-                    job.emit(dict(stage='round_complete',round=round_index+1,result=record))
+                    selected=next((a for a in record.get('attempts',[]) if record['accepted'] and a['parameters']==record['after']['parameters']),None)
+                    control_changes=[]
+                    if selected:
+                        for i,(old,new) in enumerate(zip(record['baseline_metrics'][1:],selected['metrics'][1:])):
+                            control_changes.append(dict(id=control_ids[i],before=old,after=new,
+                                deltas={k:new[k]-old[k] for k in old if old[k] is not None and new[k] is not None}))
+                    job.emit(dict(stage='round_complete',round=round_index+1,result=record,evidence_mode=example.evidence_mode,
+                        outcome={'new_evidence':0,'new_knowledge':False,'control_changes':control_changes,'parameters_changed':record.get('changed',{}),'mutation_accepted':record['accepted'],
+                        'text_changed':record.get('after',{}).get('text')!=record['before']['text'] if record.get('after') else False}))
                     if not record['accepted']:break
                     result=evaluate(answer(g,example,learner.parameters),example)
                     if result['semantic']==1 and result['form']!=0:break
