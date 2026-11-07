@@ -64,7 +64,7 @@ def store(membrane,parsed,status='observed',source='direct text input',source_ty
         if parsed.get('reason')!='empty':
             g.relation_observations.append(CrystalReason('input',source_label=source,source_type=source_type,confidence=0,
                 context=g.active_context,timestamp=g.tick_count,metadata={'status':status,'sentence':parsed.get('sentence',''),
-                'parse_status':parsed['reason'],'unsupported_relation':parsed.get('relation')}))
+                'parse_status':parsed['reason'],'svo_parse_error':parsed.get('svo_parse_error'),'unsupported_relation':parsed.get('relation')}))
         return None
     subject=resolve_label(membrane,parsed['subject'],True);target=resolve_label(membrane,parsed['target'],True)
     if subject is None or target is None:

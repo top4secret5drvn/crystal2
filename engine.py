@@ -2301,6 +2301,8 @@ class CrystalLattice:
                 self.label_to_id.pop(label, None)
                 pruned_count += 1
         incoming_ids={target for r in self.resonators.values() for target in r.connections}
+        for frame in (self.semantic_rules_state or {}).get('frames',[]):
+            incoming_ids.update(frame[role+'_id'] for role in ('subject','object') if role+'_id' in frame)
         dead_ids = [r.id for r in self.resonators.values() if r.id not in incoming_ids and r.energy == 0 and len(r.connections) == 0 and len(r.defeats) == 0 and not r.context_sources and r.label != 'SELF']
         for rid in dead_ids:
             label = self.resonators[rid].label

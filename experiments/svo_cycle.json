@@ -1,0 +1,611 @@
+{
+  "baseline": "7cafa74",
+  "before": [
+    {
+      "sentence": "кот ест рыбу",
+      "query": "что ест кот?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 0,
+        "questions": 0
+      },
+      "response": {
+        "mode": "Unknown",
+        "text": "Недостаточно подтвержденных оснований. Понятие неизвестно.",
+        "status": "unknown",
+        "confidence": 0,
+        "reason": "unknown_concept",
+        "relations": [],
+        "sources": [],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "кот ест рыбу",
+      "query": "кто ест рыбу?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 0,
+        "questions": 0
+      },
+      "response": {
+        "mode": "Unknown",
+        "text": "Недостаточно подтвержденных оснований. Понятие неизвестно.",
+        "status": "unknown",
+        "confidence": 0,
+        "reason": "unknown_concept",
+        "relations": [],
+        "sources": [],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "солнце это звезда",
+      "query": "что такое солнце?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 1,
+        "negations": 0,
+        "questions": 0
+      },
+      "response": {
+        "mode": "Attributed",
+        "text": "По наблюдению «direct text input»: Солнце — это звезда.",
+        "status": "observed",
+        "confidence": 0.55,
+        "reason": "supported_relation",
+        "evidence_status": "observed",
+        "relations": [
+          {
+            "source": 2,
+            "target": 1,
+            "type": "IS_A",
+            "subject": "солнце",
+            "object": "звезда",
+            "status": "observed",
+            "source_context": "global",
+            "cross_source_context": false,
+            "direction_unknown": false,
+            "sentence": "солнце это звезда",
+            "context": "global"
+          }
+        ],
+        "sources": [
+          "direct text input"
+        ],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "солнце нагревает землю",
+      "query": "что нагревает землю?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 0,
+        "questions": 0
+      },
+      "response": {
+        "mode": "Unknown",
+        "text": "Недостаточно подтвержденных оснований. Понятие неизвестно.",
+        "status": "unknown",
+        "confidence": 0,
+        "reason": "unknown_concept",
+        "relations": [],
+        "sources": [],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "мастер читает книгу",
+      "query": "что читает мастер?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 0,
+        "questions": 0
+      },
+      "response": {
+        "mode": "Unknown",
+        "text": "Недостаточно подтвержденных оснований. Понятие неизвестно.",
+        "status": "unknown",
+        "confidence": 0,
+        "reason": "unknown_concept",
+        "relations": [],
+        "sources": [],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "робот видит башню",
+      "query": "кто видит башню?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 0,
+        "questions": 0
+      },
+      "response": {
+        "mode": "Unknown",
+        "text": "Недостаточно подтвержденных оснований. Понятие неизвестно.",
+        "status": "unknown",
+        "confidence": 0,
+        "reason": "unknown_concept",
+        "relations": [],
+        "sources": [],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "кот ест рыбу",
+      "query": "что строит кот?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 0,
+        "questions": 0
+      },
+      "response": {
+        "mode": "Unknown",
+        "text": "Недостаточно подтвержденных оснований. Понятие неизвестно.",
+        "status": "unknown",
+        "confidence": 0,
+        "reason": "unknown_concept",
+        "relations": [],
+        "sources": [],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "кот не ест рыбу",
+      "query": "что ест кот?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 1,
+        "questions": 0
+      },
+      "response": {
+        "mode": "Unknown",
+        "text": "Недостаточно подтвержденных оснований. Понятие неизвестно.",
+        "status": "unknown",
+        "confidence": 0,
+        "reason": "unknown_concept",
+        "relations": [],
+        "sources": [],
+        "requested_mode": "auto"
+      }
+    }
+  ],
+  "after": [
+    {
+      "sentence": "кот ест рыбу",
+      "query": "что ест кот?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 0,
+        "questions": 0,
+        "semantic_frames": 1,
+        "semantic_relations": 1,
+        "parse_errors": 0,
+        "parse_error_reasons": []
+      },
+      "response": {
+        "mode": "Attributed",
+        "text": "По наблюдению «direct text input»: рыбу. Это наблюдение не прошло независимую проверку.",
+        "answer": "рыбу",
+        "status": "observed",
+        "confidence": 0.6,
+        "reason": "observed_predicate",
+        "relations": [
+          {
+            "sentence": "кот ест рыбу",
+            "subject": "кот",
+            "object": "рыба",
+            "predicate": "есть",
+            "relation": "SVO",
+            "direction": "forward",
+            "negated": false,
+            "modality": "asserted",
+            "conditions": "",
+            "context": "global",
+            "world": "",
+            "source": "direct text input",
+            "confidence": 0.6,
+            "status": "observed",
+            "rule_id": "svo.finite_literal.v1",
+            "alternatives": [],
+            "id": "7a85ed94978316b8acc89073",
+            "subject_surface": "кот",
+            "object_surface": "рыбу",
+            "predicate_surface": "ест",
+            "normalized_subject": "кот",
+            "normalized_object": "рыба",
+            "normalized_predicate": "есть",
+            "provenance_id": "7a85ed94978316b8acc89073",
+            "timestamp": 0,
+            "subject_id": 1,
+            "object_id": 4,
+            "answer_slot": "object"
+          }
+        ],
+        "sources": [
+          "direct text input"
+        ],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "кот ест рыбу",
+      "query": "кто ест рыбу?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 0,
+        "questions": 0,
+        "semantic_frames": 1,
+        "semantic_relations": 1,
+        "parse_errors": 0,
+        "parse_error_reasons": []
+      },
+      "response": {
+        "mode": "Attributed",
+        "text": "По наблюдению «direct text input»: кот. Это наблюдение не прошло независимую проверку.",
+        "answer": "кот",
+        "status": "observed",
+        "confidence": 0.6,
+        "reason": "observed_predicate",
+        "relations": [
+          {
+            "sentence": "кот ест рыбу",
+            "subject": "кот",
+            "object": "рыба",
+            "predicate": "есть",
+            "relation": "SVO",
+            "direction": "forward",
+            "negated": false,
+            "modality": "asserted",
+            "conditions": "",
+            "context": "global",
+            "world": "",
+            "source": "direct text input",
+            "confidence": 0.6,
+            "status": "observed",
+            "rule_id": "svo.finite_literal.v1",
+            "alternatives": [],
+            "id": "7a85ed94978316b8acc89073",
+            "subject_surface": "кот",
+            "object_surface": "рыбу",
+            "predicate_surface": "ест",
+            "normalized_subject": "кот",
+            "normalized_object": "рыба",
+            "normalized_predicate": "есть",
+            "provenance_id": "7a85ed94978316b8acc89073",
+            "timestamp": 0,
+            "subject_id": 1,
+            "object_id": 4,
+            "answer_slot": "subject"
+          }
+        ],
+        "sources": [
+          "direct text input"
+        ],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "солнце это звезда",
+      "query": "что такое солнце?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 1,
+        "negations": 0,
+        "questions": 0,
+        "semantic_frames": 1,
+        "semantic_relations": 1,
+        "parse_errors": 0,
+        "parse_error_reasons": []
+      },
+      "response": {
+        "mode": "Attributed",
+        "text": "По наблюдению «direct text input»: Солнце — это звезда.",
+        "status": "observed",
+        "confidence": 0.55,
+        "reason": "supported_relation",
+        "evidence_status": "observed",
+        "relations": [
+          {
+            "source": 2,
+            "target": 1,
+            "type": "IS_A",
+            "subject": "солнце",
+            "object": "звезда",
+            "status": "observed",
+            "source_context": "global",
+            "cross_source_context": false,
+            "direction_unknown": false,
+            "sentence": "солнце это звезда",
+            "context": "global"
+          }
+        ],
+        "sources": [
+          "direct text input"
+        ],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "солнце нагревает землю",
+      "query": "что нагревает землю?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 0,
+        "questions": 0,
+        "semantic_frames": 1,
+        "semantic_relations": 1,
+        "parse_errors": 0,
+        "parse_error_reasons": []
+      },
+      "response": {
+        "mode": "Attributed",
+        "text": "По наблюдению «direct text input»: солнце. Это наблюдение не прошло независимую проверку.",
+        "answer": "солнце",
+        "status": "observed",
+        "confidence": 0.6,
+        "reason": "observed_predicate",
+        "relations": [
+          {
+            "sentence": "солнце нагревает землю",
+            "subject": "солнце",
+            "object": "земля",
+            "predicate": "нагревать",
+            "relation": "SVO",
+            "direction": "forward",
+            "negated": false,
+            "modality": "asserted",
+            "conditions": "",
+            "context": "global",
+            "world": "",
+            "source": "direct text input",
+            "confidence": 0.6,
+            "status": "observed",
+            "rule_id": "svo.finite_literal.v1",
+            "alternatives": [],
+            "id": "503a1e544dc0ed71cf26f421",
+            "subject_surface": "солнце",
+            "object_surface": "землю",
+            "predicate_surface": "нагревает",
+            "normalized_subject": "солнце",
+            "normalized_object": "земля",
+            "normalized_predicate": "нагревать",
+            "provenance_id": "503a1e544dc0ed71cf26f421",
+            "timestamp": 0,
+            "subject_id": 1,
+            "object_id": 4,
+            "answer_slot": "subject"
+          }
+        ],
+        "sources": [
+          "direct text input"
+        ],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "мастер читает книгу",
+      "query": "что читает мастер?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 0,
+        "questions": 0,
+        "semantic_frames": 1,
+        "semantic_relations": 1,
+        "parse_errors": 0,
+        "parse_error_reasons": []
+      },
+      "response": {
+        "mode": "Attributed",
+        "text": "По наблюдению «direct text input»: книгу. Это наблюдение не прошло независимую проверку.",
+        "answer": "книгу",
+        "status": "observed",
+        "confidence": 0.6,
+        "reason": "observed_predicate",
+        "relations": [
+          {
+            "sentence": "мастер читает книгу",
+            "subject": "мастер",
+            "object": "книгу",
+            "predicate": "читать",
+            "relation": "SVO",
+            "direction": "forward",
+            "negated": false,
+            "modality": "asserted",
+            "conditions": "",
+            "context": "global",
+            "world": "",
+            "source": "direct text input",
+            "confidence": 0.6,
+            "status": "observed",
+            "rule_id": "svo.finite_literal.v1",
+            "alternatives": [],
+            "id": "534f4cab2889a40ee17f916c",
+            "subject_surface": "мастер",
+            "object_surface": "книгу",
+            "predicate_surface": "читает",
+            "normalized_subject": "мастер",
+            "normalized_object": "книгу",
+            "normalized_predicate": "читать",
+            "provenance_id": "534f4cab2889a40ee17f916c",
+            "timestamp": 0,
+            "subject_id": 1,
+            "object_id": 3,
+            "answer_slot": "object"
+          }
+        ],
+        "sources": [
+          "direct text input"
+        ],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "робот видит башню",
+      "query": "кто видит башню?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 0,
+        "questions": 0,
+        "semantic_frames": 1,
+        "semantic_relations": 1,
+        "parse_errors": 0,
+        "parse_error_reasons": []
+      },
+      "response": {
+        "mode": "Attributed",
+        "text": "По наблюдению «direct text input»: робот. Это наблюдение не прошло независимую проверку.",
+        "answer": "робот",
+        "status": "observed",
+        "confidence": 0.6,
+        "reason": "observed_predicate",
+        "relations": [
+          {
+            "sentence": "робот видит башню",
+            "subject": "робот",
+            "object": "башню",
+            "predicate": "видеть",
+            "relation": "SVO",
+            "direction": "forward",
+            "negated": false,
+            "modality": "asserted",
+            "conditions": "",
+            "context": "global",
+            "world": "",
+            "source": "direct text input",
+            "confidence": 0.6,
+            "status": "observed",
+            "rule_id": "svo.finite_literal.v1",
+            "alternatives": [],
+            "id": "0820894cc68e3444b99d2771",
+            "subject_surface": "робот",
+            "object_surface": "башню",
+            "predicate_surface": "видит",
+            "normalized_subject": "робот",
+            "normalized_object": "башню",
+            "normalized_predicate": "видеть",
+            "provenance_id": "0820894cc68e3444b99d2771",
+            "timestamp": 0,
+            "subject_id": 1,
+            "object_id": 3,
+            "answer_slot": "subject"
+          }
+        ],
+        "sources": [
+          "direct text input"
+        ],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "кот ест рыбу",
+      "query": "что строит кот?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 0,
+        "questions": 0,
+        "semantic_frames": 1,
+        "semantic_relations": 1,
+        "parse_errors": 0,
+        "parse_error_reasons": []
+      },
+      "response": {
+        "mode": "Unknown",
+        "text": "Неизвестно: missing_relation.",
+        "reason": "missing_relation",
+        "status": "unknown",
+        "confidence": 0,
+        "relations": [],
+        "sources": [],
+        "requested_mode": "auto"
+      }
+    },
+    {
+      "sentence": "кот не ест рыбу",
+      "query": "что ест кот?",
+      "stats": {
+        "cause_links": 0,
+        "except_links": 0,
+        "cond_links": 0,
+        "syntagm_links": 0,
+        "is_a_links": 0,
+        "negations": 1,
+        "questions": 0,
+        "semantic_frames": 1,
+        "semantic_relations": 0,
+        "parse_errors": 0,
+        "parse_error_reasons": []
+      },
+      "response": {
+        "mode": "Unknown",
+        "text": "Неизвестно: negative_observation_only.",
+        "reason": "negative_observation_only",
+        "status": "unknown",
+        "confidence": 0,
+        "relations": [],
+        "sources": [],
+        "requested_mode": "auto"
+      }
+    }
+  ]
+}
