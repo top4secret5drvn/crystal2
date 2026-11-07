@@ -3,6 +3,7 @@ membrane.py — Переводчик между текстом и битами (
 Вектор 3 (Морфология) + Вектор 5 (Голос) + 🧠 Раздел 40 (Когнитивный Конвейер)
 + 🆕 Приоритет 2: Обработка отрицания, вопросов, извлечение триплетов.
 """
+import re
 import json
 import os
 from typing import List, Dict, Tuple, Optional, Set
@@ -445,6 +446,16 @@ class LanguageMembrane:
     # 💉 Инжекция текста и Опровержение
     # ================================================================
     def inject_text(self, text: str) -> CausalStats:
+        stats = CausalStats()
+        for sentence in re.split(r'[.!?;\n]+', text):
+            if not sentence.strip():
+                continue
+            current = self._inject_sentence(sentence)
+            for name in stats.__dataclass_fields__:
+                setattr(stats, name, getattr(stats, name) + getattr(current, name))
+        return stats
+
+    def _inject_sentence(self, text: str) -> CausalStats:
         words = self.tokenize(text)
         stats = CausalStats()
         # Negation scope is not reliably parsed by this stemmer. Preserve the
@@ -570,7 +581,7 @@ class LanguageMembrane:
                 confidence=0.95,
                 context=self.lattice.active_context,
                 timestamp=self.lattice.tick_count,
-                metadata={"relation": "is_a", "marker": "это"}
+                metadata={"relation": "is_a", "marker": "это", "status": "observed"}
             )
             self.lattice.connect(subj, obj, weight=self.calibration.causal_marker_weight,
                                  edge_type=EDGE_IS_A, reason=reason)
@@ -593,7 +604,7 @@ class LanguageMembrane:
             elif marker in self.COND_MARKERS:
                 edge_type = EDGE_COND
             elif marker in self.IS_A_MARKERS:
-                edge_type = EDGE_SYNTAGM
+                edge_type = EDGE_IS_A
                 relation_meta = "is_a"
 
             # 🆕 Задача 2: оператор связки 'это' (не входит в IS_A_MARKERS как концепт)
@@ -620,7 +631,7 @@ class LanguageMembrane:
                         confidence=0.9,
                         context=self.lattice.active_context,
                         timestamp=self.lattice.tick_count,
-                        metadata={"marker": marker, **({"relation": relation_meta} if relation_meta else {})}
+                        metadata={"marker": marker, "status": "observed", **({"relation": relation_meta} if relation_meta else {})}
                     )
                     if edge_type == EDGE_CAUSE:
                         # Language reports a claim, not a verified intervention.
@@ -685,7 +696,35 @@ class LanguageMembrane:
     # ================================================================
     # 🗣️ Генерация речи
     # ================================================================
-    def generate_text(self, seed_concepts: List[str], max_length: int = 15, beam_width: int = 2) -> str:
+    def generate_text(self, seed_concepts: List[str], max_length: int = 15, beam_width: int = 2,
+                      mode: str = 'factual') -> str:
+        if mode == 'associative':
+            return '[Ассоциативный эксперимент] ' + self._generate_associative(seed_concepts, max_length, beam_width)
+        if mode != 'factual':
+            raise ValueError('Unknown generation mode')
+        candidates = []
+        constructions = {EDGE_IS_A: ('IS_A', 'Entity', 'Class'),
+                         EDGE_PART_OF: ('PART_OF', 'Part', 'Whole'),
+                         EDGE_CAUSE: ('CAUSATION', 'Cause', 'Effect')}
+        for label in seed_concepts:
+            r = self.lattice.find_best_resonator_by_label(label)
+            if r is None:
+                continue
+            for target, packed in r.connections.typed_items():
+                w, kind = unpack_edge(packed)
+                reason = self.lattice.edge_meta.get((r.id, target, kind))
+                if kind not in constructions or target not in self.lattice.resonators or reason is None:
+                    continue
+                if (reason.kind == 'hypothesis' or reason.metadata.get('status') != 'confirmed' or
+                    reason.context not in self.lattice.resolve_context()):
+                    continue
+                template, first, second = constructions[kind]
+                candidates.append((w, self.CONSTRUCTIONS[template].format(**{
+                    first:self._get_surface_form(r.label).capitalize(),
+                    second:self._get_surface_form(self.lattice.resonators[target].label)})))
+        return max(candidates)[1] if candidates else 'Недостаточно подтвержденных оснований для фактического ответа.'
+
+    def _generate_associative(self, seed_concepts: List[str], max_length: int = 15, beam_width: int = 2) -> str:
         seed_ids = []
         intention_vectors = []
         seed_concepts_clean = []

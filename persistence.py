@@ -56,6 +56,13 @@ class CrystalSnapshot:
         data['nodes'] = {rid: {name: getattr(r, name) for name in
                          ('belief_status', 'belief_confidence', 'belief_reason', 'belief_context', 'context_mask', 'defeats')}
                          for rid, r in lattice.resonators.items()}
+        data['typed_schema'] = 1
+        data['typed_adjacency'] = {rid:list(r.connections.typed_items()) for rid,r in lattice.resonators.items()}
+        data['identity'] = {rid:(r.identity_hdc, r.contextual_hdc) for rid,r in lattice.resonators.items()}
+        data['semantic_state'] = lattice.semantic_space.to_dict() if lattice.semantic_space else None
+        data['geometry_config'] = (lattice.geometry_mode, lattice.semantic_world, lattice.semantic_bindings)
+        data['abstraction_components'] = lattice.abstraction_components
+        data['sleep_signature'] = lattice._sleep_signature
         payload = json.dumps(CrystalSnapshot._encode_meta(data), ensure_ascii=False).encode('utf-8')
         return CrystalSnapshot.META_MAGIC + struct.pack('<I', len(payload)) + payload
 
@@ -65,6 +72,9 @@ class CrystalSnapshot:
             # Never retain hypotheses belonging to the previous graph.
             for name in ('hypotheses','causal_hypotheses','hypothesis_history','belief_history','edge_meta'):
                 setattr(lattice, name, {})
+            lattice.semantic_space = None
+            lattice.geometry_mode, lattice.semantic_world, lattice.semantic_bindings = 'off', None, {}
+            lattice.abstraction_components, lattice._sleep_signature = {}, None
             return
         if trailer[:8] != CrystalSnapshot.META_MAGIC:
             raise ValueError('Unknown snapshot metadata extension')
@@ -74,6 +84,22 @@ class CrystalSnapshot:
         data = CrystalSnapshot._decode_meta(json.loads(trailer[12:].decode('utf-8')))
         for name in CrystalSnapshot.META_FIELDS:
             setattr(lattice, name, data[name])
+        if data.get('typed_schema', 1) != 1:
+            raise ValueError('Unsupported typed adjacency schema')
+        if 'typed_adjacency' in data:
+            for rid, edges in data['typed_adjacency'].items():
+                lattice.resonators[rid].connections.clear()
+                lattice.resonators[rid].connections.update(edges)
+        for rid, (identity, contexts) in data.get('identity', {}).items():
+            lattice.resonators[rid].identity_hdc = identity
+            lattice.resonators[rid].contextual_hdc = contexts
+        lattice.semantic_space = None
+        if data.get('semantic_state') is not None:
+            from semantic_space import SemanticSpace
+            lattice.semantic_space = SemanticSpace.from_dict(data['semantic_state'])
+        lattice.geometry_mode, lattice.semantic_world, lattice.semantic_bindings = data.get('geometry_config', ('off', None, {}))
+        lattice.abstraction_components = data.get('abstraction_components', {})
+        lattice._sleep_signature = data.get('sleep_signature')
         for rid, attrs in data['nodes'].items():
             for name, value in attrs.items():
                 setattr(lattice.resonators[rid], name, value)

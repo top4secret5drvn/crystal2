@@ -2,6 +2,7 @@
 engine.py — Кремниевая подложка Кристалла (v4.0 Cognitive Rewrite).
 Объединяет Векторы 1-5, Геном, Причинный Калькулус, Планировщик и КОГНИТИВНЫЙ КОНВЕЙЕР.
 """
+from typed_connections import TypedConnections
 import hashlib
 import random
 from enum import IntEnum, auto
@@ -334,11 +335,13 @@ class Resonator:
     hdc_vector: int
     state: TruthValue = TruthValue.VOID
     energy: int = 0
-    connections: Dict[int, int] = field(default_factory=dict)
+    connections: Dict[int, int] = field(default_factory=TypedConnections)
     defeats: List[int] = field(default_factory=list)
     last_tick: int = 0
     activation_sources: List[int] = field(default_factory=list)
     context_sources: List[int] = field(default_factory=list)
+    identity_hdc: Optional[int] = None
+    contextual_hdc: dict = field(default_factory=dict)
     context_mask: int = 0
     cognitive_role: Optional[str] = None
     
@@ -348,6 +351,10 @@ class Resonator:
     belief_reason: Optional[CrystalReason] = None
     belief_context: str = "global"
     
+    def __post_init__(self):
+        if not isinstance(self.connections, TypedConnections):
+            self.connections = TypedConnections(self.connections)
+
     def inject_energy(self, amount: int, tick: int, source_ids: List[int] = None, cap: int = 5000):
         self.energy += amount
         if self.energy > cap:
@@ -382,7 +389,7 @@ class Resonator:
     
     def get_connections_by_type(self, edge_type: int) -> List[Tuple[int, int]]:
         result = []
-        for target_id, packed in self.connections.items():
+        for target_id, packed in self.connections.typed_items():
             w, et = unpack_edge(packed)
             if et == edge_type:
                 result.append((target_id, w))
@@ -391,8 +398,8 @@ class Resonator:
     def has_incoming_type(self, lattice: 'CrystalLattice', edge_type: int) -> bool:
         for r in lattice.resonators.values():
             if self.id in r.connections:
-                _, et = unpack_edge(r.connections[self.id])
-                if et == edge_type:
+                packed = r.connections.get_type(self.id, edge_type)
+                if packed is not None:
                     return True
         return False
 
@@ -465,6 +472,12 @@ class CrystalLattice:
         self.causal_hypotheses = {}
         self.relation_observations = []
         self.hypothesis_history = {}
+        self.semantic_space = None
+        self.geometry_mode = 'off'
+        self.semantic_world = None
+        self.semantic_bindings = {}
+        self.abstraction_components = {}
+        self._sleep_signature = None
         self.belief_history = {}
         self.retracted_belief_sources = {}
         
@@ -568,15 +581,18 @@ class CrystalLattice:
             new_id = self._next_id
             self._next_id += 1
             hdc = self.encoder.encode(label)
-            if getattr(self, 'current_epoch', None) and label != "SELF" and not label.startswith("EPOCH:"):
-                hdc ^= self.epochs[self.current_epoch]
             res = Resonator(id=new_id, label=label, hdc_vector=hdc)
             if getattr(self, 'current_epoch_id', 0) != 0 and label != "SELF" and not label.startswith("EPOCH:"):
                 res.context_mask = self.current_epoch_id
             self.resonators[new_id] = res
             self.label_to_id[label] = new_id
-        return self.resonators[self.label_to_id[label]]
-    
+        res = self.resonators[self.label_to_id[label]]
+        if res.identity_hdc is None:
+            res.identity_hdc = self.encoder.encode(label)
+        if self.current_epoch:
+            res.contextual_hdc[self.current_epoch] = res.identity_hdc ^ self.epochs[self.current_epoch]
+        return res
+
     def validate_edge(self, source_id: int, target_id: int, edge_type: int) -> Tuple[bool, str]:
         """🆕 Приоритет 1.6: Валидация создаваемой связи."""
         # Проверка допустимости типа
@@ -588,19 +604,9 @@ class CrystalLattice:
             if source_id in self.resonators and target_id in self.resonators:
                 target_r = self.resonators[target_id]
                 if source_id in target_r.connections:
-                    _, rev_type = unpack_edge(target_r.connections[source_id])
-                    if rev_type == EDGE_CAUSE and edge_type == EDGE_CAUSE:
+                    reverse_cause = target_r.connections.get_type(source_id, EDGE_CAUSE)
+                    if reverse_cause is not None and edge_type == EDGE_CAUSE:
                         return False, f"Цикл причинности: {self.resonators[source_id].label} ↔ {target_r.label}"
-        
-        # Проверка противоречий с EXCEPT
-        # 🛡 ИСПРАВЛЕНО: проверяем и читаем один и тот же ключ (source_id)
-        if edge_type != EDGE_EXCEPT:
-            if source_id in self.resonators and target_id in self.resonators:
-                target_r = self.resonators[target_id]
-                if source_id in target_r.connections:
-                    _, existing_type = unpack_edge(target_r.connections[source_id])
-                    if existing_type == EDGE_EXCEPT:
-                        return False, f"Противоречие: уже есть EXCEPT-связь"
         
         return True, "OK"
     
@@ -619,48 +625,29 @@ class CrystalLattice:
             self.paradox_log.append(f"Такт {self.tick_count}: ⚠️ Связь отклонена: {msg}")
             return
         
-        packed = pack_edge(weight, edge_type)
-        
-        if edge_type == EDGE_SYNTAGM:
-            old_packed = r1.connections.get(r2.id, 0)
-            old_w, _ = unpack_edge(old_packed)
-            packed = pack_edge(old_w + weight, edge_type)
-            r1.connections[r2.id] = packed
-            old_packed2 = r2.connections.get(r1.id, 0)
-            old_w2, _ = unpack_edge(old_packed2)
-            r2.connections[r1.id] = pack_edge(old_w2 + weight, edge_type)
-        else:
-            r1.connections[r2.id] = packed
-            reverse_type = EDGE_EFFECT if edge_type == EDGE_CAUSE else \
-                           EDGE_CAUSE if edge_type == EDGE_EFFECT else edge_type
-            r2.connections[r1.id] = pack_edge(weight, reverse_type)
-        
-        # 🆕 Приоритет 1.2: Сохранение метаданных
-        if reason:
-            self.edge_meta[(r1.id, r2.id)] = reason
-    
-    def connect_ids(self, id1: int, id2: int, weight: int = 10, edge_type: int = EDGE_SYNTAGM, reason: Optional[CrystalReason] = None):
-        if id1 not in self.resonators or id2 not in self.resonators:
+        self.connect_ids(r1.id, r2.id, weight, edge_type, reason, accumulate=True)
+
+    def connect_ids(self, id1: int, id2: int, weight: int = 10, edge_type: int = EDGE_SYNTAGM,
+                    reason: Optional[CrystalReason] = None, accumulate: bool = False):
+        if id1 not in self.resonators or id2 not in self.resonators or id1 == id2:
             return
-        
-        r1, r2 = self.resonators[id1], self.resonators[id2]
-        
-        # 🆕 Приоритет 1.6: Валидация
         valid, msg = self.validate_edge(id1, id2, edge_type)
         if not valid:
-            self.paradox_log.append(f"Такт {self.tick_count}: ⚠️ Связь отклонена: {msg}")
+            self.paradox_log.append(msg)
             return
-        
-        packed = pack_edge(weight, edge_type)
-        r1.connections[id2] = packed
-        reverse_type = EDGE_EFFECT if edge_type == EDGE_CAUSE else \
-                       EDGE_CAUSE if edge_type == EDGE_EFFECT else edge_type
-        r2.connections[id1] = pack_edge(weight, reverse_type)
-        
-        # 🆕 Приоритет 1.2: Сохранение метаданных
+        r1, r2 = self.resonators[id1], self.resonators[id2]
+        def put(source, target, kind):
+            old = source.connections.get_type(target.id, kind, 0)
+            w = weight + (unpack_edge(old)[0] if accumulate and kind == EDGE_SYNTAGM else 0)
+            source.connections[target.id] = pack_edge(w, kind)
+        put(r1, r2, edge_type)
+        reverse = EDGE_CONSTRAINTS[edge_type].get('reverse')
+        if reverse is not None or EDGE_CONSTRAINTS[edge_type].get('bidirectional'):
+            put(r2, r1, edge_type if reverse is None else reverse)
         if reason:
-            self.edge_meta[(id1, id2)] = reason
-    
+            self.edge_meta[(id1, id2, edge_type)] = reason
+            self.edge_meta[(id1, id2)] = reason  # legacy provenance view
+
     # 🆕 Приоритет 1.11: Эффективная уверенность
     def get_effective_confidence(self, reason: CrystalReason) -> float:
         """Учитывает надёжность источника."""
@@ -1075,7 +1062,7 @@ class CrystalLattice:
         
         for r in self.resonators.values():
             if not r.is_active(): continue
-            for tgt_id, packed in r.connections.items():
+            for tgt_id, packed in r.connections.typed_items():
                 w, et = unpack_edge(packed)
                 # 🆕 ЗАДАЧА 8: CAUSATION фрейм эвоцируется от CAUSE, EFFECT, COND
                 # (раньше — только EDGE_CAUSE с w > 30, из-за чего фреймы почти никогда
@@ -1113,7 +1100,7 @@ class CrystalLattice:
         for r in self.resonators.values():
             if not r.is_active(): continue
             props = []
-            for tgt_id, packed in r.connections.items():
+            for tgt_id, packed in r.connections.typed_items():
                 w, et = unpack_edge(packed)
                 if et == EDGE_SYNTAGM and w > 20 and tgt_id in self.resonators:
                     tgt_r = self.resonators[tgt_id]
@@ -1166,7 +1153,7 @@ class CrystalLattice:
         visited = {root_id}
         r = self.resonators[root_id]
         neighbors = []
-        for tgt_id, packed in r.connections.items():
+        for tgt_id, packed in r.connections.typed_items():
             if tgt_id in self.resonators and tgt_id not in visited:
                 w, et = unpack_edge(packed)
                 if et != EDGE_EXCEPT:
@@ -1524,16 +1511,82 @@ class CrystalLattice:
         log.append(f"  📊 Отрезано {severed} причинных связей")
         return log
     
+    def configure_geometry(self, space=None, world=None, mode='off'):
+        if mode not in ('off', 'diagnostic', 'hypotheses'):
+            raise ValueError('Invalid geometry mode')
+        if mode != 'off' and (space is None or world not in space.worlds):
+            raise ValueError('Geometry requires explicit semantic world')
+        self.semantic_space, self.semantic_world, self.geometry_mode = space, world, mode
+
+    def bind_semantic_sense(self, label, sense_id):
+        if self.semantic_space is None or sense_id not in self.semantic_space.senses:
+            raise ValueError('Unknown semantic sense')
+        values = self.semantic_bindings.setdefault(label, [])
+        if sense_id not in values:
+            values.append(sense_id)
+
+    def geometry_comparison(self, label1, label2):
+        if self.geometry_mode == 'off' or self.semantic_space is None:
+            return None
+        def candidates(label):
+            return [sid for sid in self.semantic_bindings.get(label, [])
+                    if self.semantic_world in self.semantic_space.senses[sid].worlds]
+        a, b = candidates(label1), candidates(label2)
+        score = self.semantic_space.similarity(a[0], b[0], self.semantic_world) if len(a)==len(b)==1 else None
+        return {'similarity': score, 'world': self.semantic_world,
+                'status': 'diagnostic' if self.geometry_mode=='diagnostic' else 'hypothesis',
+                'entailed_relation': None}
+
+    def rank_analogy_hypotheses(self, label, candidates=None):
+        if self.geometry_mode != 'hypotheses':
+            return []
+        candidates = candidates if candidates is not None else self.semantic_bindings
+        proposals=[]
+        for other in candidates:
+            if other == label:
+                continue
+            comparison = self.geometry_comparison(label, other)
+            if comparison and comparison['similarity'] is not None:
+                proposals.append({'label': other, 'score': comparison['similarity'], 'status': 'hypothesis'})
+        return sorted(proposals, key=lambda p:(-p['score'], p['label']))
+
+    def learn_semantic_evidence(self):
+        """Import only explicitly confirmed, bound, unambiguous typed relations."""
+        if self.semantic_space is None:
+            return 0
+        from semantic_space import Evidence, stable_id
+        added=0
+        for r in self.resonators.values():
+            subjects=self.semantic_bindings.get(r.label, [])
+            if len(subjects)!=1:continue
+            for tid,packed in r.connections.typed_items():
+                relation=EDGE_NAMES[unpack_edge(packed)[1]]
+                targets=self.semantic_bindings.get(self.resonators[tid].label, []) if tid in self.resonators else []
+                reason=self.edge_meta.get((r.id,tid,unpack_edge(packed)[1]))
+                if (len(targets)!=1 or relation not in self.semantic_space.RELATIONS or
+                    reason is None or reason.kind=='hypothesis' or reason.metadata.get('status')!='confirmed'):
+                    continue
+                if any(self.semantic_world not in self.semantic_space.senses[sid].worlds for sid in (subjects[0],targets[0])):
+                    continue
+                eid=stable_id('lattice',r.label,tid,relation,reason.source_label,reason.timestamp)
+                added+=self.semantic_space.observe(Evidence(eid,subjects[0],targets[0],relation,
+                    self.semantic_world,reason.source_label or reason.source_type,
+                    confidence=reason.confidence,confirmed=True,epoch=reason.context))
+        return added
+
     def find_analogies(self, label: str) -> List[Tuple[str, int]]:
         if label not in self.label_to_id:
             return []
         r = self.resonators[self.label_to_id[label]]
         analogies = []
-        for target_id, packed in r.connections.items():
+        for target_id, packed in r.connections.typed_items():
             w, et = unpack_edge(packed)
             if et == EDGE_ANALOG and target_id in self.resonators:
                 analogies.append((self.resonators[target_id].label, w))
         analogies.sort(key=lambda x: x[1], reverse=True)
+        if self.geometry_mode == 'hypotheses':
+            scores={p['label']:p['score'] for p in self.rank_analogy_hypotheses(label, [x[0] for x in analogies])}
+            analogies.sort(key=lambda x:(-scores.get(x[0], -1),-x[1],x[0]))
         return analogies
     
     def propose_causal_link(self, a: int, b: int, reason: CrystalReason):
@@ -1559,13 +1612,14 @@ class CrystalLattice:
         h["status"] = "confirmed" if all(h["evidence"].values()) else "defeated"
         a, b, _ = key
         if h["status"] == "confirmed":
-            self.resonators[a].connections[b] = pack_edge(60, EDGE_CAUSE)
-            self.resonators[b].connections[a] = pack_edge(60, EDGE_EFFECT)
+            h['reason'].metadata['status'] = 'confirmed'
+            h['reason'].kind = 'intervention'
+            self.connect_ids(a, b, 60, EDGE_CAUSE, h['reason'])
         else:
             for x, y, et in ((a,b,EDGE_CAUSE),(b,a,EDGE_EFFECT)):
                 edge = self.resonators[x].connections.get(y)
                 if edge is not None and unpack_edge(edge)[1] == et:
-                    self.resonators[x].connections[y] = pack_edge(unpack_edge(edge)[0], EDGE_SYNTAGM)
+                    self.resonators[x].connections.remove_type(y, et)
         return h["status"]
 
     def infer_causal_links(self, min_co_activation: int = 3) -> List[str]:
@@ -1819,11 +1873,9 @@ class CrystalLattice:
                     continue
                 direct_except = False
                 if u2_id in u1_r.connections:
-                    _, edge_type = unpack_edge(u1_r.connections[u2_id])
-                    direct_except = edge_type == EDGE_EXCEPT
+                    direct_except = u1_r.connections.get_type(u2_id, EDGE_EXCEPT) is not None
                 if not direct_except and u1_id in u2_r.connections:
-                    _, edge_type = unpack_edge(u2_r.connections[u1_id])
-                    direct_except = edge_type == EDGE_EXCEPT
+                    direct_except = u2_r.connections.get_type(u1_id, EDGE_EXCEPT) is not None
                 structural_strength = len(u1_r.connections) + len(u2_r.connections)
                 root_like = u1_r.label.startswith("root:") or u2_r.label.startswith("root:")
                 weight1 = n1.get(u1_id, (None, 0, 0))[1] if u1_id in n1 else 0
@@ -2006,7 +2058,11 @@ class CrystalLattice:
             (a1, a2) for a1, a2 in antagonisms
             if not self._is_false_antagonism(a1, a2)
         ]
+        typed1={(tid,unpack_edge(p)[1]) for tid,p in r1.connections.typed_items() if unpack_edge(p)[1]!=EDGE_SYNTAGM}
+        typed2={(tid,unpack_edge(p)[1]) for tid,p in r2.connections.typed_items() if unpack_edge(p)[1]!=EDGE_SYNTAGM}
         return {
+            "shared_typed_relations": sorted(typed1 & typed2),
+            "geometry": self.geometry_comparison(r1.label, r2.label),
             "entity1": display_label(label1) or r1.label,
             "entity2": display_label(label2) or r2.label,
             "common": common_traits,
@@ -2080,6 +2136,48 @@ class CrystalLattice:
             self.genome &= ~(0xFFFFFFFF << GENE_DECAY_SHIFT)
             self.genome |= (20 << GENE_DECAY_SHIFT)
     
+    def _abstraction_leaves(self, node_id, visiting=None):
+        visiting = set() if visiting is None else set(visiting)
+        if node_id in visiting or node_id not in self.resonators:
+            raise ValueError('Cyclic or missing abstraction component')
+        visiting.add(node_id)
+        components = self.abstraction_components.get(node_id)
+        if components is None:
+            return frozenset((node_id,))
+        return frozenset().union(*(self._abstraction_leaves(c, visiting) for c in components))
+
+    def _can_abstract(self, components):
+        components=tuple(sorted(set(components)))
+        if len(components)<2 or len(self.abstraction_components)>=128:
+            return False
+        leaves=[self._abstraction_leaves(c) for c in components]
+        if any(a<=b or b<=a for i,a in enumerate(leaves) for b in leaves[i+1:]):
+            return False  # self-inclusion and redundant wrapping
+        union=frozenset().union(*leaves)
+        return not any(self._abstraction_leaves(node)==union for node in self.abstraction_components)
+
+    def propose_structural_abstraction(self, components):
+        """Explicit higher-level candidate. Novel leaf structure, never truth."""
+        components=tuple(sorted(set(components)))
+        if not self._can_abstract(components):
+            return None
+        labels=[self.resonators[c].label for c in components]
+        label='cluster:structure:'+hashlib.sha256(repr(components).encode()).hexdigest()[:16]
+        r=self.get_or_create(label)
+        self.abstraction_components[r.id]=components
+        self.add_hypothesis(r.id,CrystalReason('hypothesis',source_label=label,
+            source_type='sleep_abstraction',confidence=.3,metadata={'training_examples':labels,'components':list(components)}))
+        for component in components:
+            self.connect_ids(r.id,component,50,EDGE_COND)
+        return r.id
+
+    def _structural_signature(self):
+        topology = sorted((r.id, tuple(sorted((target, unpack_edge(packed)[1])
+                     for target, packed in r.connections.typed_items()))) for r in self.resonators.values())
+        provenance = sorted((key, reason.source_label, reason.source_type, reason.timestamp, reason.confidence,
+                             repr(reason.metadata)) for key, reason in self.edge_meta.items())
+        return hashlib.sha256(repr((topology, provenance)).encode()).hexdigest()
+
     def discover_abstractions(self) -> List[str]:
         """Раздел 36: Сингамия — обнаружение топологического изоморфизма."""
         dreams = []
@@ -2091,7 +2189,7 @@ class CrystalLattice:
         profiles = {}
         for attr in attractors:
             profile = []
-            for tgt_id, packed in attr.connections.items():
+            for tgt_id, packed in attr.connections.typed_items():
                 w, et = unpack_edge(packed)
                 if w > self.calibration.syngrammy_min_edge_weight and tgt_id in self.resonators:
                     tgt = self.resonators[tgt_id]
@@ -2121,7 +2219,7 @@ class CrystalLattice:
                     jaccard = intersection / union if union > 0 else 0
                     if jaccard > self.calibration.syngrammy_jaccard_thresh:
                         abstract_label = "mdl:" + "+".join(sorted((r1.label, r2.label)))
-                        if abstract_label not in self.label_to_id:
+                        if abstract_label not in self.label_to_id and self._can_abstract((id1, id2)):
                             # 🆕 Приоритет 1.10: Оценка поддержки
                             support = len([r for r in self.resonators.values()
                                            if r.id in r1.connections or r.id in r2.connections])
@@ -2135,6 +2233,7 @@ class CrystalLattice:
                             abstract_r = Resonator(id=new_id, label=abstract_label, hdc_vector=bundled_hdc)
                             abstract_r.energy = (r1.energy + r2.energy) // 2
                             self.resonators[new_id] = abstract_r
+                            self.abstraction_components[new_id] = (id1, id2)
                             self.label_to_id[abstract_label] = new_id
                             
                             # Создаём причину
@@ -2161,6 +2260,8 @@ class CrystalLattice:
     
     # --- Сон ---
     def defragment(self):
+        if self._sleep_signature == self._structural_signature():
+            return 0, 0, ['No new structural evidence; sleep skipped.']
         merged_count = 0
         pruned_count = 0
         dreams = []
@@ -2171,25 +2272,21 @@ class CrystalLattice:
             matched_root_label = None
             if raw_label in root_nodes:
                 matched_root_label = raw_label
-            else:
-                for root_key in root_nodes:
-                    if root_key in raw_label or raw_label in root_key:
-                        if len(root_key) >= self.calibration.min_root_len:
-                            matched_root_label = root_key
-                            break
             if matched_root_label:
                 root_r = root_nodes[matched_root_label]
-                if raw_r.id != root_r.id:
-                    for tgt_id, packed in list(raw_r.connections.items()):
+                if raw_r.id != root_r.id and not any(raw_r.id in members for members in self.abstraction_components.values()):
+                    for tgt_id, packed in list(raw_r.connections.typed_items()):
                         if tgt_id != root_r.id and tgt_id in self.resonators:
                             w, et = unpack_edge(packed)
-                            old_packed = root_r.connections.get(tgt_id, 0)
+                            old_packed = root_r.connections.get_type(tgt_id, et, 0)
                             old_w, old_et = unpack_edge(old_packed)
                             new_w = min(MASK_WEIGHT, old_w + w) if (et == EDGE_SYNTAGM and old_et == EDGE_SYNTAGM) else max(old_w, w)
                             root_r.connections[tgt_id] = pack_edge(new_w, et)
                             tgt_r = self.resonators[tgt_id]
                             if raw_r.id in tgt_r.connections:
-                                tgt_r.connections[root_r.id] = tgt_r.connections.pop(raw_r.id)
+                                for reverse in list(tgt_r.connections.relations[raw_r.id].values()):
+                                    tgt_r.connections[root_r.id] = reverse
+                                del tgt_r.connections[raw_r.id]
                     root_r.energy = min(self.calibration.energy_cap, root_r.energy + raw_r.energy)
                     to_delete_ids.append(raw_r.id)
         for rid in to_delete_ids:
@@ -2221,7 +2318,7 @@ class CrystalLattice:
             r = self.resonators[r_id]
             target_r = self.resonators[tgt_id]
             cluster_label = "cluster:" + "+".join(sorted((r.label, target_r.label)))
-            if cluster_label not in self.label_to_id:
+            if cluster_label not in self.label_to_id and self._can_abstract((r_id, tgt_id)):
                 # 🆕 Приоритет 1.10: Оценка поддержки
                 support = len([node for node in self.resonators.values()
                               if r.id in node.connections or target_r.id in node.connections])
@@ -2235,6 +2332,7 @@ class CrystalLattice:
                 cluster_r = Resonator(id=new_id, label=cluster_label, hdc_vector=bundled_hdc)
                 cluster_r.energy = (r.energy + target_r.energy) // 2
                 self.resonators[new_id] = cluster_r
+                self.abstraction_components[new_id] = (r_id, tgt_id)
                 self.label_to_id[cluster_label] = new_id
                 
                 reason = CrystalReason(
@@ -2275,7 +2373,7 @@ class CrystalLattice:
                 a_label = self.resonators[a_id].label
                 c_label = self.resonators[c_id].label
                 shortcut_label = f"mdl:{a_label}->{c_label}"
-                if shortcut_label not in self.label_to_id:
+                if shortcut_label not in self.label_to_id and self._can_abstract((a_id, c_id)):
                     # 🆕 Приоритет 1.10: Оценка поддержки
                     if count < 3:
                         dreams.append(f"⚠️ MDL отклонен: '{shortcut_label}' (поддержка: {count})")
@@ -2288,6 +2386,7 @@ class CrystalLattice:
                     self._next_id += 1
                     shortcut_r = Resonator(id=new_id, label=shortcut_label, hdc_vector=bundled_hdc)
                     self.resonators[new_id] = shortcut_r
+                    self.abstraction_components[new_id] = (a_id, c_id)
                     self.label_to_id[shortcut_label] = new_id
                     
                     reason = CrystalReason(
@@ -2327,7 +2426,7 @@ class CrystalLattice:
                     r1, r2 = self.resonators[id1], self.resonators[id2]
                     sim = self.encoder.similarity(r1.hdc_vector, r2.hdc_vector)
                     if sim < 0.20:  # только реально далёкие векторы (было < 0.30)
-                        if id2 not in r1.connections or unpack_edge(r1.connections[id2])[1] != EDGE_EXCEPT:
+                        if r1.connections.get_type(id2, EDGE_EXCEPT) is None:
                             self.connect(r1.label, r2.label, weight=self.calibration.except_antonym_weight, edge_type=EDGE_EXCEPT)
                             dreams.append(f"🛡 Авто-EXCEPT: '{r1.label}' ↔ '{r2.label}' (общая база: {len(common_base)})")
                             except_generated += 1
@@ -2347,6 +2446,7 @@ class CrystalLattice:
         dreams.append(f"🧬 Геном: Decay={self.decay_percent}%, Thresh={self.entropy_threshold:.2f}")
         syn_dreams = self.discover_abstractions()
         dreams.extend(syn_dreams)
+        self._sleep_signature = self._structural_signature()
         return merged_count, pruned_count, dreams
     
     # 🆕 Приоритет 1.9: XAI-трассировка
